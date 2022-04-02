@@ -1,0 +1,10 @@
+{
+  "name": "NoteIt",
+  "description": "Note && OCR",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "action": {
+    "default_title": "NoteIt",
+    "default_popup": "index.html"
+  }
+}
