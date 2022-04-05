@@ -65,6 +65,9 @@
       },
       {
         "usePrettierrc": true
+      },
+      {
+        "endOfLine": "auto"
       }
     ]
   }
