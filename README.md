@@ -13,4 +13,10 @@ yarn dev
 ```bash
 npx husky-init && npm install
 ```
-Go to `.husky/pre-commit` file and change `npm test` to `npx lint-staged`, it will enable automatic code formatting before commit.
+Go to `.husky/pre-commit` file and make sure the content of the file look like this:
+```bash
+#!/bin/sh
+. "$(dirname "$0")/_/husky.sh"
+
+npx lint-staged
+```
