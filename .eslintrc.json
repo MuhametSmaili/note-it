@@ -6,55 +6,68 @@
     "plugin:prettier/recommended"
   ],
   "ignorePatterns": [".eslintrc.js"],
+  "parser": "@typescript-eslint/parser",
   "rules": {
-    "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/explicit-function-return-type": ["off"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
-    "@typescript-eslint/no-explicit-any": "off",
-    "@typescript-eslint/class-literal-property-style": ["error"],
-    "@typescript-eslint/no-extra-semi": ["error"],
-    "@typescript-eslint/no-unused-vars": ["error", { "argsIgnorePattern": "^_" }],
-    "@typescript-eslint/no-dupe-class-members": ["error"],
-    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/interface-name-prefix": "off",
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        "selector": "default",
-        "format": ["camelCase"]
-      },
-
-      {
-        "selector": "variable",
-        "format": ["camelCase", "UPPER_CASE", "PascalCase"]
-      },
-      {
-        "selector": "enumMember",
-        "format": ["UPPER_CASE"]
-      },
-      {
-        "selector": "parameter",
-        "format": ["camelCase", "PascalCase"],
-        "trailingUnderscore": "allow",
-        "leadingUnderscore": "allow"
-      },
-
-      {
-        "selector": "memberLike",
-        "modifiers": ["private"],
         "format": ["camelCase"],
-        "leadingUnderscore": "allow"
+        "selector": "default"
       },
       {
-        "selector": "objectLiteralProperty",
+        "format": ["camelCase", "UPPER_CASE", "PascalCase"],
+        "selector": "variable"
+      },
+      {
+        "format": ["UPPER_CASE"],
+        "selector": "enumMember"
+      },
+      {
+        "format": ["camelCase", "PascalCase"],
+        "leadingUnderscore": "allow",
+        "selector": "parameter",
+        "trailingUnderscore": "allow"
+      },
+      {
+        "format": ["camelCase"],
+        "leadingUnderscore": "allow",
+        "modifiers": ["private"],
+        "selector": "memberLike"
+      },
+      {
         "format": ["camelCase", "snake_case"],
-        "leadingUnderscore": "allow"
+        "leadingUnderscore": "allow",
+        "selector": "objectLiteralProperty"
       },
-
       {
-        "selector": "typeLike",
-        "format": ["PascalCase"]
+        "format": ["PascalCase"],
+        "selector": "typeLike"
       }
     ],
-    "prettier/prettier": ["error", { "singleQuote": true }, { "usePrettierrc": true }]
+    "@typescript-eslint/no-dupe-class-members": ["error"],
+    "@typescript-eslint/no-empty-function": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-extra-semi": ["error"],
+    "@typescript-eslint/no-unused-vars": [
+      "error",
+      {
+        "argsIgnorePattern": "^_"
+      }
+    ],
+    "prettier/prettier": [
+      "error",
+      {
+        "singleQuote": true
+      },
+      {
+        "usePrettierrc": true
+      },
+      {
+        "endOfLine": "auto"
+      }
+    ]
   }
 }
