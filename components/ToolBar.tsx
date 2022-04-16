@@ -60,35 +60,33 @@ const blockTypeButtons = [
 ];
 
 type ToolBarProps = {
-  editorState: EditorState;
-  setEditorState: (editorState: EditorState) => void;
+  setEditorState: (fn: (prevState: EditorState) => EditorState) => void;
 };
 
-const ToolBar = ({ editorState, setEditorState }: ToolBarProps) => {
+const ToolBar = ({ setEditorState }: ToolBarProps) => {
   const toggleBlockType = (event: React.MouseEvent) => {
     event.preventDefault();
-    console.log('toggleBlockType');
     const block = event.currentTarget.getAttribute('data-block');
-    console.log({ block });
+    console.log('TOGGLE BLOCK TYPE :: ', { block });
     if (!block) return;
-    const newEditorState = RichUtils.toggleBlockType(editorState, block);
-    setEditorState(newEditorState);
+    setEditorState((prevState: EditorState) => {
+      return RichUtils.toggleBlockType(prevState, block);
+    });
   };
 
   const toggleInlineStyle = (event: React.MouseEvent) => {
     event.preventDefault();
     const style = event.currentTarget.getAttribute('data-style');
     if (!style) return;
-    console.log({ style });
-    const newEditorState = RichUtils.toggleInlineStyle(editorState, style);
-    setEditorState(newEditorState);
+    setEditorState((prevState: EditorState) => {
+      return RichUtils.toggleInlineStyle(prevState, style);
+    });
   };
   return (
     <div>
       <div className="block-style-options">
         Block Types:
         {blockTypeButtons.map(({ block, value }) => {
-          console.log({ block, value });
           return <input type="button" key={block} value={value} data-block={block} onClick={toggleBlockType} />;
         })}
       </div>

@@ -10,7 +10,6 @@ const Editor = dynamic<EditorProps>(() => import('draft-js').then((mod) => mod.E
 const NoteEditor = () => {
   const [editorState, setEditorState] = useState<EditorState>(() => EditorState.createEmpty());
 
-  // For keyboard shortcuts
   const handleKeyCommand = (command: string, _: EditorState, __: number) => {
     const commandMap: Map<string, string> = new Map([
       ['strikethrough', 'STRIKETHROUGH'],
@@ -59,7 +58,7 @@ const NoteEditor = () => {
   return (
     <>
       <h1>Editor</h1>
-      <ToolBar editorState={editorState} setEditorState={setEditorState} />
+      <ToolBar setEditorState={setEditorState} />
       <div
         style={{
           border: '1px solid #ccc',
