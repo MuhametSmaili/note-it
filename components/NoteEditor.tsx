@@ -3,10 +3,12 @@ import dynamic from 'next/dynamic';
 import { EditorProps, EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
+import ToolBar from './ToolBar';
+
 const Editor = dynamic<EditorProps>(() => import('draft-js').then((mod) => mod.Editor), { ssr: false });
 
 const NoteEditor = () => {
-  const [editorState, setEditorState] = useState(() => EditorState.createEmpty());
+  const [editorState, setEditorState] = useState<EditorState>(() => EditorState.createEmpty());
 
   // For keyboard shortcuts
   const handleKeyCommand = (command: string, _: EditorState, __: number) => {
@@ -57,6 +59,7 @@ const NoteEditor = () => {
   return (
     <>
       <h1>Editor</h1>
+      <ToolBar editorState={editorState} setEditorState={setEditorState} />
       <div
         style={{
           border: '1px solid #ccc',
