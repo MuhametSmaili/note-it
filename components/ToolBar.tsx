@@ -85,15 +85,41 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
   return (
     <div>
       <div className="block-style-options">
-        Block Types:
+        <h5 style={{ padding: 0, margin: '10px 0 0 0' }}>Block Types:</h5>
         {blockTypeButtons.map(({ block, value }) => {
-          return <input type="button" key={block} value={value} data-block={block} onClick={toggleBlockType} />;
+          return (
+            <input
+              type="button"
+              style={{
+                margin: '5px 5px 0 0',
+                fontSize: 12,
+                padding: 2,
+              }}
+              key={block}
+              value={value}
+              data-block={block}
+              onClick={toggleBlockType}
+            />
+          );
         })}
       </div>
       <div className="inline-style-options">
-        Inline Styles:
+        <h5 style={{ padding: 0, margin: '10px 0 0 0' }}>Inline Styles:</h5>
         {inlineStyleButtons.map(({ value, style }) => {
-          return <input type="button" key={style} value={value} data-style={style} onClick={toggleInlineStyle} />;
+          return (
+            <input
+              type="button"
+              style={{
+                margin: '5px 5px 0 0',
+                fontSize: 12,
+                padding: 2,
+              }}
+              key={style}
+              value={value}
+              data-style={style}
+              onClick={toggleInlineStyle}
+            />
+          );
         })}
       </div>
     </div>

@@ -57,15 +57,15 @@ const NoteEditor = () => {
 
   return (
     <>
-      <h1>Editor</h1>
       <ToolBar setEditorState={setEditorState} />
       <div
         style={{
           border: '1px solid #ccc',
-          padding: 10,
-          maxHeight: 500,
+          height: 500,
           width: 'inherit',
           overflowY: 'auto',
+          padding: 10,
+          marginTop: 10,
         }}
       >
         <Editor
