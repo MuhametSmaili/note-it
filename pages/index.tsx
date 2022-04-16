@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import Head from 'next/head';
 
 import Hello from '@components/Hello';
+import NoteEditor from '@components/NoteEditor';
 
 const Home: NextPage = () => {
   return (
@@ -13,6 +14,7 @@ const Home: NextPage = () => {
       </Head>
       <h1>Note app</h1>
       <Hello />
+      <NoteEditor />
     </div>
   );
 };
