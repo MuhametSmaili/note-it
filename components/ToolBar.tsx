@@ -1,3 +1,4 @@
+import React from 'react';
 import { EditorState, RichUtils } from 'draft-js';
 
 const inlineStyleButtons = [
@@ -67,7 +68,6 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
   const toggleBlockType = (event: React.MouseEvent) => {
     event.preventDefault();
     const block = event.currentTarget.getAttribute('data-block');
-    console.log('TOGGLE BLOCK TYPE :: ', { block });
     if (!block) return;
     setEditorState((prevState: EditorState) => {
       return RichUtils.toggleBlockType(prevState, block);
@@ -100,4 +100,4 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
   );
 };
 
-export default ToolBar;
+export default React.memo(ToolBar);
