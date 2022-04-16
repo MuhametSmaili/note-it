@@ -61,8 +61,8 @@ const NoteEditor = () => {
       <div
         style={{
           border: '1px solid #ccc',
-          height: 500,
-          width: 'inherit',
+          height: 400,
+          width: '100%',
           overflowY: 'auto',
           padding: 10,
           marginTop: 10,
