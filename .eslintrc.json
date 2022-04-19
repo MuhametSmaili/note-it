@@ -5,7 +5,7 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:prettier/recommended"
   ],
-  "ignorePatterns": [".eslintrc.js"],
+  "ignorePatterns": [".eslintrc.js", "out/**/*", "node_modules/**/*"],
   "parser": "@typescript-eslint/parser",
   "rules": {
     "@typescript-eslint/class-literal-property-style": ["error"],
@@ -65,9 +65,6 @@
       },
       {
         "usePrettierrc": true
-      },
-      {
-        "endOfLine": "auto"
       }
     ]
   }
