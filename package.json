@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && next export && mv out/_next out/next && sed -i '' 's/\\/_next/\\.\\/next/g' out/**.html && cp 'extension/manifest.json' 'out/'",
+    "build": "next build && next export && mv out/_next out/next && sed -i 's/\\/_next/\\.\\/next/g' out/**.html && cp -a 'extension/.' 'out/'",
     "start": "next start",
     "lint": "next lint",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
