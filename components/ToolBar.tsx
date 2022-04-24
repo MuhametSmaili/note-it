@@ -1,5 +1,6 @@
 import React from 'react';
 import { EditorState, RichUtils } from 'draft-js';
+import { getCurrentTab } from 'src/utils/getCurrentTab';
 
 const inlineStyleButtons = [
   {
@@ -82,6 +83,15 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
       return RichUtils.toggleInlineStyle(prevState, style);
     });
   };
+
+  const screenshotHandler = async () => {
+    const tab = await getCurrentTab();
+    chrome.runtime.sendMessage({
+      type: 'takeScreenShoot',
+      tab: tab,
+    });
+  };
+
   return (
     <div>
       <div className="block-style-options">
@@ -121,6 +131,10 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
             />
           );
         })}
+      </div>
+      <div>
+        <h5 style={{ padding: 0, margin: '10px 0 0 0' }}>Utils:</h5>
+        <button onClick={screenshotHandler}>Screenshot to Clipboard</button>
       </div>
     </div>
   );
