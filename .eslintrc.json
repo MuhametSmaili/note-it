@@ -67,5 +67,6 @@
         "usePrettierrc": true
       }
     ]
-  }
+  },
+  "env": { "webextensions": true }
 }

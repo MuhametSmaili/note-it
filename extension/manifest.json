@@ -6,5 +6,9 @@
   "action": {
     "default_title": "NoteIt",
     "default_popup": "index.html"
+  },
+  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite"],
+  "background": {
+    "service_worker": "background.js"
   }
 }
