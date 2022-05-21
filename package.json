@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "start": "webpack --watch --progress --config webpack/webpack.dev.js",
+    "build": "webpack --watch --progress --config webpack/webpack.prod.js",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
     "prepare": "husky install"
   },
