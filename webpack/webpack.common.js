@@ -12,7 +12,7 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.tsx?$/,
+        test: /\.(ts|js)x?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
       },
@@ -24,6 +24,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js'],
+    alias: {
+      '@utils': path.resolve('src/utils'),
+      '@components': path.resolve('src/components'),
+    },
   },
   plugins: [
     new CleanWebpackPlugin({
@@ -33,15 +37,15 @@ module.exports = {
       patterns: [
         {
           from: path.resolve('src/static'),
-          to: path.resolve('dist'),
+          to: path.resolve('build'),
         },
       ],
     }),
-    ...getHtmlPlugins(['popup', 'options']),
+    ...getHtmlPlugins(['popup']),
   ],
   output: {
     filename: '[name].js',
-    path: path.resolve('dist'),
+    path: path.resolve('build'),
   },
   optimization: {
     splitChunks: {
