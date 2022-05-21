@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import dynamic from 'next/dynamic';
-import { EditorProps, EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
-import 'draft-js/dist/Draft.css';
+import { EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
+// import 'draft-js/dist/Draft.css';
 
 import ToolBar from './ToolBar';
 
-const Editor = dynamic<EditorProps>(() => import('draft-js').then((mod) => mod.Editor), { ssr: false });
+import { Editor } from 'draft-js';
 
 const NoteEditor = () => {
   const [editorState, setEditorState] = useState<EditorState>(() => EditorState.createEmpty());

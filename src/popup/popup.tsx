@@ -1,8 +1,12 @@
-import React from 'react';
-import { rootRender } from 'src/utils/render';
+import NoteEditor from '@components/NoteEditor';
+import { rootRender } from '@utils/render';
 
 const App: React.FC = () => {
-  return <div>Hello</div>;
+  return (
+    <div>
+      <NoteEditor />
+    </div>
+  );
 };
 
 rootRender.render(<App />);

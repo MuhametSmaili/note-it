@@ -1,1 +1,1 @@
-console.log('BACKGROUND script');
+chrome.runtime.onInstalled.addListener(() => {});
