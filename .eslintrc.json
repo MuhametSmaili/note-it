@@ -1,6 +1,6 @@
 {
   "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  "ignorePatterns": [".eslintrc.js", "out/**/*", "node_modules/**/*"],
+  "ignorePatterns": [".eslintrc.js", "out/**/*", "node_modules/**/*", "webpack/*"],
   "parser": "@typescript-eslint/parser",
   "rules": {
     "@typescript-eslint/class-literal-property-style": ["error"],
