@@ -7,14 +7,8 @@
     "default_title": "NoteIt",
     "default_popup": "popup.html"
   },
-  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite"],
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["contentScript.js"]
-    }
-  ]
+  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite"]
 }
