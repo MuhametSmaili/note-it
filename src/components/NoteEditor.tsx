@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
-// import 'draft-js/dist/Draft.css';
+import 'draft-js/dist/Draft.css';
 
 import ToolBar from './ToolBar';
 
