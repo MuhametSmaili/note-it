@@ -1,6 +1,6 @@
 import React from 'react';
 import { EditorState, RichUtils } from 'draft-js';
-import { getCurrentTab } from 'src/utils/getCurrentTab';
+import { getCurrentTab } from '@utils/getCurrentTab';
 
 const inlineStyleButtons = [
   {
