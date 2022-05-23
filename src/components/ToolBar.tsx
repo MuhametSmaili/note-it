@@ -1,5 +1,6 @@
 import React from 'react';
 import { EditorState, RichUtils } from 'draft-js';
+import { MessageRequest } from '@utils/MessageRequest';
 import { getCurrentTab } from '@utils/getCurrentTab';
 
 const inlineStyleButtons = [
@@ -87,7 +88,7 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
   const screenshotHandler = async () => {
     const tab = await getCurrentTab();
     chrome.runtime.sendMessage({
-      type: 'takeScreenShoot',
+      message: MessageRequest.CROP_SCREEN,
       tab: tab,
     });
   };
