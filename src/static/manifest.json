@@ -13,7 +13,7 @@
   "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite", "storage"],
   "web_accessible_resources": [
     {
-      "resources": ["./libraries/worker.min.js"],
+      "resources": ["./libraries/worker.min.js", "frameContent.html"],
       "matches": ["<all_urls>"]
     }
   ]
