@@ -135,7 +135,7 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
       </div>
       <div>
         <h5 style={{ padding: 0, margin: '10px 0 0 0' }}>Utils:</h5>
-        <button onClick={screenshotHandler}>Screenshot to Clipboard</button>
+        <button onClick={screenshotHandler}>📷</button>
       </div>
     </div>
   );
