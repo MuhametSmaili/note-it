@@ -1,0 +1,91 @@
+.iframe-container {
+  position: fixed;
+  height: 250px;
+  width: 500px;
+  background-color: gray;
+  bottom: 0;
+  right: 0;
+  border-radius: 10px;
+  margin: 5px;
+  padding: 1px;
+}
+
+.progress-container {
+  height: 20px;
+  width: 100%;
+  background-color: #b2b2b2;
+  position: relative;
+}
+.progress {
+  background-color: #2f588f;
+  height: 100%;
+  width: 100%;
+}
+
+.progress-text {
+  display: block;
+  text-align: center;
+  color: white;
+  font-weight: bolder;
+  font-size: 14px;
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.iframe-inner-container {
+  height: 212px;
+  background-color: #9ca3af;
+  border-radius: 13px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.iframe-button-container {
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn {
+  background-color: #ffffff;
+  border: 0;
+  border-radius: 0.5rem;
+  box-sizing: border-box;
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 600;
+  line-height: 1.25rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  text-decoration: none #d1d5db solid;
+  text-decoration-thickness: auto;
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+}
+
+.btn:hover {
+  background-color: rgb(249, 250, 240);
+}
+
+.btn:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+.btn:focus-visible {
+  box-shadow: none;
+}
+
+.imageContainer {
+  display: flex;
+  justify-content: center;
+}
+.image {
+  height: 95px;
+  width: auto;
+}
