@@ -3,11 +3,15 @@ const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 
+const scripts = ['cropArea', 'frameScript', 'frameContent'];
+
 module.exports = {
   entry: {
     popup: path.resolve('src/popup/popup.tsx'),
     background: path.resolve('src/background/background.ts'),
-    contentScript: path.resolve('src/contentScript/contentScript.tsx'),
+    cropArea: path.resolve('src/contentScript/Screenshot/CropArea/cropArea.tsx'),
+    frameContent: path.resolve('src/contentScript/Screenshot/ImageHandler/frameContent.tsx'),
+    frameScript: path.resolve('src/contentScript/Screenshot/ImageHandler/frameScript.tsx'),
   },
   module: {
     rules: [
@@ -45,7 +49,7 @@ module.exports = {
         },
       ],
     }),
-    ...getHtmlPlugins(['popup', 'contentScript']),
+    ...getHtmlPlugins(['popup', ...scripts]),
   ],
   output: {
     filename: '[name].js',
@@ -54,8 +58,7 @@ module.exports = {
   optimization: {
     splitChunks: {
       chunks(chunk) {
-        console.log(chunk.name);
-        return chunk.name !== 'contentScript';
+        return !scripts.includes(chunk.name);
       },
     },
   },
