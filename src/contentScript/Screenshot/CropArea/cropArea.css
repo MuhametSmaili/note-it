@@ -1,0 +1,19 @@
+.overlayCursor {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 99999;
+  cursor: crosshair;
+}
+
+.selectedArea {
+  cursor: crosshair;
+  box-sizing: border-box;
+  position: fixed;
+  z-index: 999999;
+  border: gray 1px dotted;
+  box-shadow: 0 0 0 50000px rgba(0, 0, 0, 0.5);
+  background-color: transparent;
+}
