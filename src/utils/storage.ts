@@ -1,5 +1,7 @@
+import { Screenshot } from 'src/contentScript/Screenshot/ImageHandler/frameContent';
+
 export interface LocalStorage {
-  screenshot?: any;
+  screenshot?: Screenshot;
 }
 
 export function setStorage(setValue: Partial<LocalStorage>): void {
@@ -10,7 +12,7 @@ export function setStorage(setValue: Partial<LocalStorage>): void {
   }
 }
 
-export function getFromStorage(key: keyof LocalStorage): Promise<LocalStorage[keyof LocalStorage]> {
+export function getFromStorage<T extends keyof LocalStorage>(key: T): Promise<LocalStorage[T]> {
   return new Promise((resolve) => {
     try {
       chrome.storage.local.get([key], (res: LocalStorage) => {
@@ -22,6 +24,6 @@ export function getFromStorage(key: keyof LocalStorage): Promise<LocalStorage[ke
   });
 }
 
-export function removeFromStorage([...args]: [keyof LocalStorage]) {
+export function removeFromStorage([args]: Array<keyof LocalStorage>) {
   chrome.storage.local.remove(args);
 }
