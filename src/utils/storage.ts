@@ -1,7 +1,11 @@
+import { RawDraftContentState } from 'draft-js';
 import { Screenshot } from 'src/contentScript/Screenshot/ImageHandler/frameContent';
 
 export interface LocalStorage {
   screenshot?: Screenshot;
+  notes?: {
+    currentNote: RawDraftContentState;
+  };
 }
 
 export function setStorage(setValue: Partial<LocalStorage>): void {
