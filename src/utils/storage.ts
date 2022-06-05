@@ -4,7 +4,7 @@ import { Screenshot } from 'src/contentScript/Screenshot/ImageHandler/frameConte
 export interface LocalStorage {
   screenshot?: Screenshot;
   notes?: {
-    currentNote: RawDraftContentState;
+    currentNote?: RawDraftContentState;
   };
 }
 
