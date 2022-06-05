@@ -3,7 +3,7 @@ import { rootRender } from '@utils/render';
 
 const App: React.FC = () => {
   return (
-    <div>
+    <div style={{ width: '500px' }}>
       <NoteEditor />
     </div>
   );
