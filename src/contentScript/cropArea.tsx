@@ -3,7 +3,7 @@ import { MessageRequest } from '@utils/MessageRequest';
 import { rootRender } from '@utils/render';
 import { setStorage } from '@utils/storage';
 import { useState, MouseEvent } from 'react';
-import './cropArea.css';
+import '@styles/tailwind.css';
 
 const CropArea: React.FC = () => {
   const [firstPoint, setFirstPoints] = useState<{ x: number; y: number }>();
@@ -50,18 +50,19 @@ const CropArea: React.FC = () => {
 
   return (
     <div
-      className="overlayCursor"
+      className="fixed left-0 top-0 w-full h-full z-[99999] cursor-crosshair"
       onMouseDown={onStartSelectingHandler}
       onMouseMove={onMouseMoveHandler}
       onMouseUp={() => cropArea && onMouseUpHandler(cropArea)}
     >
       <div
-        className="selectedArea"
+        className="cursor-crosshair box-border fixed z-[999999] border border-gray-900 border-dotted bg-transparent"
         style={{
           width: cropArea?.width + 'px',
           height: cropArea?.height + 'px',
           left: cropArea?.x + 'px',
           top: cropArea?.y + 'px',
+          boxShadow: '0 0 0 50000px rgba(0,0,0,0.5)',
         }}
       />
     </div>

@@ -9,9 +9,9 @@ module.exports = {
   entry: {
     popup: path.resolve('src/popup/popup.tsx'),
     background: path.resolve('src/background/background.ts'),
-    cropArea: path.resolve('src/contentScript/Screenshot/CropArea/cropArea.tsx'),
-    frameContent: path.resolve('src/contentScript/Screenshot/ImageHandler/frameContent.tsx'),
-    frameScript: path.resolve('src/contentScript/Screenshot/ImageHandler/frameScript.tsx'),
+    cropArea: path.resolve('src/contentScript/cropArea.tsx'),
+    frameContent: path.resolve('src/contentScript/frameContent.tsx'),
+    frameScript: path.resolve('src/contentScript/frameScript.tsx'),
   },
   module: {
     rules: [
@@ -22,7 +22,7 @@ module.exports = {
       },
       {
         test: /\.css$/i,
-        use: ['style-loader', 'css-loader'],
+        use: ['style-loader', 'css-loader', 'postcss-loader'],
       },
       {
         test: /\.(jpg|jpeg|png|woff|woff2|eot|ttf|svg)$/,
@@ -35,6 +35,7 @@ module.exports = {
     alias: {
       '@utils': path.resolve('src/utils'),
       '@components': path.resolve('src/components'),
+      '@styles': path.resolve('src/styles'),
     },
   },
   plugins: [
