@@ -1,13 +1,24 @@
-import React, { useState } from 'react';
-import { EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
+import React, { useEffect, useState } from 'react';
+import { convertFromRaw, convertToRaw, EditorState, getDefaultKeyBinding, KeyBindingUtil, RichUtils } from 'draft-js';
 import 'draft-js/dist/Draft.css';
 
 import ToolBar from './ToolBar';
 
 import { Editor } from 'draft-js';
+import { getFromStorage, setStorage } from '@utils/storage';
 
 const NoteEditor = () => {
   const [editorState, setEditorState] = useState<EditorState>(() => EditorState.createEmpty());
+
+  useEffect(() => {
+    // Get the current saved note if there is any
+    getFromStorage('notes').then((res) => {
+      if (res && res.currentNote) {
+        const contentState = convertFromRaw(res.currentNote);
+        setEditorState(EditorState.createWithContent(contentState));
+      }
+    });
+  }, []);
 
   const handleKeyCommand = (command: string, _: EditorState, __: number) => {
     const commandMap: Map<string, string> = new Map([
@@ -54,6 +65,12 @@ const NoteEditor = () => {
     return getDefaultKeyBinding(event);
   };
 
+  const handleNoteEditorState = (noteState: EditorState) => {
+    setEditorState(noteState);
+    const rawNoteData = convertToRaw(noteState.getCurrentContent());
+    setStorage({ notes: { currentNote: rawNoteData } });
+  };
+
   return (
     <>
       <ToolBar setEditorState={setEditorState} />
@@ -71,7 +88,7 @@ const NoteEditor = () => {
           editorState={editorState}
           handleKeyCommand={handleKeyCommand}
           keyBindingFn={keyBindingFunction}
-          onChange={setEditorState}
+          onChange={handleNoteEditorState}
           placeholder="Note down your ideas..."
         />
       </div>

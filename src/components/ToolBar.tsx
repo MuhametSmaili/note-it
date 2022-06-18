@@ -2,6 +2,7 @@ import React from 'react';
 import { EditorState, RichUtils } from 'draft-js';
 import { MessageRequest } from '@utils/MessageRequest';
 import { getCurrentTab } from '@utils/getCurrentTab';
+import { removeFromStorage } from '@utils/storage';
 
 const inlineStyleButtons = [
   {
@@ -93,6 +94,10 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
     });
   };
 
+  const downloadHandler = () => {
+    removeFromStorage(['notes']);
+  };
+
   return (
     <div>
       <div className="block-style-options">
@@ -136,6 +141,7 @@ const ToolBar = ({ setEditorState }: ToolBarProps) => {
       <div>
         <h5 style={{ padding: 0, margin: '10px 0 0 0' }}>Utils:</h5>
         <button onClick={screenshotHandler}>📷</button>
+        <button onClick={downloadHandler}> 📥 Download</button>
       </div>
     </div>
   );
