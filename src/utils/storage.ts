@@ -1,10 +1,9 @@
-import { RawDraftContentState } from 'draft-js';
 import { Screenshot } from 'src/contentScript/frameContent';
 
 export interface LocalStorage {
   screenshot?: Screenshot;
   notes?: {
-    currentNote?: RawDraftContentState;
+    currentNote?: any;
   };
 }
 
