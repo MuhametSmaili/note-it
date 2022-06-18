@@ -3,6 +3,12 @@
   "description": "Note && OCR",
   "version": "0.0.1",
   "manifest_version": 3,
+  "icons": {
+    "16": "./icon/16 x 16.png",
+    "32": "./icon/32 x 32.png",
+    "48": "./icon/48 x 48.png",
+    "128": "./icon/128 x 128.png"
+  },
   "action": {
     "default_title": "NoteIt",
     "default_popup": "popup.html"
