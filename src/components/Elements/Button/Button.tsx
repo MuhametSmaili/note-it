@@ -3,7 +3,7 @@ import clsx from 'clsx';
 import { Spinner } from '@components/Elements';
 
 const variants = {
-  primary: 'bg-gray-true text-blue-prussian',
+  primary: 'bg-gray-light text-blue-prussian',
   inverse: 'bg-white text-blue-prussian hover:bg-gray-true active:bg-gray-true',
 };
 
@@ -41,7 +41,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
           'flex justify-center items-center font-bold disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
           variants[variant],
           sizes[size],
-          active && 'bg-gray-true',
+          active && '!bg-gray-true',
           className,
           disabled && 'bg-gray-30 text-white',
         )}
