@@ -1,31 +1,48 @@
 import { copyBlobToClipboard, CropArea, imageToBlob } from '@utils/image';
 import { rootRender } from '@utils/render';
 import { getFromStorage, removeFromStorage } from '@utils/storage';
-import { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import Tesseract from 'tesseract.js';
-import './imageHandler.css';
+import '@styles/tailwind.css';
+import { Button } from '@components/Elements/Button/Button';
+import { Spinner } from '@components/Elements/Spinner/Spinner';
 
 export type Screenshot = {
   capturedImage: string;
   cropArea: CropArea;
 };
 
+type StatusHandler = {
+  type: 'LOADING' | 'DONE' | 'ERROR';
+  message?: string;
+};
+
 const FrameContent: React.FC = () => {
-  const [progress, setProgress] = useState({ value: -1, status: '' });
-  const [imageSrc, setImageSrc] = useState<Screenshot>();
-  const [status, setStatus] = useState<string>();
+  // const [progress, setProgress] = useState({ value: -1, status: '' });
+  const [screenshot, setScreenshot] = useState<Screenshot>();
+  const [status, setStatus] = useState<StatusHandler>();
+  const [imageSrc, setImageSrc] = useState<string>();
+
+  const handleImageToText = useCallback(() => {
+    return getFromStorage('screenshot').then((res) => {
+      if (!res) return;
+      return imageToBlob(res.capturedImage, res.cropArea).then((imageBlob) => {
+        setImageSrc(URL.createObjectURL(imageBlob));
+        setScreenshot(res);
+        return imageBlob;
+      });
+    });
+  }, []);
 
   useEffect(() => {
-    getFromStorage('screenshot').then((res) => {
-      setImageSrc(res);
-    });
+    handleImageToText();
     return () => {
       removeFromStorage(['screenshot']);
     };
   }, []);
 
   const imageToTextHandler = () => {
-    if (!imageSrc) {
+    if (!screenshot) {
       return;
     }
 
@@ -34,26 +51,31 @@ const FrameContent: React.FC = () => {
         workerBlobURL: false,
         workerPath: '/libraries/worker.min.js',
         corePath: '/libraries/tesseract-core.asm.js',
-        logger: (m: any) => {
-          setProgress({ value: m.progress, status: m.status });
-        },
+        // logger: (m: any) => {
+        //   setProgress({ value: m.progress, status: m.status });
+        // },
       });
 
       (async () => {
+        setStatus({ type: 'LOADING' });
+
         await worker.load();
         await worker.loadLanguage('eng');
         await worker.initialize('eng');
 
-        imageToBlob(imageSrc.capturedImage, imageSrc.cropArea).then(async (imageBlob) => {
+        imageToBlob(screenshot.capturedImage, screenshot.cropArea).then(async (imageBlob) => {
           const {
             data: { text },
           } = await worker.recognize(URL.createObjectURL(imageBlob));
 
           navigator.clipboard
             .writeText(text)
-            .then(() => setStatus('✅ Text copied'))
-            .catch(() => setStatus('❌ There was an error'));
+            .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
+            .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
           await worker.terminate();
+          setTimeout(() => {
+            setStatus({ type: 'DONE' });
+          }, 2000);
         });
       })();
     } catch (error) {
@@ -62,37 +84,61 @@ const FrameContent: React.FC = () => {
   };
 
   const copyImageHandler = () => {
-    if (!imageSrc) {
+    if (!screenshot) {
       return;
     }
-    imageToBlob(imageSrc.capturedImage, imageSrc.cropArea).then(async (blob) => {
-      await copyBlobToClipboard(blob)
-        .then(() => setStatus('✅ Image copied'))
-        .catch(() => setStatus('❌ There was an error'));
+    setStatus({ type: 'LOADING' });
+    imageToBlob(screenshot.capturedImage, screenshot.cropArea).then(async (imageBlob) => {
+      setImageSrc(URL.createObjectURL(imageBlob));
+      if (!imageBlob) return;
+      await copyBlobToClipboard(imageBlob)
+        .then(() => setStatus({ type: 'DONE', message: '✅ Image copied' }))
+        .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
+      setTimeout(() => {
+        setStatus({ type: 'DONE' });
+      }, 2000);
     });
   };
 
   return (
-    <div className="iframe-inner-container">
-      <div>
-        <h3>Image cropped</h3>
-      </div>
-      <div className="progress-container">
-        <div className="progress" style={{ width: progress.value * 100 + '%' }}>
-          <span className="progress-text">{progress.status}</span>
+    <div className="h-screen bg-white rounded-sm z-[99999] p-2 shadow-lg scrollbar border-2 border-blue-prussian">
+      <h3 className="text-xl font-bold">Image cropped</h3>
+      <div className="flex flex-row content-between">
+        <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
+          <img src={imageSrc} className="object-cover" />
         </div>
-      </div>
-      <h2>{status}</h2>
-      <div className="iframe-button-container">
-        <button className="btn" onClick={imageToTextHandler}>
-          Convert to text
-        </button>
-        <button className="btn" onClick={copyImageHandler}>
-          Copy Image
-        </button>
+        <div className="flex w-1/3 flex-col pt-3">
+          <Button
+            size="md"
+            className="mb-4"
+            title="Convert to text "
+            onClick={imageToTextHandler}
+            disabled={status?.type === 'LOADING'}
+          />
+          <Button
+            size="md"
+            className="mb-4"
+            title="Copy Image "
+            onClick={copyImageHandler}
+            disabled={status?.type === 'LOADING'}
+          />
+          <Button
+            size="md"
+            className="mb-4"
+            title="Download image"
+            onClick={() => alert('will be immplemented')}
+            disabled={status?.type === 'LOADING'}
+          />
+          <div className="flex justify-center">{status?.type === 'LOADING' && <Spinner />}</div>
+          {status?.type === 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status.message}</h2>}
+        </div>
       </div>
     </div>
   );
 };
 
-rootRender.render(<FrameContent />);
+rootRender.render(
+  <React.StrictMode>
+    <FrameContent />
+  </React.StrictMode>,
+);
