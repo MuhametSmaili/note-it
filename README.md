@@ -1,4 +1,4 @@
-![LOGO](./src/static/icon/128%20x%20128.png 'Title')
+![LOGO](./noteIt_cover.png 'Logo')
 
 # **NOTE IT**
 
