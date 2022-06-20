@@ -15,7 +15,12 @@
     ]
   },
   "dependencies": {
+    "@tiptap/extension-image": "^2.0.0-beta.30",
+    "@tiptap/extension-link": "^2.0.0-beta.42",
+    "@tiptap/react": "^2.0.0-beta.113",
+    "@tiptap/starter-kit": "^2.0.0-beta.189",
     "clsx": "^1.1.1",
+    "lodash.debounce": "^4.0.8",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "tesseract.js": "^2.1.5"
