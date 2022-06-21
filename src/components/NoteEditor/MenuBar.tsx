@@ -1,8 +1,10 @@
-import { Button } from '@components/Elements';
+import { Button, SelectFieldSpinner } from '@components/Elements';
 import { Editor } from '@tiptap/react';
 import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/MessageRequest';
 import { removeFromStorage } from '@utils/storage';
+import { useState } from 'react';
+import clsx from 'clsx';
 // ICONS
 import Undo from '@icons/Undo.svg';
 import Redo from '@icons/Redo.svg';
@@ -79,15 +81,12 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
         <Button
           variant="inverse"
           size="sm"
-          onClick={() => editor.chain().focus().toggleCode().run()}
-          active={editor.isActive('code')}
+          onClick={() => editor.commands.toggleUnderline()}
+          active={editor.isActive('underline')}
         >
           <Underline />
         </Button>
-        <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().toggleCode().run()}>
-          <H />
-        </Button>
-
+        <Heading editor={editor} />
         <Button
           size="sm"
           variant="inverse"
@@ -114,10 +113,10 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           <CodeArrows />
         </Button>
 
-        <Button onClick={() => editor.chain().focus().toggleCode().run()} size="sm" variant="inverse">
+        <Button onClick={() => editor.chain().focus().unsetAllMarks().run()} size="sm" variant="inverse">
           <ClearFormatting />
         </Button>
-        <div className="flex items-center flex-grow mx-10">
+        <div className="flex items-center mx-8">
           <NoteIt />
         </div>
         {/* TODO */}
@@ -133,5 +132,58 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
       </div>
       <div className="block relative border border-gray-light min-w-full w-full my-1" />
     </>
+  );
+};
+
+const headingStyle = [
+  {
+    value: 1,
+    label: '',
+  },
+  {
+    value: 2,
+    label: '',
+  },
+  {
+    value: 3,
+    label: '',
+  },
+];
+
+const Heading = ({ editor }: { editor: Editor }) => {
+  const [value, setValue] = useState(1);
+  return (
+    <div
+      className={clsx(
+        'flex items-center rounded-sm px-1 hover:cursor-pointer hover:bg-gray-true',
+        editor.isActive('heading', { level: value }) ? 'bg-gray-true' : '',
+      )}
+    >
+      <div
+        onClick={() =>
+          editor
+            .chain()
+            .focus()
+            .toggleHeading({ level: Number(value) as any })
+            .run()
+        }
+      >
+        <H />
+      </div>
+      <SelectFieldSpinner
+        active={editor.isActive('heading', { level: value })}
+        showIndex={true}
+        currentValue={value}
+        options={headingStyle}
+        onChange={(val) => {
+          setValue(Number(val));
+          editor
+            .chain()
+            .focus()
+            .toggleHeading({ level: Number(val) as any })
+            .run();
+        }}
+      />
+    </div>
   );
 };

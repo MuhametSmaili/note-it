@@ -1,12 +1,14 @@
 import { SelectOptionType, SelectValue } from './SelectField';
 import ArrowUp from '@icons/ArrowUp.svg';
 import ArrowDown from '@icons/ArrowDown.svg';
+import clsx from 'clsx';
 
 type ChangeSelectFieldProps = {
   currentValue: SelectValue;
   options: SelectOptionType[];
   onChange: (val: SelectValue) => void;
   showIndex?: boolean;
+  active?: boolean;
 };
 
 /**
@@ -22,6 +24,7 @@ export const SelectFieldSpinner = ({
   options,
   onChange,
   showIndex,
+  active,
 }: ChangeSelectFieldProps): JSX.Element => {
   const currentPosition = options.findIndex((val) => val.value === currentValue);
   const maxIndex = options.length - 1;
@@ -43,12 +46,12 @@ export const SelectFieldSpinner = ({
   };
 
   return (
-    <div className="bg-gray-light ml-1 h-fit rounded-sm relative text-sm">
+    <div className={clsx('bg-gray-light ml-1 h-fit rounded-sm relative text-sm', active && 'bg-gray-true')}>
       <div className="hover:cursor-pointer" onClick={onUpHandler}>
         <ArrowUp height={16} width={16} />
       </div>
       {showIndex && (
-        <div className="absolute text-sm left-1/2 top-1/2" style={{ transform: 'translate(-50%, -50%)' }}>
+        <div className="absolute text-sm left-1/2 top-1/2 select-none" style={{ transform: 'translate(-50%, -50%)' }}>
           {currentPosition + 1}
         </div>
       )}
