@@ -28,7 +28,7 @@ const NoteEditor = ({ content }: any) => {
             view.dispatch(transaction);
           };
 
-          Array.from(event!.clipboardData?.files)
+          Array.from(event?.clipboardData?.files)
             .filter((item: any) => item.type.startsWith('image'))
             .forEach((item: any) => {
               reader.readAsDataURL(item);
