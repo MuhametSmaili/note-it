@@ -6,13 +6,14 @@ import { MenuBar } from './MenuBar';
 import { useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { setStorage } from '@utils/storage';
+import Underline from '@tiptap/extension-underline';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
 const NoteEditor = ({ content }: any) => {
   const editor = useEditor({
-    extensions: [StarterKit, Image, Link],
+    extensions: [StarterKit, Image, Link, Underline],
     content: content,
     editorProps: {
       handleDOMEvents: {
