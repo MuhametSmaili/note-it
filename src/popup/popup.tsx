@@ -6,9 +6,9 @@ const NoteEditor = React.lazy(() => import(/* webpackPrefetch: true */ '@compone
 const FolderNotes = React.lazy(() => import('@components/NotesFolder/NotesFolder'));
 const Ocr = React.lazy(() => import('@components/Ocr/Ocr'));
 
+import { JSONContent } from '@tiptap/react';
 import { TabContent, Tab } from '@components/Elements';
 import { getFromStorage } from '@utils/storage';
-import { JSONContent } from '@tiptap/react';
 
 // ICONS
 import FeatherActiveIcon from '@icons/Feather_active.svg';
@@ -33,7 +33,7 @@ const App: React.FC = () => {
 
   return (
     <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">
-      <div className="pt-1 w-16 h-screen bg-gradient-to-t from-blue-prussian/100 to-blue-prussian/80 to-blue-prussian/90  flex flex-col  justify-start items-center overflow-hidden">
+      <div className="pt-1 w-16 h-screen bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100  flex flex-col  justify-start items-center overflow-hidden">
         <div className="mb-2">
           <Logo />
         </div>
