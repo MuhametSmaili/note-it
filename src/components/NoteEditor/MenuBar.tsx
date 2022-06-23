@@ -1,10 +1,11 @@
-import { Button, SelectFieldSpinner } from '@components/Elements';
+import { useState } from 'react';
 import { Editor } from '@tiptap/react';
+import { Button, SelectFieldSpinner } from '@components/Elements';
 import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/MessageRequest';
 import { removeFromStorage } from '@utils/storage';
-import { useState } from 'react';
 import clsx from 'clsx';
+
 // ICONS
 import Undo from '@icons/Undo.svg';
 import Redo from '@icons/Redo.svg';
@@ -43,7 +44,7 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
   };
 
   const downloadHandler = () => {
-    removeFromStorage(['notes']);
+    removeFromStorage(['currentNote']);
   };
 
   const saveNoteHandler = async () => {
@@ -150,6 +151,7 @@ const headingStyle = [
   },
 ];
 
+type Level = 1 | 2 | 3; //| 4 | 5 | 6
 const Heading = ({ editor }: { editor: Editor }) => {
   const [value, setValue] = useState(1);
   return (
@@ -164,7 +166,7 @@ const Heading = ({ editor }: { editor: Editor }) => {
           editor
             .chain()
             .focus()
-            .toggleHeading({ level: Number(value) as any })
+            .toggleHeading({ level: Number(value) as Level })
             .run()
         }
       >
@@ -180,7 +182,7 @@ const Heading = ({ editor }: { editor: Editor }) => {
           editor
             .chain()
             .focus()
-            .toggleHeading({ level: Number(val) as any })
+            .toggleHeading({ level: Number(val) as Level })
             .run();
         }}
       />

@@ -2,7 +2,7 @@ import { CropArea as CropAreaType } from '@utils/image';
 import { MessageRequest } from '@utils/MessageRequest';
 import { rootRender } from '@utils/render';
 import { setStorage } from '@utils/storage';
-import { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent } from 'react';
 import '@styles/tailwind.css';
 
 const CropArea: React.FC = () => {
@@ -69,4 +69,8 @@ const CropArea: React.FC = () => {
   );
 };
 
-rootRender.render(<CropArea />);
+rootRender.render(
+  <React.StrictMode>
+    <CropArea />
+  </React.StrictMode>,
+);

@@ -5,16 +5,16 @@ import Link from '@tiptap/extension-link';
 import { MenuBar } from './MenuBar';
 import { useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
-import { setStorage } from '@utils/storage';
+import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
-const NoteEditor = ({ content }: any) => {
+const NoteEditor = () => {
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
-    content: content,
+    content: '',
     editorProps: {
       handleDOMEvents: {
         paste(view, event: any) {
@@ -43,21 +43,28 @@ const NoteEditor = ({ content }: any) => {
       },
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
+    onBeforeCreate: ({ editor }) => {
+      getFromStorage('currentNote').then((noteContent) => {
+        if (noteContent) {
+          editor.commands.insertContent(noteContent);
+        }
+      });
+    },
   });
+
+  const saveNoteHandler = (updatedEditor: Editor) => {
+    if (updatedEditor) {
+      setStorage({ currentNote: updatedEditor?.getJSON() });
+    }
+  };
+
+  const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), []);
 
   useEffect(() => {
     return () => {
       debouncedEventHandler.cancel(); // 👉 https://docs-lodash.com/v4/debounce/#:~:text=comes%20with%20a%C2%A0cancelmethod%20to%20cancel%20delayed%C2%A0func
     };
-  }, []);
-
-  const saveNoteHandler = (updatedEditor: Editor) => {
-    if (updatedEditor) {
-      setStorage({ notes: { currentNote: updatedEditor?.getJSON() } });
-    }
-  };
-
-  const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), []);
+  }, [debouncedEventHandler]);
 
   return (
     <>

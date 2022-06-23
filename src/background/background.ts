@@ -13,7 +13,6 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
     });
     return true;
   } else if (request.message === MessageRequest.INSERT_FRAME) {
-    console.log(request);
     chrome.scripting.executeScript({
       target: { tabId: Number(sender.tab?.id) },
       files: ['frameScript.js'],

@@ -18,20 +18,17 @@ type StatusHandler = {
 };
 
 const FrameContent: React.FC = () => {
-  // const [progress, setProgress] = useState({ value: -1, status: '' });
   const [screenshot, setScreenshot] = useState<Screenshot>();
   const [status, setStatus] = useState<StatusHandler>();
   const [imageSrc, setImageSrc] = useState<string>();
 
-  const handleImageToText = useCallback(() => {
-    return getFromStorage('screenshot').then((res) => {
-      if (!res) return;
-      return imageToBlob(res.capturedImage, res.cropArea).then((imageBlob) => {
-        setImageSrc(URL.createObjectURL(imageBlob));
-        setScreenshot(res);
-        return imageBlob;
-      });
-    });
+  const handleImageToText = useCallback(async () => {
+    const res = await getFromStorage('screenshot');
+    if (!res) return;
+    const imageBlob = await imageToBlob(res.capturedImage, res.cropArea);
+    setImageSrc(URL.createObjectURL(imageBlob));
+    setScreenshot(res);
+    return imageBlob;
   }, []);
 
   useEffect(() => {
@@ -39,7 +36,7 @@ const FrameContent: React.FC = () => {
     return () => {
       removeFromStorage(['screenshot']);
     };
-  }, []);
+  }, [handleImageToText]);
 
   const imageToTextHandler = () => {
     if (!screenshot) {
@@ -51,9 +48,6 @@ const FrameContent: React.FC = () => {
         workerBlobURL: false,
         workerPath: '/libraries/worker.min.js',
         corePath: '/libraries/tesseract-core.asm.js',
-        // logger: (m: any) => {
-        //   setProgress({ value: m.progress, status: m.status });
-        // },
       });
 
       (async () => {
@@ -73,9 +67,7 @@ const FrameContent: React.FC = () => {
             .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
             .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
           await worker.terminate();
-          setTimeout(() => {
-            setStatus({ type: 'DONE' });
-          }, 2000);
+          processDoneHandler();
         });
       })();
     } catch (error) {
@@ -89,15 +81,18 @@ const FrameContent: React.FC = () => {
     }
     setStatus({ type: 'LOADING' });
     imageToBlob(screenshot.capturedImage, screenshot.cropArea).then(async (imageBlob) => {
-      setImageSrc(URL.createObjectURL(imageBlob));
       if (!imageBlob) return;
       await copyBlobToClipboard(imageBlob)
         .then(() => setStatus({ type: 'DONE', message: '✅ Image copied' }))
         .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
-      setTimeout(() => {
-        setStatus({ type: 'DONE' });
-      }, 2000);
+      processDoneHandler();
     });
+  };
+
+  const processDoneHandler = () => {
+    setTimeout(() => {
+      setStatus({ type: 'DONE' });
+    }, 2000);
   };
 
   return (

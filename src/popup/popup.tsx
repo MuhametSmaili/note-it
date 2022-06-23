@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { rootRender } from '@utils/render';
 import '@styles/tailwind.css';
 // Tab contents
@@ -6,9 +6,8 @@ const NoteEditor = React.lazy(() => import(/* webpackPrefetch: true */ '@compone
 const FolderNotes = React.lazy(() => import('@components/NotesFolder/NotesFolder'));
 const Ocr = React.lazy(() => import('@components/Ocr/Ocr'));
 
-import { JSONContent } from '@tiptap/react';
 import { TabContent, Tab } from '@components/Elements';
-import { getFromStorage } from '@utils/storage';
+import clsx from 'clsx';
 
 // ICONS
 import FeatherActiveIcon from '@icons/Feather_active.svg';
@@ -20,20 +19,16 @@ import OcrActiveIcon from '@icons/Ocr_active.svg';
 import Logo from '@icons/Logo.svg';
 
 const App: React.FC = () => {
-  const [noteContent, setContent] = useState<JSONContent>();
   const [activeTab, setActiveTab] = useState(1);
-
-  useEffect(() => {
-    getFromStorage('notes').then((notes) => {
-      if (notes && notes.currentNote) {
-        setContent(notes.currentNote || []);
-      }
-    });
-  }, []);
 
   return (
     <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">
-      <div className="pt-1 w-16 h-screen bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100  flex flex-col  justify-start items-center overflow-hidden">
+      <div
+        className={clsx(
+          'pt-1 w-16 h-screen flex flex-col  justify-start items-center overflow-hidden',
+          'bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100',
+        )}
+      >
         <div className="mb-2">
           <Logo />
         </div>
@@ -49,7 +44,7 @@ const App: React.FC = () => {
       </div>
 
       <TabContent isActive={activeTab === 0}>
-        <NoteEditor content={noteContent ?? ''} />
+        <NoteEditor />
       </TabContent>
       <TabContent isActive={activeTab === 1}>
         <FolderNotes />
@@ -61,4 +56,8 @@ const App: React.FC = () => {
   );
 };
 
-rootRender.render(<App />);
+rootRender.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+);

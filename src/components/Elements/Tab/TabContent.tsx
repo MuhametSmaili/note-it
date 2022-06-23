@@ -4,7 +4,7 @@ import { Spinner } from '../Spinner/Spinner';
 type TabContentProps = {
   component?: LazyExoticComponent<() => JSX.Element>;
   isActive: boolean;
-  children: any;
+  children: JSX.Element;
 };
 
 const TabContent = (props: TabContentProps) => {
