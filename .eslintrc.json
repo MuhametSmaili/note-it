@@ -75,17 +75,3 @@
   },
   "env": { "webextensions": true }
 }
-// https://khalilstemmler.com/blogs/typescript/eslint-for-typescript/
-// https://dev.to/blarzhernandez/4-essential-eslint-plugins-you-need-in-your-react-setup-1e9o
-// https://dev.to/knowankit/setup-eslint-and-prettier-in-react-app-357b
-// https://siderlabs.com/blog/how-the-react-developer-team-uses-eslint-2828564814da/
-// lint-staged
-// husky
-// check branch name
-// --no-stash
-// https://yeaaahmat.medium.com/preventing-bad-commits-with-pre-commit-hooks-and-linters-6bc0a470d14b
-
-// GIT HOOKS
-// https://githooks.com/
-// https://itnext.io/enforcing-commit-templates-8cf3dbfe2510
-// https://ahmetcan.org/git-hooks-enforce-commit-message-and-branch-name/
