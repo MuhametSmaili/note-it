@@ -1,8 +1,18 @@
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  "ignorePatterns": [".eslintrc.js", "out/**/*", "node_modules/**/*", "webpack/*"],
+  "plugins": ["react"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "ignorePatterns": [".eslintrc.js", "build/**/*", "node_modules/**/*", "webpack/*"],
   "parser": "@typescript-eslint/parser",
+  "overrides": [{ "settings": { "react": { "version": "detect" } }, "files": ["**/*.ts", "**/*.tsx"] }],
   "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/class-literal-property-style": ["error"],
     "@typescript-eslint/explicit-function-return-type": ["off"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -44,8 +54,8 @@
       }
     ],
     "@typescript-eslint/no-dupe-class-members": ["error"],
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-function": ["error"],
+    "@typescript-eslint/no-explicit-any": ["warn"],
     "@typescript-eslint/no-extra-semi": ["error"],
     "@typescript-eslint/no-unused-vars": [
       "error",
@@ -65,3 +75,17 @@
   },
   "env": { "webextensions": true }
 }
+// https://khalilstemmler.com/blogs/typescript/eslint-for-typescript/
+// https://dev.to/blarzhernandez/4-essential-eslint-plugins-you-need-in-your-react-setup-1e9o
+// https://dev.to/knowankit/setup-eslint-and-prettier-in-react-app-357b
+// https://siderlabs.com/blog/how-the-react-developer-team-uses-eslint-2828564814da/
+// lint-staged
+// husky
+// check branch name
+// --no-stash
+// https://yeaaahmat.medium.com/preventing-bad-commits-with-pre-commit-hooks-and-linters-6bc0a470d14b
+
+// GIT HOOKS
+// https://githooks.com/
+// https://itnext.io/enforcing-commit-templates-8cf3dbfe2510
+// https://ahmetcan.org/git-hooks-enforce-commit-message-and-branch-name/
