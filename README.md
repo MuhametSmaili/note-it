@@ -1,4 +1,4 @@
-![LOGO](./noteIt_cover.png 'Logo')
+![LOGO](./src/styles/images/noteIt_cover.png 'Logo')
 
 # **NOTE IT**
 
