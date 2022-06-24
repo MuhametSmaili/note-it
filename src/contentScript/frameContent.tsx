@@ -6,6 +6,8 @@ import Tesseract from 'tesseract.js';
 import '@styles/tailwind.css';
 import { Button } from '@components/Elements/Button/Button';
 import { Spinner } from '@components/Elements/Spinner/Spinner';
+import { SelectField } from '@components/Elements';
+import { tesseractLanguages } from '@utils/tesseractLanguage';
 
 export type Screenshot = {
   capturedImage: string;
@@ -21,6 +23,7 @@ const FrameContent: React.FC = () => {
   const [screenshot, setScreenshot] = useState<Screenshot>();
   const [status, setStatus] = useState<StatusHandler>();
   const [imageSrc, setImageSrc] = useState<string>();
+  const [language, setLanguage] = useState('eng');
 
   const handleImageToText = useCallback(async () => {
     const res = await getFromStorage('screenshot');
@@ -54,8 +57,8 @@ const FrameContent: React.FC = () => {
         setStatus({ type: 'LOADING' });
 
         await worker.load();
-        await worker.loadLanguage('eng');
-        await worker.initialize('eng');
+        await worker.loadLanguage(language);
+        await worker.initialize(language);
 
         imageToBlob(screenshot.capturedImage, screenshot.cropArea).then(async (imageBlob) => {
           const {
@@ -103,6 +106,14 @@ const FrameContent: React.FC = () => {
           <img src={imageSrc} className="object-cover" />
         </div>
         <div className="flex w-1/3 flex-col pt-3">
+          <div className="mb-4">
+            <SelectField
+              disabled={status?.type === 'LOADING'}
+              value={language}
+              options={tesseractLanguages}
+              onChange={(e) => setLanguage(e.target.value)}
+            />
+          </div>
           <Button
             size="md"
             className="mb-4"
