@@ -27,6 +27,7 @@
     "lodash.debounce": "^4.0.8",
     "react": "18.1.0",
     "react-dom": "18.1.0",
+    "react-dropzone": "^14.2.1",
     "tesseract.js": "^2.1.5"
   },
   "devDependencies": {

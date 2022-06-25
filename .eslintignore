@@ -1,3 +1,6 @@
 postcss.config.js
 tailwind.config.js
 tailwind.css
+package.json
+package-lock.json
+webpack/*
