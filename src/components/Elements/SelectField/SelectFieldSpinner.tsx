@@ -9,6 +9,7 @@ type ChangeSelectFieldProps = {
   onChange: (val: SelectValue) => void;
   showIndex?: boolean;
   active?: boolean;
+  disabled?: boolean;
 };
 
 /**
@@ -25,6 +26,7 @@ export const SelectFieldSpinner = ({
   onChange,
   showIndex,
   active,
+  disabled = false,
 }: ChangeSelectFieldProps): JSX.Element => {
   const currentPosition = options.findIndex((val) => val.value === currentValue);
   const maxIndex = options.length - 1;
@@ -39,6 +41,7 @@ export const SelectFieldSpinner = ({
 
   const onDownHandler = () => {
     if (currentPosition < maxIndex) {
+      console.log('On down handler', options[currentPosition + 1].value);
       onChange(options[currentPosition + 1].value);
     } else {
       onChange(options[0].value);
@@ -46,8 +49,14 @@ export const SelectFieldSpinner = ({
   };
 
   return (
-    <div className={clsx('bg-gray-light ml-1 h-fit rounded-sm relative text-sm', active && 'bg-gray-true')}>
-      <div className="hover:cursor-pointer" onClick={onUpHandler}>
+    <div
+      className={clsx(
+        'bg-gray-light ml-1 h-fit rounded-sm relative text-sm',
+        active && 'bg-gray-true',
+        disabled && 'disabled:opacity-70 disabled:cursor-not-allowed',
+      )}
+    >
+      <div className="hover:cursor-pointer" onClick={() => !disabled && onUpHandler()}>
         <ArrowUp height={16} width={16} />
       </div>
       {showIndex && (
@@ -55,7 +64,7 @@ export const SelectFieldSpinner = ({
           {currentPosition + 1}
         </div>
       )}
-      <div className="hover:cursor-pointer" onClick={onDownHandler}>
+      <div className="hover:cursor-pointer" onClick={() => !disabled && onDownHandler()}>
         <ArrowDown />
       </div>
     </div>
