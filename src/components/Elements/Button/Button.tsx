@@ -1,4 +1,4 @@
-import * as React from 'react';
+import { ButtonHTMLAttributes, forwardRef } from 'react';
 import clsx from 'clsx';
 import { Spinner } from '@components/Elements';
 
@@ -12,31 +12,21 @@ const sizes = {
   md: 'py-2 px-2 text-md',
 };
 
-export type ButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement> & {
+type ButtonProps = {
   variant?: keyof typeof variants;
   size?: keyof typeof sizes;
   isLoading?: boolean;
   active?: boolean;
-};
+} & ButtonHTMLAttributes<HTMLButtonElement>;
 
-export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    {
-      type = 'button',
-      className = '',
-      variant = 'primary',
-      size = 'md',
-      isLoading = false,
-      active = false,
-      disabled,
-      ...props
-    },
+    { className = '', variant = 'primary', size = 'md', isLoading = false, active = false, disabled, ...props },
     ref,
   ) => {
     return (
       <button
         ref={ref}
-        type={type}
         className={clsx(
           'flex justify-center items-center font-bold disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
           variants[variant],

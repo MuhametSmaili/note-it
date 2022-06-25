@@ -17,7 +17,7 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
     img.onload = function () {
       canvas.width = width;
       canvas.height = height;
-      ctx!.drawImage(img, left, top, width, height, 0, 0, width, height);
+      ctx?.drawImage(img, left, top, width, height, 0, 0, width, height);
 
       return canvas.toBlob(
         (blob) => {

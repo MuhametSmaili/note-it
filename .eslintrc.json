@@ -1,8 +1,18 @@
 {
-  "extends": ["eslint:recommended", "plugin:@typescript-eslint/recommended", "plugin:prettier/recommended"],
-  "ignorePatterns": [".eslintrc.js", "out/**/*", "node_modules/**/*", "webpack/*"],
+  "plugins": ["react"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/recommended",
+    "plugin:prettier/recommended",
+    "plugin:react/recommended",
+    "plugin:react-hooks/recommended"
+  ],
+  "ignorePatterns": [".eslintrc.js", "build/**/*", "node_modules/**/*", "webpack/*"],
   "parser": "@typescript-eslint/parser",
+  "overrides": [{ "settings": { "react": { "version": "detect" } }, "files": ["**/*.ts", "**/*.tsx"] }],
   "rules": {
+    "react/jsx-uses-react": "off",
+    "react/react-in-jsx-scope": "off",
     "@typescript-eslint/class-literal-property-style": ["error"],
     "@typescript-eslint/explicit-function-return-type": ["off"],
     "@typescript-eslint/explicit-module-boundary-types": "off",
@@ -44,8 +54,8 @@
       }
     ],
     "@typescript-eslint/no-dupe-class-members": ["error"],
-    "@typescript-eslint/no-empty-function": "off",
-    "@typescript-eslint/no-explicit-any": "off",
+    "@typescript-eslint/no-empty-function": ["error"],
+    "@typescript-eslint/no-explicit-any": ["warn"],
     "@typescript-eslint/no-extra-semi": ["error"],
     "@typescript-eslint/no-unused-vars": [
       "error",

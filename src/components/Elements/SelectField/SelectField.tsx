@@ -11,7 +11,6 @@ export type SelectOptionType = {
 
 type SelectFieldProps = {
   options: SelectOptionType[];
-  className?: string;
   defaultValue?: string;
   placeholder?: string;
 } & Partial<SelectHTMLAttributes<HTMLSelectElement>>;
@@ -25,12 +24,18 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
           value={value}
           ref={ref}
           className={clsx(
-            'block w-full px-5 h-full text-md text-blue-prussian font-bold bg-gray-light focus:outline-none rounded-sm',
+            'block w-full px-5 h-full text-md font-bold  rounded-sm',
+            'text-blue-prussian bg-gray-light',
+            'appearance-none focus:outline-none',
             className,
-            'appearance-none',
           )}
           {...props}
-          onChange={(e) => setValue(e.target.value)}
+          onChange={(e) => {
+            setValue(e.target.value);
+            if (props.onChange) {
+              props.onChange(e);
+            }
+          }}
         >
           {options.map(({ label, value }) => (
             <option key={label?.toString()} value={value} className="text-md">
@@ -43,3 +48,4 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
     );
   },
 );
+SelectField.displayName = 'Select-field';

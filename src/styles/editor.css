@@ -1,0 +1,56 @@
+/* Basic editor styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,400;0,500;0,700;1,200&display=swap');
+.ProseMirror {
+  font-family: 'Poppins', sans-serif;
+  width: 668px;
+  overflow-y: auto;
+  padding-right: 5px;
+  height: 500px;
+  font-size: 1rem;
+  @apply border-none scrollbar;
+}
+
+.ProseMirror-focused {
+  border: none;
+  outline: none;
+}
+
+.ProseMirror p {
+  margin-top: 2px;
+}
+
+.ProseMirror.ProseMirror-focused {
+  border: none;
+  focus: none;
+}
+
+.ProseMirror code {
+  display: block;
+  background: theme('colors.blue.prussian' / 90%);
+  width: 100%;
+  padding: 1rem;
+  @apply rounded-sm text-white;
+}
+
+.ProseMirror ul {
+  @apply pl-7 list-disc;
+}
+
+.ProseMirror blockquote {
+  @apply pl-7 ml-5 border-l-2 border-solid italic;
+  border-color: theme('colors.blue.prussian' / 20%);
+  color: theme('colors.blue.prussian' / 80%);
+}
+
+.ProseMirror h1 {
+  @apply text-xl font-bold;
+}
+
+.ProseMirror h2 {
+  @apply text-md font-bold;
+}
+
+.ProseMirror h3 {
+  @apply text-sm font-bold;
+}

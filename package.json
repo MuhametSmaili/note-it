@@ -6,16 +6,25 @@
     "start": "webpack --watch --progress --config ./webpack/webpack.dev.js",
     "build": "NODE_ENV=production webpack --watch --progress --config ./webpack/webpack.prod.js",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
-    "prepare": "husky install"
+    "prepare": "husky install && chmod ug+x .husky/*",
+    "lint": "eslint . --ext .ts,.tsx",
+    "lint:fix": "npm run lint -- --fix"
   },
   "lint-staged": {
     "**/*.(ts|tsx|js|json|svg|css)": [
+      "eslint",
       "prettier --write",
       "git add"
     ]
   },
   "dependencies": {
+    "@tiptap/extension-image": "^2.0.0-beta.30",
+    "@tiptap/extension-link": "^2.0.0-beta.42",
+    "@tiptap/extension-underline": "^2.0.0-beta.25",
+    "@tiptap/react": "^2.0.0-beta.113",
+    "@tiptap/starter-kit": "^2.0.0-beta.189",
     "clsx": "^1.1.1",
+    "lodash.debounce": "^4.0.8",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "tesseract.js": "^2.1.5"
@@ -37,9 +46,10 @@
     "eslint-config-prettier": "^8.5.0",
     "eslint-plugin-prettier": "^4.0.0",
     "eslint-plugin-react": "^7.30.0",
-    "eslint-plugin-react-hooks": "^4.5.0",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "html-webpack-plugin": "^5.5.0",
     "husky": "^8.0.1",
+    "lint-staged": "^13.0.2",
     "postcss-loader": "^7.0.0",
     "prettier": "^2.6.2",
     "style-loader": "^3.3.1",
