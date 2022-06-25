@@ -35,11 +35,17 @@ const FrameContent: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    console.log('TESTING the frame content ');
     handleImageToText();
     return () => {
+      console.log('REMOVING SCREENSHOT');
       removeFromStorage(['screenshot']);
+      if (imageSrc) {
+        console.log('REMOVING OBJ IMAGE src');
+        URL.revokeObjectURL(imageSrc);
+      }
     };
-  }, [handleImageToText]);
+  }, [handleImageToText, imageSrc]);
 
   const imageToTextHandler = () => {
     if (!screenshot) {
@@ -103,7 +109,13 @@ const FrameContent: React.FC = () => {
       <h3 className="text-xl font-bold">Image cropped</h3>
       <div className="flex flex-row content-between">
         <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
-          <img src={imageSrc} className="object-cover" />
+          <img
+            src={imageSrc}
+            className="object-cover"
+            onLoad={() => {
+              URL.revokeObjectURL(imageSrc || '');
+            }}
+          />
         </div>
         <div className="flex w-1/3 flex-col pt-3">
           <div className="mb-4">
