@@ -37,7 +37,7 @@
       linear-gradient(theme(colors.gray.true) 50%, rgba(0, 0, 0, 0) 0%);
     background-position: top, right, bottom, left;
     background-repeat: repeat-x, repeat-y;
-    background-size: 100px 2px, 3px 100px;
+    background-size: 110px 5px, 5px 110px;
   }
 }
 

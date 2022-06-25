@@ -121,7 +121,6 @@ const FrameContent: React.FC = () => {
           <div className="mb-4">
             <SelectField
               disabled={status?.type === 'LOADING'}
-              value={language}
               options={tesseractLanguages}
               onChange={(e) => setLanguage(e.target.value)}
             />

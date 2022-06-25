@@ -37,20 +37,36 @@ const Ocr = () => {
 
   const convertToTextHandler = () => {
     if (!droppedImage) return;
-    setStatus({ type: 'LOADING' });
-    Tesseract.recognize(URL.createObjectURL(droppedImage), language, {})
-      .then(({ data: { text } }) => {
+    try {
+      const worker = Tesseract.createWorker({
+        workerBlobURL: false,
+        workerPath: '/libraries/worker.min.js',
+        corePath: '/libraries/tesseract-core.asm.js',
+      });
+
+      (async () => {
+        setStatus({ type: 'LOADING' });
+
+        await worker.load();
+        await worker.loadLanguage(language);
+        await worker.initialize(language);
+
+        const {
+          data: { text },
+        } = await worker.recognize(URL.createObjectURL(droppedImage));
+
         navigator.clipboard
           .writeText(text)
           .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
           .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
+        await worker.terminate();
         setTimeout(() => {
           setStatus({ type: 'DONE' });
         }, 2000);
-      })
-      .catch((_e) => {
-        setStatus({ type: 'ERROR', message: '❌ Error converting image to text' });
-      });
+      })();
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -69,7 +85,6 @@ const Ocr = () => {
           <SelectField
             disabled={status?.type === 'LOADING'}
             options={tesseractLanguages}
-            value={language}
             onChange={(e) => setLanguage(e.target.value)}
           />
         </div>
@@ -80,7 +95,7 @@ const Ocr = () => {
           onClick={convertToTextHandler}
         />
       </div>
-      <div className="border-b-2 border-gray-light mb-5 mx-10 mt-5" />
+      <div className="border-b-2 border-gray-light mb-5 mx-10" />
       {status?.type === 'LOADING' && (
         <div className="flex z-10 justify-center items-center absolute bg-gray-light/80 w-full h-full">
           <Spinner />
@@ -101,7 +116,7 @@ const Ocr = () => {
           <img src={URL.createObjectURL(droppedImage)} />
         </div>
       ) : (
-        <div className="border-dash-space flex items-center h-[80%] mt-10 hover:cursor-pointer hover:bg-gray-light/80">
+        <div className="border-dash-space flex items-center h-[80%] mt-10 mx-8 hover:cursor-pointer hover:bg-gray-light/80">
           <div {...getRootProps()} className="h-full">
             <input {...getInputProps()} />
             {isDragActive ? (
