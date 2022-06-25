@@ -54,7 +54,7 @@ const Ocr = () => {
   };
 
   return (
-    <div className="p-2 w-fit h-full" style={{ width: '650px' }}>
+    <div className="p-2 w-fit h-full">
       <div className="flex justify-between items-center mb-1">
         <div className="flex">
           <div
