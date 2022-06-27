@@ -6,7 +6,7 @@
   width: 668px;
   overflow-y: auto;
   padding-right: 5px;
-  height: 500px;
+  height: 490px;
   font-size: 1rem;
   @apply border-none scrollbar;
 }
