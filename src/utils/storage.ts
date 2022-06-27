@@ -1,9 +1,10 @@
 import { JSONContent } from '@tiptap/react';
 import { Screenshot } from 'src/contentScript/frameContent';
+import { Note } from './types/Note';
 
 export interface LocalStorage {
   screenshot?: Screenshot;
-  notes?: [];
+  notes?: Note[];
   currentNote?: JSONContent;
 }
 
