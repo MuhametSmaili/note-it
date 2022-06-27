@@ -1,10 +1,10 @@
+import { useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
-import { Note } from '@utils/types/Note';
 
-import StarIcon from '@icons/Star.svg';
-import { useState } from 'react';
 import { getFromStorage, setStorage } from '@utils/storage';
+import { Note } from '@utils/types/Note';
+import StarIcon from '@icons/Star.svg';
 
 type NoteContentProps = {
   note: Note;
@@ -32,7 +32,12 @@ const NoteContent = ({ note }: NoteContentProps) => {
   return (
     <div className="border border-blue-green p-2 overflow-hidden max-h-72 scrollbar">
       <div className="flex items justify-between">
-        <h2 className="text-xl font-bold">{note.title}</h2>
+        <h2
+          className="text-xl font-bold hover:cursor-pointer"
+          onClick={() => setStorage({ currentNote: note.noteContent })}
+        >
+          {note.title}
+        </h2>
         <div className="hover:cursor-pointer" onClick={favoriteHandler}>
           <StarIcon fill={favorite ? '#023047' : 'white'} />
         </div>
