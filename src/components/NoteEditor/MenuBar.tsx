@@ -3,7 +3,7 @@ import { Editor } from '@tiptap/react';
 import { Button, SelectFieldSpinner } from '@components/Elements';
 import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/MessageRequest';
-import { removeFromStorage } from '@utils/storage';
+import { getFromStorage, removeFromStorage, setStorage } from '@utils/storage';
 import clsx from 'clsx';
 
 // ICONS
@@ -48,7 +48,22 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
   };
 
   const saveNoteHandler = async () => {
-    //   TODO : Add multiple note support
+    let notes = await getFromStorage('notes');
+    const newNote = {
+      id: Date.now(), // FIX this is not the best solution
+      isFavorite: false,
+      noteContent: editor.getJSON(),
+      title: 'Default',
+    };
+
+    if (!notes) {
+      notes = [];
+    }
+
+    notes.push(newNote);
+    setStorage({ notes });
+    removeFromStorage(['currentNote']);
+    editor.commands.clearContent();
   };
 
   return (
