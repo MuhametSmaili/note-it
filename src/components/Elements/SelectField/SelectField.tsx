@@ -19,13 +19,14 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
   ({ className, options, ...props }, ref) => {
     const [value, setValue] = useState(props.value || props.defaultValue || options[0].value);
     return (
-      <div className="flex justify-center items-center h-9">
+      <div className="flex justify-center items-center h-9 hover:cursor-pointer">
         <select
           value={value}
           ref={ref}
           className={clsx(
             'block w-full px-5 h-full text-md font-bold  rounded-sm',
             'text-blue-prussian bg-gray-light',
+            'disabled:opacity-70 disabled:cursor-not-allowed',
             'appearance-none focus:outline-none',
             className,
           )}
@@ -43,7 +44,12 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
             </option>
           ))}
         </select>
-        <SelectFieldSpinner currentValue={value} options={options} onChange={(val) => setValue(val)} />
+        <SelectFieldSpinner
+          disabled={props.disabled}
+          currentValue={value}
+          options={options}
+          onChange={(val) => setValue(val)}
+        />
       </div>
     );
   },

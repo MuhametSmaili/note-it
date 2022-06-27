@@ -27,6 +27,7 @@ const App: React.FC = () => {
         className={clsx(
           'pt-1 w-16 h-screen flex flex-col  justify-start items-center overflow-hidden',
           'bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100',
+          'w-[70px]',
         )}
       >
         <div className="mb-2">
