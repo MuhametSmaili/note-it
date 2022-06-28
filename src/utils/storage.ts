@@ -1,12 +1,18 @@
-import { JSONContent } from '@tiptap/react';
 import { Screenshot } from 'src/contentScript/frameContent';
 import { Note } from './types/Note';
 
 export interface LocalStorage {
   screenshot?: Screenshot;
   notes?: Note[];
-  currentNote?: JSONContent;
+  currentNote?: Note;
 }
+
+export const emptyNote: Note = {
+  id: -1,
+  title: 'Default',
+  isFavorite: false,
+  noteContent: {},
+};
 
 export function setStorage(setValue: Partial<LocalStorage>): void {
   try {

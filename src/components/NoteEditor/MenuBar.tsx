@@ -1,10 +1,11 @@
 import { useState } from 'react';
 import { Editor } from '@tiptap/react';
+import clsx from 'clsx';
 import { Button, SelectFieldSpinner } from '@components/Elements';
 import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/MessageRequest';
-import { getFromStorage, removeFromStorage, setStorage } from '@utils/storage';
-import clsx from 'clsx';
+import { Note } from '@utils/types/Note';
+import { getFromStorage, emptyNote, setStorage } from '@utils/storage';
 
 // ICONS
 import Undo from '@icons/Undo.svg';
@@ -24,9 +25,10 @@ import NoteIt from '@icons/NoteIt.svg';
 
 type MenuBarProps = {
   editor: Editor;
+  currentNote?: Note;
 };
 
-export const MenuBar = ({ editor }: MenuBarProps) => {
+export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
   if (!editor) {
     return null;
   }
@@ -44,13 +46,27 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
   };
 
   const downloadHandler = () => {
-    removeFromStorage(['currentNote']);
+    setStorage({ currentNote: emptyNote });
   };
 
   const saveNoteHandler = async () => {
     let notes = await getFromStorage('notes');
+    if (editor.getText().trim() === '') {
+      return;
+    }
+    if (currentNote && currentNote.id !== -1 && notes) {
+      const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
+
+      if (findNoteIndex >= 0) {
+        notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON() });
+        setStorage({ notes });
+      }
+      setStorage({ currentNote: emptyNote });
+      return;
+    }
+
     const newNote = {
-      id: Date.now(), // FIX this is not the best solution
+      id: Date.now(),
       isFavorite: false,
       noteContent: editor.getJSON(),
       title: 'Default',
@@ -62,7 +78,7 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
 
     notes.push(newNote);
     setStorage({ notes });
-    removeFromStorage(['currentNote']);
+    setStorage({ currentNote: emptyNote });
     editor.commands.clearContent();
   };
 

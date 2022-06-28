@@ -3,15 +3,18 @@ import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
 import { MenuBar } from './MenuBar';
-import { useEffect, useMemo } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
+import { useStore } from '@hooks/useStore';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
 const NoteEditor = () => {
+  const currentNote = useStore('currentNote');
+
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
     content: '',
@@ -44,21 +47,26 @@ const NoteEditor = () => {
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
     onBeforeCreate: ({ editor }) => {
-      getFromStorage('currentNote').then((noteContent) => {
-        if (noteContent) {
-          editor.commands.insertContent(noteContent);
+      getFromStorage('currentNote').then((note) => {
+        if (note) {
+          editor.commands.insertContent(note.noteContent);
         }
       });
     },
   });
 
-  const saveNoteHandler = (updatedEditor: Editor) => {
-    if (updatedEditor) {
-      setStorage({ currentNote: updatedEditor?.getJSON() });
-    }
-  };
+  const saveNoteHandler = useCallback(
+    (updatedEditor: Editor) => {
+      if (updatedEditor && currentNote) {
+        setStorage({
+          currentNote: { ...currentNote, noteContent: updatedEditor?.getJSON() },
+        });
+      }
+    },
+    [currentNote],
+  );
 
-  const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), []);
+  const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), [saveNoteHandler]);
 
   useEffect(() => {
     return () => {
@@ -68,7 +76,7 @@ const NoteEditor = () => {
 
   return (
     <>
-      {editor && <MenuBar editor={editor} />}
+      {editor && <MenuBar editor={editor} currentNote={currentNote} />}
       <EditorContent editor={editor} />
     </>
   );

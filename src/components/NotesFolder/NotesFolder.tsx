@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Button } from '@components/Elements';
 import NoteContent from './NoteContent';
-import { useStore } from '../../hooks/useStore';
+import { useStore } from '@hooks/useStore';
 
 const NotesFolder = () => {
   const notes = useStore('notes');
