@@ -18,7 +18,7 @@ const TabContent = (props: TabContentProps) => {
     >
       {props.isActive && (
         <div className="relative h-full w-full overflow-y-auto scrollbar" style={{ maxHeight: '550px' }}>
-          <div className="p-2">{props.children}</div>
+          <div className="p-2 h-full">{props.children}</div>
         </div>
       )}
     </React.Suspense>
