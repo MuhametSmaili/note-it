@@ -8,11 +8,10 @@ const NotesFolder = () => {
   const [showFavorites, setShowFavorites] = useState(false);
 
   const visibleNotes = useMemo(() => {
-    let newNotes = notes;
     if (showFavorites) {
-      newNotes = notes?.filter((note) => note.isFavorite === true);
+      return notes?.filter((note) => note.isFavorite === true);
     }
-    return newNotes;
+    return notes;
   }, [notes, showFavorites]);
 
   return (
