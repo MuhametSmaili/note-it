@@ -19,7 +19,7 @@ import OcrActiveIcon from '@icons/Ocr_active.svg';
 import Logo from '@icons/Logo.svg';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(1);
+  const [activeTab, setActiveTab] = useState(0);
 
   return (
     <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">

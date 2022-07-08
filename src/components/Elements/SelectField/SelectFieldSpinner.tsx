@@ -41,7 +41,6 @@ export const SelectFieldSpinner = ({
 
   const onDownHandler = () => {
     if (currentPosition < maxIndex) {
-      console.log('On down handler', options[currentPosition + 1].value);
       onChange(options[currentPosition + 1].value);
     } else {
       onChange(options[0].value);

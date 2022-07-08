@@ -18,7 +18,8 @@
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
       "@styles/*": ["./src/styles/*"],
-      "@icons/*": ["./src/icons/*"]
+      "@icons/*": ["./src/icons/*"],
+      "@hooks/*": ["./src/hooks/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],

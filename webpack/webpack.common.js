@@ -61,6 +61,7 @@ module.exports = {
       '@components': path.resolve('src/components'),
       '@styles': path.resolve('src/styles'),
       '@icons': path.resolve('src/icons'),
+      '@hooks': path.resolve('src/hooks'),
     },
   },
   plugins: [

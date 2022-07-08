@@ -4,7 +4,7 @@ import { Spinner } from '@components/Elements';
 
 const variants = {
   primary: 'bg-gray-light text-blue-prussian',
-  inverse: 'bg-white text-blue-prussian hover:bg-gray-true active:bg-gray-true',
+  inverse: 'bg-white text-blue-prussian active:bg-gray-true',
 };
 
 const sizes = {
@@ -31,7 +31,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
           'flex justify-center items-center font-bold disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
           variants[variant],
           sizes[size],
-          active && '!bg-gray-true',
+          active && '!bg-gray-light',
           className,
           disabled && 'bg-gray-30 text-white',
         )}

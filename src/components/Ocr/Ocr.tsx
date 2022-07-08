@@ -19,7 +19,6 @@ const Ocr = () => {
   const [status, setStatus] = useState<StatusHandler>();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
-    console.log(acceptedFiles);
     acceptedFiles.forEach((file: File) => {
       if (allowedMimeTypes.includes(file.type)) setDroppedImage(file);
     });

@@ -35,13 +35,10 @@ const FrameContent: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    console.log('TESTING the frame content ');
     handleImageToText();
     return () => {
-      console.log('REMOVING SCREENSHOT');
       removeFromStorage(['screenshot']);
       if (imageSrc) {
-        console.log('REMOVING OBJ IMAGE src');
         URL.revokeObjectURL(imageSrc);
       }
     };
