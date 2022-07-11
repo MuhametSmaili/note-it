@@ -17,12 +17,14 @@ import FeatherIcon from '@icons/Feather.svg';
 import OcrIcon from '@icons/ocr.svg';
 import OcrActiveIcon from '@icons/Ocr_active.svg';
 import Logo from '@icons/Logo.svg';
+import { useStore } from '@hooks/useStore';
 
 const App: React.FC = () => {
   const [activeTab, setActiveTab] = useState(0);
+  const currentNote = useStore('currentNote');
 
   return (
-    <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">
+    <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden scrollbar">
       <div
         className={clsx(
           'pt-1 w-16 h-screen flex flex-col  justify-start items-center overflow-hidden',
@@ -45,7 +47,7 @@ const App: React.FC = () => {
       </div>
 
       <TabContent isActive={activeTab === 0}>
-        <NoteEditor />
+        {currentNote ? <NoteEditor currentNote={currentNote} /> : <span></span>}
       </TabContent>
       <TabContent isActive={activeTab === 1}>
         <FolderNotes />

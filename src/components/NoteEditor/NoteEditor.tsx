@@ -7,13 +7,13 @@ import { useCallback, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
-import { useStore } from '@hooks/useStore';
+import { Note } from '@utils/types/Note';
 
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
-const NoteEditor = () => {
-  const currentNote = useStore('currentNote');
+const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
+  // const currentNote = useStore('currentNote');
 
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
