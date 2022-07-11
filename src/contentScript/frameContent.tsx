@@ -103,7 +103,6 @@ const FrameContent: React.FC = () => {
   const downloadImageHandler = async () => {
     try {
       if (imageSrc) {
-        console.log(imageSrc);
         const anchor = document.createElement('a');
         anchor.style.display = 'none';
         anchor.href = imageSrc;
@@ -114,7 +113,8 @@ const FrameContent: React.FC = () => {
         URL.revokeObjectURL(imageSrc);
       }
     } catch (e) {
-      console.log('An error in downloading the file sorry', e);
+      setStatus({ type: 'ERROR', message: '❌ There was an error try again' });
+      processDoneHandler();
     }
   };
 
