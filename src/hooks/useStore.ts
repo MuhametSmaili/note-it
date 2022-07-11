@@ -1,7 +1,7 @@
 import { getFromStorage, LocalStorage } from '@utils/storage';
 import { useEffect, useState } from 'react';
 
-export function useStore<T extends keyof LocalStorage>(keyOfStorage: T) {
+export function useStore<T extends keyof LocalStorage>(keyOfStorage: T, refetch = false) {
   const [result, setResult] = useState<LocalStorage[T]>();
 
   useEffect(() => {
@@ -16,7 +16,7 @@ export function useStore<T extends keyof LocalStorage>(keyOfStorage: T) {
     return () => {
       ignore = true;
     };
-  }, [keyOfStorage]);
+  }, [keyOfStorage, refetch]);
 
   return result;
 }

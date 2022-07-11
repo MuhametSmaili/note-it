@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
+import { EditorContent, useEditor } from '@tiptap/react';
 
 import { setStorage } from '@utils/storage';
 import { Note } from '@utils/types/Note';
-import { useStore } from '@hooks/useStore';
 // Icons
 import StarIcon from '@icons/Star.svg';
 import DeleteIcon from '@icons/Delete.svg';
 
 type NoteContentProps = {
   note: Note;
+  notes: Note[];
+  onDeleteNoteHandler: (id: number) => void;
 };
-const NoteContent = ({ note }: NoteContentProps) => {
+const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => {
   const [favorite, setFavorite] = useState<boolean>(note.isFavorite);
-  const notes = useStore('notes');
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -22,23 +22,12 @@ const NoteContent = ({ note }: NoteContentProps) => {
   });
 
   const onFavoriteToggleHandler = async () => {
-    if (notes) {
-      const currNote = note;
-      const currNoteIndex = notes.findIndex((nt) => nt.id === note.id) || 0;
-      currNote.isFavorite = !note.isFavorite;
-      notes.splice(currNoteIndex, 1, currNote);
-      setStorage({ notes });
-    }
+    const currNote = note;
+    const currNoteIndex = notes.findIndex((nt) => nt.id === note.id) || 0;
+    currNote.isFavorite = !note.isFavorite;
+    notes.splice(currNoteIndex, 1, currNote);
+    setStorage({ notes });
     setFavorite((isFav) => !isFav);
-  };
-
-  const onDeleteNoteHandler = () => {
-    // TODO show a confirmation modal
-    // fix refresh list
-    if (notes) {
-      const newNotes = notes.filter((nt) => nt.id !== note.id);
-      setStorage({ notes: newNotes });
-    }
   };
 
   return (
@@ -51,7 +40,7 @@ const NoteContent = ({ note }: NoteContentProps) => {
           {note.title}
         </h2>
         <div className="flex">
-          <div className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNoteHandler}>
+          <div className="hover:cursor-pointer mr-1 hover:scale-90" onClick={() => onDeleteNoteHandler(note.id)}>
             <DeleteIcon />
           </div>
           <div className="hover:cursor-pointer hover:scale-90 hover:rotate-12" onClick={onFavoriteToggleHandler}>
