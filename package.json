@@ -24,7 +24,9 @@
     "@tiptap/react": "^2.0.0-beta.113",
     "@tiptap/starter-kit": "^2.0.0-beta.189",
     "clsx": "^1.1.1",
+    "html-to-pdfmake": "^2.4.4",
     "lodash.debounce": "^4.0.8",
+    "pdfmake": "^0.2.5",
     "react": "18.1.0",
     "react-dom": "18.1.0",
     "react-dropzone": "^14.2.1",
@@ -33,6 +35,7 @@
   "devDependencies": {
     "@svgr/webpack": "^6.2.1",
     "@types/chrome": "^0.0.188",
+    "@types/html-to-pdfmake": "^2.1.0",
     "@types/node": "17.0.35",
     "@types/react": "18.0.9",
     "@types/react-dom": "18.0.4",
