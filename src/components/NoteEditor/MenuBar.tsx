@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Editor } from '@tiptap/react';
 import clsx from 'clsx';
 import { Button, SelectFieldSpinner } from '@components/Elements';
@@ -6,6 +6,9 @@ import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/MessageRequest';
 import { Note } from '@utils/types/Note';
 import { getFromStorage, emptyNote, setStorage } from '@utils/storage';
+import htmlToPdfMake from 'html-to-pdfmake';
+import * as pdfMake from 'pdfmake/build/pdfmake';
+import * as pdfFonts from 'pdfmake/build/vfs_fonts';
 
 // ICONS
 import Undo from '@icons/Undo.svg';
@@ -45,8 +48,18 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
     }, 200);
   };
 
-  const downloadHandler = () => {
-    setStorage({ currentNote: emptyNote });
+  const downloadHandler = async () => {
+    const html = htmlToPdfMake(editor.getHTML());
+    (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+    pdfMake
+      .createPdf(
+        {
+          content: html,
+          info: { author: 'NoteIt', creationDate: new Date(), title: 'note' },
+        },
+        undefined,
+      )
+      .download('note-it.pdf');
   };
 
   const saveNoteHandler = async () => {
