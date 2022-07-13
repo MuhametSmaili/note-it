@@ -6,4 +6,5 @@ package.json
 package-lock.json
 webpack.*.js
 tsconfig.json
+manifest.json
 *.svg

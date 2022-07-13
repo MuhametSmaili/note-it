@@ -3,7 +3,7 @@ import { Editor } from '@tiptap/react';
 import clsx from 'clsx';
 import { Button, SelectFieldSpinner } from '@components/Elements';
 import { getCurrentTab } from '@utils/getCurrentTab';
-import { MessageRequest } from '@utils/MessageRequest';
+import { MessageRequest } from '@utils/types/MessageRequest';
 import { Note } from '@utils/types/Note';
 import { getFromStorage, emptyNote, setStorage } from '@utils/storage';
 import htmlToPdfMake from 'html-to-pdfmake';

@@ -1,4 +1,5 @@
-import { MessageRequest } from '@utils/MessageRequest';
+import { MessageRequest } from '@utils/types/MessageRequest';
+import './contextMenu';
 
 chrome.runtime.onMessage.addListener((request, sender, response) => {
   if (request.message === MessageRequest.CROP_SCREEN) {
@@ -29,5 +30,33 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
       files: ['frameScript.js'],
     });
     return true;
+  }
+});
+
+let chromeWindowId = -1;
+// Action to open extension in window or popup.
+chrome.action.onClicked.addListener(async function () {
+  const activeMenu = await chrome.storage.local.get(['activeMenu']).then((res) => res.activeMenu);
+  if (activeMenu === 'window') {
+    // Open just one window
+    chrome.windows.get(chromeWindowId, (window) => {
+      if (window) {
+        chrome.windows.update(chromeWindowId, { focused: true });
+        return;
+      } else {
+        chrome.windows
+          .create({
+            url: chrome.runtime.getURL('popup.html'),
+            focused: true,
+            type: 'popup',
+            height: 550,
+            width: 750,
+          })
+          .then((currentWindow) => (chromeWindowId = Number(currentWindow.id)));
+        return;
+      }
+    });
+  } else {
+    chrome.action.setPopup({ popup: 'popup.html' });
   }
 });

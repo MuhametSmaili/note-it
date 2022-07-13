@@ -10,13 +10,12 @@
     "128": "./icon/128 x 128.png"
   },
   "action": {
-    "default_title": "NoteIt",
-    "default_popup": "popup.html"
+    "default_title": "NoteIt"
   },
   "background": {
     "service_worker": "background.js"
   },
-  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite", "storage", "unlimitedStorage"],
+  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite", "storage", "unlimitedStorage", "contextMenus"],
   "web_accessible_resources": [
     {
       "resources": ["./libraries/worker.min.js", "frameContent.html"],

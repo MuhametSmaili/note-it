@@ -1,5 +1,5 @@
 import { CropArea as CropAreaType } from '@utils/image';
-import { MessageRequest } from '@utils/MessageRequest';
+import { MessageRequest } from '@utils/types/MessageRequest';
 import { rootRender } from '@utils/render';
 import { setStorage } from '@utils/storage';
 import React, { useState, MouseEvent } from 'react';
