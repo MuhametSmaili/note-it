@@ -17,11 +17,12 @@ type ButtonProps = {
   size?: keyof typeof sizes;
   isLoading?: boolean;
   active?: boolean;
+  icon?: JSX.Element;
 } & ButtonHTMLAttributes<HTMLButtonElement>;
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className = '', variant = 'primary', size = 'md', isLoading = false, active = false, disabled, ...props },
+    { className = '', icon, variant = 'primary', size = 'md', isLoading = false, active = false, disabled, ...props },
     ref,
   ) => {
     return (
@@ -40,6 +41,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {isLoading && <Spinner size="sm" className="text-current" />}
         <span className="mx-1">{props.children || props.title}</span>
+        {icon && icon}
       </button>
     );
   },
