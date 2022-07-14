@@ -6,7 +6,7 @@ import React, { useState, MouseEvent } from 'react';
 import '@styles/tailwind.css';
 
 const CropArea: React.FC = () => {
-  const [firstPoint, setFirstPoints] = useState<{ x: number; y: number }>();
+  const [firstPoint, setFirstPoint] = useState<{ x: number; y: number }>();
   const [cropArea, setCropArea] = useState<CropAreaType>();
 
   const onMouseUpHandler = (cropArea: CropAreaType) => {
@@ -18,7 +18,7 @@ const CropArea: React.FC = () => {
         },
         function ({ imgSrc }) {
           try {
-            const screenshot = { capturedImage: imgSrc, cropArea: cropArea };
+            const screenshot = { capturedImage: imgSrc, cropArea };
             setStorage({ screenshot });
             chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
           } catch (e) {
@@ -31,7 +31,7 @@ const CropArea: React.FC = () => {
   };
 
   const onStartSelectingHandler = (event: MouseEvent) => {
-    setFirstPoints({
+    setFirstPoint({
       x: event.clientX,
       y: event.clientY,
     });
