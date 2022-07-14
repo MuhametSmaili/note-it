@@ -1,5 +1,13 @@
+import Tesseract, { ImageLike } from 'tesseract.js';
+
 export type CropArea = { x: number; y: number; width: number; height: number };
 
+/**
+ *
+ * @param imageURL full image
+ * @param cropArea cropped area (x,y,width,height)
+ * @returns blob of the cropped image
+ */
 export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob> {
   const left = cropArea.x * window.devicePixelRatio;
   const top = cropArea.y * window.devicePixelRatio;
@@ -47,5 +55,47 @@ export async function copyBlobToClipboard(imageBlob: Blob) {
     ]);
   } catch (e) {
     console.warn(e);
+  }
+}
+
+/**
+ *
+ * @param blob blob file
+ * @returns base64 image
+ */
+export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
+  return new Promise((resolve, _) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result);
+    return reader.readAsDataURL(blob);
+  });
+}
+
+/**
+ *
+ * @param imageSrc image source or base64 or any image -> recommended base54
+ * @param language the language of image eng default
+ * @returns text recognized from image
+ */
+export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promise<string | undefined> {
+  try {
+    const worker = Tesseract.createWorker({
+      workerBlobURL: false,
+      workerPath: '/libraries/worker.min.js',
+      corePath: '/libraries/tesseract-core.asm.js',
+    });
+
+    await worker.load();
+    await worker.loadLanguage(language);
+    await worker.initialize(language);
+
+    const {
+      data: { text },
+    } = await worker.recognize(imageSrc);
+
+    await worker.terminate();
+    return text;
+  } catch (error) {
+    console.error('Error converting image to text', error);
   }
 }
