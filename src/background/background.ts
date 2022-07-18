@@ -1,3 +1,4 @@
+import { getFromStorage } from '@utils/storage';
 import { MessageRequest } from '@utils/types/MessageRequest';
 import './contextMenu';
 
@@ -36,8 +37,8 @@ chrome.runtime.onMessage.addListener((request, sender, response) => {
 let chromeWindowId = -1;
 // Action to open extension in window or popup.
 chrome.action.onClicked.addListener(async function () {
-  const activeMenu = await chrome.storage.local.get(['activeMenu']).then((res) => res.activeMenu);
-  if (activeMenu === 'window') {
+  const windowType = await getFromStorage('windowType');
+  if (windowType === 'window') {
     // Open just one window
     chrome.windows.get(chromeWindowId, (window) => {
       if (window) {

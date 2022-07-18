@@ -5,7 +5,7 @@ export interface LocalStorage {
   screenshot?: Screenshot;
   notes?: Note[];
   currentNote?: Note;
-  activeMenu?: 'popup' | 'window';
+  windowType?: 'popup' | 'window';
 }
 
 export const emptyNote: Note = {

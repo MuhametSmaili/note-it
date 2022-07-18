@@ -17,7 +17,7 @@ chrome.contextMenus.create({
 });
 
 chrome.contextMenus.onClicked.addListener((e) => {
-  setStorage({ activeMenu: e.menuItemId as 'popup' | 'window' });
+  setStorage({ windowType: e.menuItemId as 'popup' | 'window' });
   if (e.menuItemId === 'popup') {
     chrome.action.setPopup({ popup: 'popup.html' });
   } else {
