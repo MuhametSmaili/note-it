@@ -13,8 +13,6 @@ import { Note } from '@utils/types/Note';
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
 const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
-  // const currentNote = useStore('currentNote');
-
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
     content: '',

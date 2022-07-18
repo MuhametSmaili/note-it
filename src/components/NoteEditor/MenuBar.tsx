@@ -9,6 +9,7 @@ import { getFromStorage, emptyNote, setStorage } from '@utils/storage';
 import htmlToPdfMake from 'html-to-pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
+import { useTab } from '../../provider/tabContext';
 
 // ICONS
 import Undo from '@icons/Undo.svg';
@@ -32,6 +33,7 @@ type MenuBarProps = {
 };
 
 export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
+  const { dispatch } = useTab();
   if (!editor) {
     return null;
   }
@@ -49,12 +51,12 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
   };
 
   const downloadHandler = async () => {
-    const html = htmlToPdfMake(editor.getHTML());
+    const pdfMakeObject = htmlToPdfMake(editor.getHTML());
     (pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
     pdfMake
       .createPdf(
         {
-          content: html,
+          content: pdfMakeObject,
           info: { author: 'NoteIt', creationDate: new Date(), title: 'note' },
         },
         undefined,
@@ -63,23 +65,27 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
   };
 
   const saveNoteHandler = async () => {
-    let notes = await getFromStorage('notes');
     if (editor.getText().trim() === '') {
       return;
     }
-    if (currentNote && currentNote.id !== -1 && notes) {
+    const notes = await getFromStorage('notes');
+
+    if (currentNote && currentNote.id && notes) {
+      // update note
       const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
-
-      if (findNoteIndex >= 0) {
-        notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON() });
-        setStorage({ notes });
-      }
-      setStorage({ currentNote: emptyNote });
-      return;
+      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON() });
+      setStorage({ notes, currentNote: emptyNote });
+      editor.commands.clearContent();
+    } else {
+      // create new note
+      createNewNoteHandler(notes);
     }
+    dispatch({ type: 'TAB_HANDLER', payload: 1 }); // go to notes folder
+  };
 
+  const createNewNoteHandler = (notes?: Note[]) => {
     const newNote = {
-      id: Date.now(),
+      id: Date.now() + (notes?.length || 0),
       isFavorite: false,
       noteContent: editor.getJSON(),
       title: 'Default',
@@ -88,10 +94,9 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
     if (!notes) {
       notes = [];
     }
-
     notes.push(newNote);
-    setStorage({ notes });
-    setStorage({ currentNote: emptyNote });
+
+    setStorage({ notes, currentNote: emptyNote });
     editor.commands.clearContent();
   };
 
