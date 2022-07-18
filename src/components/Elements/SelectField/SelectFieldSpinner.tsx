@@ -1,6 +1,6 @@
 import { SelectOptionType, SelectValue } from './SelectField';
-import ArrowUp from '@icons/ArrowUp.svg';
-import ArrowDown from '@icons/ArrowDown.svg';
+import ArrowUp from '@icons/ArrowUp';
+import ArrowDown from '@icons/ArrowDown';
 import clsx from 'clsx';
 
 type ChangeSelectFieldProps = {
@@ -55,17 +55,17 @@ export const SelectFieldSpinner = ({
         disabled && 'disabled:opacity-70 disabled:cursor-not-allowed',
       )}
     >
-      <div className="hover:cursor-pointer" onClick={() => !disabled && onUpHandler()}>
+      <button aria-label="decrement" className="hover:cursor-pointer" onClick={() => !disabled && onUpHandler()}>
         <ArrowUp height={16} width={16} />
-      </div>
+      </button>
       {showIndex && (
         <div className="absolute text-sm left-1/2 top-1/2 select-none" style={{ transform: 'translate(-50%, -50%)' }}>
           {currentPosition + 1}
         </div>
       )}
-      <div className="hover:cursor-pointer" onClick={() => !disabled && onDownHandler()}>
+      <button aria-label="increment" className="hover:cursor-pointer" onClick={() => !disabled && onDownHandler()}>
         <ArrowDown />
-      </div>
+      </button>
     </div>
   );
 };
