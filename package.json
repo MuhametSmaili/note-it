@@ -5,7 +5,8 @@
   "scripts": {
     "start": "webpack --watch --progress --config ./webpack/webpack.dev.js",
     "build": "NODE_ENV=production webpack --watch --progress --config ./webpack/webpack.prod.js",
-    "test": "vitest",
+    "test": "vitest run",
+    "test:watch": "vitest",
     "coverage": "vitest run --coverage",
     "format": "prettier --ignore-path .gitignore --write --plugin-search-dir=. .",
     "prepare": "husky install && chmod ug+x .husky/*",
