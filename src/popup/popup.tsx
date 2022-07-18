@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { rootRender } from '@utils/render';
 import '@styles/tailwind.css';
 // Tab contents
@@ -18,10 +18,19 @@ import OcrIcon from '@icons/ocr.svg';
 import OcrActiveIcon from '@icons/Ocr_active.svg';
 import Logo from '@icons/Logo.svg';
 import { useStore } from '@hooks/useStore';
+import { ActiveTabProvider, useTab } from '../provider/tabContext';
+import { emptyNote } from '@utils/storage';
 
 const App: React.FC = () => {
-  const [activeTab, setActiveTab] = useState(0);
-  const currentNote = useStore('currentNote');
+  const {
+    state: { activeTab },
+    dispatch,
+  } = useTab();
+  const currentNote = useStore('currentNote', activeTab === 0);
+
+  const updateActiveTabHandler = (tab: number) => {
+    dispatch({ type: 'TAB_HANDLER', payload: tab });
+  };
 
   return (
     <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden scrollbar">
@@ -35,19 +44,19 @@ const App: React.FC = () => {
         <div className="mb-2">
           <Logo />
         </div>
-        <Tab onClickHandler={() => setActiveTab(0)} isActive={activeTab === 0}>
+        <Tab onClickHandler={() => updateActiveTabHandler(0)} isActive={activeTab === 0}>
           {activeTab === 0 ? <FeatherActiveIcon /> : <FeatherIcon />}
         </Tab>
-        <Tab onClickHandler={() => setActiveTab(1)} isActive={activeTab === 1}>
+        <Tab onClickHandler={() => updateActiveTabHandler(1)} isActive={activeTab === 1}>
           {activeTab === 1 ? <FolderActiveIcon /> : <FolderIcon />}
         </Tab>
-        <Tab onClickHandler={() => setActiveTab(2)} isActive={activeTab === 2}>
+        <Tab onClickHandler={() => updateActiveTabHandler(2)} isActive={activeTab === 2}>
           {activeTab === 2 ? <OcrActiveIcon /> : <OcrIcon />}
         </Tab>
       </div>
 
       <TabContent isActive={activeTab === 0}>
-        {currentNote ? <NoteEditor currentNote={currentNote} /> : <span></span>}
+        <NoteEditor currentNote={currentNote || emptyNote} />
       </TabContent>
       <TabContent isActive={activeTab === 1}>
         <FolderNotes />
@@ -61,6 +70,8 @@ const App: React.FC = () => {
 
 rootRender.render(
   <React.StrictMode>
-    <App />
+    <ActiveTabProvider>
+      <App />
+    </ActiveTabProvider>
   </React.StrictMode>,
 );

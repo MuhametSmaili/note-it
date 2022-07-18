@@ -9,7 +9,7 @@ export interface LocalStorage {
 }
 
 export const emptyNote: Note = {
-  id: -1,
+  id: undefined,
   title: 'Default',
   isFavorite: false,
   noteContent: {},

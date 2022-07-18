@@ -4,6 +4,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 
 import { setStorage } from '@utils/storage';
 import { Note } from '@utils/types/Note';
+import { useTab } from '../../provider/tabContext';
 // Icons
 import StarIcon from '@icons/Star.svg';
 import DeleteIcon from '@icons/Delete.svg';
@@ -15,6 +16,7 @@ type NoteContentProps = {
 };
 const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => {
   const [favorite, setFavorite] = useState<boolean>(note.isFavorite);
+  const { dispatch } = useTab();
 
   const editor = useEditor({
     extensions: [StarterKit],
@@ -30,17 +32,22 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
     setFavorite((isFav) => !isFav);
   };
 
+  const setCurrentNoteHandler = () => {
+    setStorage({ currentNote: note });
+    dispatch({ type: 'TAB_HANDLER', payload: 0 }); // set the first tab as active tab
+  };
+
   return (
     <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72 scrollbar">
       <div className="flex items justify-between">
-        <h2
-          className="text-xl font-bold hover:cursor-pointer hover:scale-90"
-          onClick={() => setStorage({ currentNote: note })}
-        >
+        <h2 className="text-xl font-bold hover:cursor-pointer hover:scale-90" onClick={setCurrentNoteHandler}>
           {note.title}
         </h2>
         <div className="flex">
-          <div className="hover:cursor-pointer mr-1 hover:scale-90" onClick={() => onDeleteNoteHandler(note.id)}>
+          <div
+            className="hover:cursor-pointer mr-1 hover:scale-90"
+            onClick={() => note.id && onDeleteNoteHandler(note.id)}
+          >
             <DeleteIcon />
           </div>
           <div className="hover:cursor-pointer hover:scale-90 hover:rotate-12" onClick={onFavoriteToggleHandler}>
