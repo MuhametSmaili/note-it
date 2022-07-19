@@ -1,34 +1,42 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+![LOGO](./src/styles/images/noteIt_cover.png 'Logo')
 
-## Getting Started
+# **NOTE IT**
 
-First, run the development server:
+**NoteIt is a feature-packed note-taking extension and OCR support for chrome.
+You can take notes, convert images to text, download notes to pdf, and more.**
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- ✍ Take note
+- 👀 Open extension as popup or window
+- 📸 Take a screenshot of the active tab and:
+  - ✂️ Copy the cropped image
+  - 📜 Convert to text (OCR support)
+  - ✔ Download the cropped image
+- 💾 Save notes on your local machine
+  - 🗃 Notes folder
+  - ⭐ Make notes as favorite
+- 📁 Download note in PDF format
+- 🗄 Convert your images to text (this feature works only when the extension is in window mode)
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+> 📝 Note
+>
+> The extension is still being developed
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+## Contributors
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+[![](https://github.com/MuhametSmaili.png?size=100&fit=cover&mask=circle)](https://github.com/MuhametSmaili)
+[![](https://github.com/bkrmadtya.png?size=100&fit=cover&mask=circle)](https://github.com/bkrmadtya)
 
-## Learn More
+<br/>
+<br/>
 
-To learn more about Next.js, take a look at the following resources:
+🎨 Designed by : [Altin Smaili](https://www.figma.com/file/h66qGHcw4DzCZMotoqioTV/Note-It?node-id=2%3A121)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Main libraries used
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+- [React](https://reactjs.org/)
+- [Tiptap](https://tiptap.dev/)
+- [tesseract.js](https://tesseract.projectnaptha.com/)
+- [pdfmake](https://pdfmake.org/#/)
+- [html-to-pdfmake](https://github.com/Aymkdn/html-to-pdfmake)
