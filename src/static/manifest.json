@@ -1,6 +1,6 @@
 {
   "name": "NoteIt",
-  "description": "A feature-packed note-taking extension and OCR support.",
+  "description": "A feature-packed note-taking extension with OCR support.",
   "version": "0.0.1",
   "manifest_version": 3,
   "icons": {
