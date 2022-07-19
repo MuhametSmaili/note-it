@@ -2,13 +2,13 @@ import { useEditor, EditorContent, Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
-import { MenuBar } from './MenuBar';
+import { MenuBar } from './MenuBar/MenuBar';
 import { useCallback, useEffect, useMemo } from 'react';
 import debounce from 'lodash.debounce';
 import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
 import { Note } from '@utils/types/Note';
-
+import { paste } from './pasteHandler';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
@@ -18,29 +18,7 @@ const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
     content: '',
     editorProps: {
       handleDOMEvents: {
-        paste(view, event: any) {
-          // USED when we paste image from clipboard
-          let hasFiles = false;
-          const reader = new FileReader();
-          reader.onload = function (event) {
-            const imageUrl = event?.target?.result;
-            const node = view.state.schema.nodes.image.create({ src: imageUrl });
-            const transaction = view.state.tr.replaceSelectionWith(node);
-            view.dispatch(transaction);
-          };
-
-          Array.from(event?.clipboardData?.files)
-            .filter((item: any) => item.type.startsWith('image'))
-            .forEach((item: any) => {
-              reader.readAsDataURL(item);
-              hasFiles = true;
-            });
-
-          if (hasFiles) {
-            event.preventDefault();
-            return true;
-          }
-        },
+        paste,
       },
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
