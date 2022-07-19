@@ -6,6 +6,7 @@ export interface LocalStorage {
   notes?: Note[];
   currentNote?: Note;
   windowType?: 'popup' | 'window';
+  activeWindow?: Array<{ windowId: number }>;
 }
 
 export const emptyNote: Note = {
