@@ -1,6 +1,6 @@
 {
   "name": "NoteIt",
-  "description": "A feature-packed note-taking extension with OCR support.",
+  "description": "A feature-packed note-taking extension and OCR support.",
   "version": "0.0.1",
   "manifest_version": 3,
   "icons": {
@@ -16,6 +16,7 @@
     "service_worker": "background.js"
   },
   "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite", "storage", "unlimitedStorage", "contextMenus"],
+  "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
       "resources": ["./libraries/worker.min.js", "frameContent.html"],
