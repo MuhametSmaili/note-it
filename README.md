@@ -9,11 +9,11 @@ You can take notes, convert images to text, download notes to pdf, and more.**
 
 - ✍ Take note
 - 👀 Open extension as popup or window
-- 📸 Take screenshot of the active tab and:
+- 📸 Take a screenshot of the active tab and:
   - ✂️ Copy the cropped image
   - 📜 Convert to text (OCR support)
   - ✔ Download the cropped image
-- 💾 Save notes in your local machine
+- 💾 Save notes on your local machine
   - 🗃 Notes folder
   - ⭐ Make notes as favorite
 - 📁 Download note in PDF format
