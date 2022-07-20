@@ -2,7 +2,7 @@
 
 # **NOTE IT**
 
-**NoteIt is a feature-packed note-taking extension and OCR support for chrome.
+**NoteIt is a feature-packed note-taking extension with OCR support for chrome.
 You can take notes, convert images to text, download notes to pdf, and more.**
 
 ## Features
