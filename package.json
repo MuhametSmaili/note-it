@@ -36,7 +36,7 @@
     "tesseract.js": "^2.1.5"
   },
   "devDependencies": {
-    "@svgr/webpack": "^6.2.1",
+    "@svgr/webpack": "6.3.0",
     "@testing-library/jest-dom": "^5.16.4",
     "@testing-library/react": "^13.3.0",
     "@types/chrome": "^0.0.193",
