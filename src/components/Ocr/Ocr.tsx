@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button, SelectField } from '@components/Elements';
+import { Button, SelectField, Spinner } from '@components/Elements';
 import { tesseractLanguages } from '@utils/tesseractLanguage';
 import { imageToText } from '@utils/image';
 import AddCamera from '@icons/AddCamera.svg';
@@ -65,13 +65,15 @@ const Ocr = () => {
         />
       </div>
       <div className="block icon-circle relative border border-gray-light w-full my-2" />
-      {status?.type === 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
-      <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
-      {/* {status?.type !== 'LOADING' && (
-        <div className="flex z-10 justify-center items-center absolute bg-gray-light/80 w-full rounded-md">
+      {status?.type !== 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
+
+      {status?.type === 'LOADING' ? (
+        <div className="flex-grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
           <Spinner />
         </div>
-      )} */}
+      ) : (
+        <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
+      )}
     </div>
   );
 };
