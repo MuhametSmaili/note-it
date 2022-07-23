@@ -3,27 +3,27 @@
 @tailwind utilities;
 
 @layer utilities {
-  .scrollbar::-webkit-scrollbar {
-    width: 5px;
-    height: 5px;
+  ::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
   }
 
-  .scrollbar::-webkit-scrollbar:hover {
+  ::-webkit-scrollbar:hover {
     cursor: pointer;
   }
 
-  .scrollbar::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     border-radius: 100vh;
     background: theme(colors.blue.prussian / 20%);
   }
 
-  .scrollbar::-webkit-scrollbar-thumb {
+  ::-webkit-scrollbar-thumb {
     background: theme(colors.blue.prussian / 80%);
     border-radius: 100vh;
-    border: 3px solid theme(colors.blue.prussian / 80%);
+    border: 5px solid theme(colors.blue.prussian / 80%);
   }
 
-  .scrollbar::-webkit-scrollbar-thumb:hover {
+  ::-webkit-scrollbar-thumb:hover {
     background: theme(colors.blue.prussian);
     cursor: pointer;
   }
