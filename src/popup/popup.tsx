@@ -33,7 +33,7 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden scrollbar">
+    <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">
       <div
         className={clsx(
           'pt-1 w-16 h-screen flex flex-col  justify-start items-center overflow-hidden',

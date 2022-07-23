@@ -3,41 +3,48 @@
 @tailwind utilities;
 
 @layer utilities {
-  .scrollbar::-webkit-scrollbar {
+  ::-webkit-scrollbar {
     width: 5px;
     height: 5px;
   }
 
-  .scrollbar::-webkit-scrollbar:hover {
+  ::-webkit-scrollbar:hover {
     cursor: pointer;
   }
 
-  .scrollbar::-webkit-scrollbar-track {
+  ::-webkit-scrollbar-track {
     border-radius: 100vh;
-    background: theme(colors.blue.prussian / 20%);
+    background: theme('colors.blue.prussian' / 20%);
   }
 
-  .scrollbar::-webkit-scrollbar-thumb {
-    background: theme(colors.blue.prussian / 80%);
+  ::-webkit-scrollbar-thumb {
+    background: theme('colors.blue.prussian' / 80%);
     border-radius: 100vh;
-    border: 3px solid theme(colors.blue.prussian / 80%);
+    border: 3px solid theme('colors.blue.prussian' / 80%);
   }
 
-  .scrollbar::-webkit-scrollbar-thumb:hover {
-    background: theme(colors.blue.prussian);
+  ::-webkit-scrollbar-thumb:hover {
+    background: theme('colors.blue.prussian');
     cursor: pointer;
   }
 
-  .border-dash-space {
-    text-align: center;
-    line-height: 100px;
-    background: linear-gradient(to right, theme(colors.gray.true) 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(theme(colors.gray.true) 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(to right, theme(colors.gray.true) 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(theme(colors.gray.true) 50%, rgba(0, 0, 0, 0) 0%);
-    background-position: top, right, bottom, left;
-    background-repeat: repeat-x, repeat-y;
-    background-size: 110px 5px, 5px 110px;
+  .icon-circle:before,
+  .icon-circle:after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    top: -5px;
+    background: theme('colors.gray.light');
+  }
+
+  .icon-circle:before {
+    left: -5px;
+  }
+
+  .icon-circle:after {
+    right: -5px;
   }
 }
 

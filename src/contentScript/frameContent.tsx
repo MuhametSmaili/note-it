@@ -86,7 +86,7 @@ const FrameContent: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-white rounded-sm z-[99999] p-2 shadow-lg scrollbar border-2 border-blue-prussian">
+    <div className="h-screen bg-white rounded-sm z-[99999] p-2 shadow-lg border-2 border-blue-prussian">
       <h3 className="text-xl font-bold">Image cropped</h3>
       <div className="flex flex-row content-between">
         <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
@@ -96,25 +96,26 @@ const FrameContent: React.FC = () => {
           <SelectField
             options={tesseractLanguages}
             onChange={(e) => setLanguage(e.target.value)}
+            className="font-bold"
             disabled={status?.type === 'LOADING'}
           />
           <Button
             size="md"
-            className="my-4"
+            className="my-4 font-bold"
             title="Convert to text "
             onClick={imageToTextHandler}
             disabled={status?.type === 'LOADING'}
           />
           <Button
             size="md"
-            className="mb-4"
+            className="mb-4 font-bold"
             title="Copy Image "
             onClick={copyImageHandler}
             disabled={status?.type === 'LOADING'}
           />
           <Button
             size="md"
-            className="mb-4"
+            className="mb-4 font-bold"
             title="Download image"
             onClick={downloadImageHandler}
             disabled={status?.type === 'LOADING'}
