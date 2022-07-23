@@ -38,7 +38,7 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
   };
 
   return (
-    <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72">
+    <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72 max-w-[200px] m-2">
       <div className="flex items justify-between">
         <h2 className="text-xl font-bold hover:cursor-pointer hover:scale-90" onClick={setCurrentNoteHandler}>
           {note.title}
