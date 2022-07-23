@@ -20,7 +20,6 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
 
   const editor = useEditor({
     extensions: [StarterKit],
-    editable: false,
     content: note.noteContent,
   });
 
@@ -39,7 +38,7 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
   };
 
   return (
-    <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72">
+    <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72 scrollbar">
       <div className="flex items justify-between">
         <h2 className="text-xl font-bold hover:cursor-pointer hover:scale-90" onClick={setCurrentNoteHandler}>
           {note.title}

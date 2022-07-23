@@ -21,7 +21,7 @@ const FrameScript = () => {
   };
 
   return (
-    <div className={'fixed h-80 w-[588px] bg-white bottom-0 right-0 rounded-sm m-1 p-2 z-[9999]'}>
+    <div className={'fixed h-80 w-[588px] bg-white bottom-0 right-0 rounded-sm m-1 p-2 scrollbar z-[9999]'}>
       <div className="flex items-center justify-center" style={{ position: 'absolute', right: '25px', top: '25px' }}>
         <div className="mr-2" onClick={onRetakeImageHandler} role="button">
           <CameraRetake />

@@ -8,7 +8,7 @@
   padding-right: 5px;
   height: 490px;
   font-size: 1rem;
-  @apply border-none;
+  @apply border-none scrollbar;
 }
 
 .ProseMirror-focused {
@@ -53,13 +53,4 @@
 
 .ProseMirror h3 {
   @apply text-sm font-bold;
-}
-
-.ProseMirror a {
-  color: theme('colors.blue.prussian');
-  text-decoration: underline;
-}
-
-.ProseMirror a:hover {
-  cursor: pointer;
 }
