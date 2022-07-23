@@ -17,7 +17,8 @@ import BulletPoints from '@icons/BulletPointsDots.svg';
 import Quote from '@icons/Quote.svg';
 import CodeArrows from '@icons/CodeArrows.svg';
 import ClearFormatting from '@icons/ClearFormatting.svg';
-import NoteIt from '@icons/NoteIt.svg';
+// import NoteIt from '@icons/NoteIt.svg';
+import NoteIt from '@styles/images/note-it.png';
 
 type MenuBarProps = {
   editor: Editor;
@@ -91,7 +92,7 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
           <ClearFormatting />
         </Button>
         <div className="flex items-center mx-8">
-          <NoteIt />
+          <img src={NoteIt} alt="note-it text" loading="lazy" width={73} height={30} />
         </div>
         <DownloadNote editor={editor} />
         <SaveNote currentNote={currentNote} editor={editor} />
