@@ -24,8 +24,8 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
           value={value}
           ref={ref}
           className={clsx(
-            'block w-full px-5 py-2 h-full text-md font-bold  rounded-sm',
-            'text-blue-prussian bg-gray-light',
+            'block w-full px-5 py-2 h-full text-md rounded-sm',
+            'text-blue-prussian bg-gray-light text-center',
             'disabled:opacity-70 disabled:cursor-not-allowed',
             'appearance-none focus:outline-none',
             className,
