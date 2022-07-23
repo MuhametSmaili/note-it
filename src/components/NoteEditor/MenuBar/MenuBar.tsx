@@ -98,7 +98,7 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
         <SaveNote currentNote={currentNote} editor={editor} />
         <ScreenshotArea />
       </div>
-      <div className="block relative border border-gray-light min-w-full w-full my-1" />
+      <div className="block icon-circle relative border border-gray-light w-full my-2" />
     </>
   );
 };

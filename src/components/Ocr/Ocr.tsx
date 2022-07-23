@@ -64,7 +64,7 @@ const Ocr = () => {
           onClick={convertToTextHandler}
         />
       </div>
-      <div className="border-b-2 border-gray-light mb-5 mx-10" />
+      <div className="block icon-circle relative border border-gray-light w-full my-2" />
       {status?.type === 'LOADING' && (
         <div className="flex z-10 justify-center items-center absolute bg-gray-light/80 w-full h-5/6 rounded-md">
           <Spinner />
