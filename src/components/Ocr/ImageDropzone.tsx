@@ -1,6 +1,6 @@
 import { useDropzone } from 'react-dropzone';
 import Close from '@icons/X.svg';
-
+import clsx from 'clsx';
 type ImageDropzoneProps = {
   droppedImage: Blob | undefined;
   clearImage: () => void;
@@ -25,16 +25,20 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
           <img src={URL.createObjectURL(droppedImage)} alt="dropped-image" loading="lazy" />
         </div>
       ) : (
-        <div className="border-dash-space flex items-center h-[80%] mt-10 mx-8 hover:cursor-pointer hover:bg-gray-light/80">
-          <div {...getRootProps()} className="h-full">
-            <input {...getInputProps()} />
-            {isDragActive ? (
-              <h1 className="text-gray-true text-center h-full text-[50px] p-10 flex items-center">👍 Drop here...</h1>
-            ) : (
+        <div className="flex items-center mt-5 mx-5 h-full">
+          <div className="h-full ">
+            <div
+              {...getRootProps()}
+              className={clsx(
+                'h-full flex items-center justify-center relative ',
+                "bg-center bg-no-repeat bg-contain bg-[url('@styles/images/rectangle.png')]",
+              )}
+            >
+              <input {...getInputProps()} />
               <h1 className="text-gray-true text-center h-full text-[50px] p-10 flex items-center">
-                Upload an image or drag and drop it here
+                {isDragActive ? ' Drop here...' : 'Upload an image or drag and drop it here'}
               </h1>
-            )}
+            </div>
           </div>
         </div>
       )}

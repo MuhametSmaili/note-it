@@ -28,18 +28,6 @@
     cursor: pointer;
   }
 
-  .border-dash-space {
-    text-align: center;
-    line-height: 100px;
-    background: linear-gradient(to right, theme('colors.gray.true') 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(theme('colors.gray.true') 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(to right, theme('colors.gray.true') 50%, rgba(0, 0, 0, 0) 0%),
-      linear-gradient(theme('colors.gray.true') 50%, rgba(0, 0, 0, 0) 0%);
-    background-position: top, right, bottom, left;
-    background-repeat: repeat-x, repeat-y;
-    background-size: 110px 5px, 5px 110px;
-  }
-
   .icon-circle:before,
   .icon-circle:after {
     content: '';
