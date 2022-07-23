@@ -25,7 +25,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
           <img src={URL.createObjectURL(droppedImage)} alt="dropped-image" loading="lazy" />
         </div>
       ) : (
-        <div className="flex items-center mt-5 mx-5 h-full">
+        <div className="flex items-center my-6 mx-5 h-full">
           <div className="h-full ">
             <div
               {...getRootProps()}
