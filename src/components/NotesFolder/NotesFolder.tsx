@@ -24,7 +24,7 @@ const NotesFolder = () => {
   };
 
   return (
-    <div>
+    <>
       <div className="flex items-center ">
         <Button
           className="mx-2"
@@ -47,7 +47,7 @@ const NotesFolder = () => {
             <NoteContent onDeleteNoteHandler={onDeleteNoteHandler} notes={visibleNotes} note={note} key={note.id} />
           ))}
       </div>
-    </div>
+    </>
   );
 };
 
