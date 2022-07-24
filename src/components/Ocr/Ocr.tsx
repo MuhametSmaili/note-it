@@ -5,6 +5,7 @@ import { tesseractLanguages } from '@utils/tesseractLanguage';
 import { imageToText } from '@utils/image';
 import AddCamera from '@icons/AddCamera.svg';
 import { ImageDropzone } from './ImageDropzone';
+import { useStore } from '@hooks/useStore';
 
 type StatusHandler = {
   type: 'LOADING' | 'DONE' | 'ERROR';
@@ -16,6 +17,7 @@ const Ocr = () => {
   const [droppedImage, setDroppedImage] = useState<Blob>();
   const [language, setLanguage] = useState('eng');
   const [status, setStatus] = useState<StatusHandler>();
+  const windowType = useStore('windowType');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach((file: File) => {
@@ -40,7 +42,7 @@ const Ocr = () => {
   };
 
   return (
-    <div className="p-2 relative h-full flex flex-col">
+    <div className="relative flex flex-col h-full">
       <div className="flex justify-between items-center mb-1">
         <div className="flex">
           <Button
@@ -65,13 +67,20 @@ const Ocr = () => {
         />
       </div>
       <div className="block icon-circle relative border border-gray-light w-full my-2" />
-      {status?.type === 'LOADING' && (
-        <div className="flex z-10 justify-center items-center absolute bg-gray-light/80 w-full h-5/6 rounded-md">
+      {status?.type !== 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
+      {windowType && windowType === 'popup' && (
+        <h2 className="text-md font-bold text-gray-true text-center">
+          Please use window type for local images, right-click on extension, and choose window
+        </h2>
+      )}
+
+      {status?.type === 'LOADING' ? (
+        <div className="flex-grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
           <Spinner />
         </div>
+      ) : (
+        <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
       )}
-      {status?.type === 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
-      <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
     </div>
   );
 };

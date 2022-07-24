@@ -33,10 +33,11 @@ const App: React.FC = () => {
   };
 
   return (
-    <div style={{ width: '750px', height: '550px' }} className="flex flex-row overflow-hidden">
+    <div style={{ minWidth: '745px', minHeight: '550px' }} className="flex flex-row h-full">
       <div
         className={clsx(
-          'pt-1 w-16 h-screen flex flex-col  justify-start items-center overflow-hidden',
+          'pt-2 h-screen overflow-hidden',
+          'flex flex-col  justify-start items-center pt-2 h-screen min-h-full',
           'bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100',
           'w-[70px]',
         )}

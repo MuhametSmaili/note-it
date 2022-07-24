@@ -28,7 +28,7 @@ type MenuBarProps = {
 export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
   return (
     <>
-      <div className="flex flex-row flex-wrap">
+      <div className="flex flex-row">
         <div className="bg-gray-light text-blue-prussian p-2 w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1">
           Default
         </div>
@@ -91,7 +91,7 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
         <Button onClick={() => editor.chain().focus().unsetAllMarks().run()} size="sm" variant="inverse">
           <ClearFormatting />
         </Button>
-        <div className="flex items-center mx-8">
+        <div className="flex justify-center flex-grow">
           <img src={NoteIt} alt="note-it text" loading="lazy" width={73} height={30} />
         </div>
         <DownloadNote editor={editor} />

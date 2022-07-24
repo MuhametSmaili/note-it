@@ -41,7 +41,7 @@ const NotesFolder = () => {
           onClick={() => setShowFavorites(true)}
         />
       </div>
-      <div className="grid grid-cols-3 gap-3 p-3 overflow-y-auto">
+      <div className="flex flex-wrap">
         {visibleNotes &&
           visibleNotes?.map((note) => (
             <NoteContent onDeleteNoteHandler={onDeleteNoteHandler} notes={visibleNotes} note={note} key={note.id} />
