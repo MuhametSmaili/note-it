@@ -15,6 +15,7 @@ module.exports = {
         green: '#219EBC',
         prussian: '#023047',
       },
+      red: '#A03768',
     },
     fontSize: {
       sm: '0.625rem', // ~ 12px
