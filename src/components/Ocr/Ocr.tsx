@@ -43,7 +43,7 @@ const Ocr = () => {
 
   return (
     <div className="relative flex flex-col h-full">
-      <div className="flex justify-between items-center mb-1">
+      <div className="flex justify-between items-center">
         <div className="flex">
           <Button
             variant="primary"
@@ -69,7 +69,7 @@ const Ocr = () => {
       <div className="block icon-circle relative border border-gray-light w-full my-2" />
       {status?.type !== 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
       {windowType && windowType === 'popup' && (
-        <h2 className="text-md font-bold text-gray-true text-center">
+        <h2 className="text-md text-gray-true text-center">
           Please use window type for local images, right-click on extension, and choose window
         </h2>
       )}
