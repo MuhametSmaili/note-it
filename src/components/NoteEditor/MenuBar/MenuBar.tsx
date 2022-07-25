@@ -35,7 +35,7 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
 
   return (
     <>
-      <div className="flex flex-row">
+      <div className="flex flex-row items-center">
         <Input name="name" placeholder="Note name" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
@@ -96,8 +96,8 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
         <Button onClick={() => editor.chain().focus().unsetAllMarks().run()} size="sm" variant="inverse">
           <ClearFormatting />
         </Button>
-        <div className="flex justify-center flex-grow items-center">
-          <img src={NoteIt} alt="note-it text" loading="lazy" width={68} height={28} />
+        <div className="flex justify-center flex-grow items-center h-full select-none">
+          <img draggable={false} src={NoteIt} alt="note-it text" loading="lazy" width={68} height={28} />
         </div>
         <DownloadNote editor={editor} />
         <SaveNote currentNote={currentNote} editor={editor} title={title || currentNote.title} />
