@@ -31,7 +31,7 @@ const NotesFolder = () => {
         <Button
           className="mx-2"
           variant="inverse"
-          active={!filter}
+          active={!filter.showFavorites}
           title="All Notes"
           onClick={() => setFilter({ showFavorites: false })}
         />
