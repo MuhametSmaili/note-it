@@ -5,18 +5,21 @@ import { Note } from '@utils/types/Note';
 import { useTab } from '../../../../provider/tabContext';
 import Save from '@icons/Save.svg';
 
-export const SaveNote = ({ editor, currentNote }: { editor: Editor; currentNote?: Note }) => {
+type SaveNoteProps = { editor: Editor; currentNote?: Note; title: string };
+
+export const SaveNote = ({ editor, currentNote, title }: SaveNoteProps) => {
   const { dispatch } = useTab();
   const saveNoteHandler = async () => {
-    if (editor.getText().trim() === '') {
+    if (editor.getText().trim() === '' || title.trim() === '') {
       return;
     }
+
     const notes = await getFromStorage('notes');
 
     if (currentNote && currentNote.id && notes) {
       // update note
       const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
-      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON() });
+      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON(), title });
       setStorage({ notes, currentNote: emptyNote });
       editor.commands.clearContent();
     } else {
@@ -31,7 +34,7 @@ export const SaveNote = ({ editor, currentNote }: { editor: Editor; currentNote?
       id: Date.now() + (notes?.length || 0),
       isFavorite: false,
       noteContent: editor.getJSON(),
-      title: 'Default',
+      title,
     };
 
     if (!notes) {

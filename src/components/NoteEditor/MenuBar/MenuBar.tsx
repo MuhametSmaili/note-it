@@ -19,19 +19,26 @@ import CodeArrows from '@icons/CodeArrows.svg';
 import ClearFormatting from '@icons/ClearFormatting.svg';
 // import NoteIt from '@icons/NoteIt.svg';
 import NoteIt from '@styles/images/note-it.png';
+import { Input } from '@components/Elements/Input/Input';
+import { useEffect, useState } from 'react';
 
 type MenuBarProps = {
   editor: Editor;
-  currentNote?: Note;
+  currentNote: Note;
 };
 
 export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
+  const [title, setTitle] = useState<string>();
+
+  useEffect(() => {
+    // We need effect here because the currentNote is changed afterwards, otherwise the input won't be updatedEditor
+    setTitle(currentNote.title);
+  }, [currentNote]);
+
   return (
     <>
       <div className="flex flex-row">
-        <div className="bg-gray-light text-blue-prussian p-2 w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1">
-          Default
-        </div>
+        <Input name="name" placeholder="Note name" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
         </Button>
@@ -95,7 +102,7 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
           <img src={NoteIt} alt="note-it text" loading="lazy" width={73} height={30} />
         </div>
         <DownloadNote editor={editor} />
-        <SaveNote currentNote={currentNote} editor={editor} />
+        <SaveNote currentNote={currentNote} editor={editor} title={title || currentNote.title} />
         <ScreenshotArea />
       </div>
       <div className="block icon-circle relative border border-gray-light w-full my-2" />
