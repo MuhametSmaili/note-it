@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import { Button } from '@components/Elements';
+import { Button, Input } from '@components/Elements';
 import { Note } from '@utils/types/Note';
 // Menu items
 import { Heading } from './MenuItem/Heading';
@@ -17,10 +18,7 @@ import BulletPoints from '@icons/BulletPointsDots.svg';
 import Quote from '@icons/Quote.svg';
 import CodeArrows from '@icons/CodeArrows.svg';
 import ClearFormatting from '@icons/ClearFormatting.svg';
-// import NoteIt from '@icons/NoteIt.svg';
 import NoteIt from '@styles/images/note-it.png';
-import { Input } from '@components/Elements/Input/Input';
-import { useEffect, useState } from 'react';
 
 type MenuBarProps = {
   editor: Editor;
