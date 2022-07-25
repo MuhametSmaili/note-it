@@ -27,7 +27,7 @@
     "@tiptap/react": "2.0.0-beta.114",
     "@tiptap/starter-kit": "2.0.0-beta.191",
     "clsx": "1.2.1",
-    "html-to-pdfmake": "2.4.4",
+    "html-to-pdfmake": "2.4.5",
     "lodash.debounce": "4.0.8",
     "pdfmake": "0.2.5",
     "react": "18.2.0",
