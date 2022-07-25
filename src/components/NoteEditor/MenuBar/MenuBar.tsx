@@ -96,8 +96,8 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
         <Button onClick={() => editor.chain().focus().unsetAllMarks().run()} size="sm" variant="inverse">
           <ClearFormatting />
         </Button>
-        <div className="flex justify-center flex-grow">
-          <img src={NoteIt} alt="note-it text" loading="lazy" width={73} height={30} />
+        <div className="flex justify-center flex-grow items-center">
+          <img src={NoteIt} alt="note-it text" loading="lazy" width={68} height={28} />
         </div>
         <DownloadNote editor={editor} />
         <SaveNote currentNote={currentNote} editor={editor} title={title || currentNote.title} />
