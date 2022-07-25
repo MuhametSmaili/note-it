@@ -23,6 +23,7 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
   const editor = useEditor({
     extensions: [StarterKit],
     content: note.noteContent,
+    editable: false,
   });
 
   const onFavoriteToggleHandler = async () => {
