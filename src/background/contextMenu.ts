@@ -44,7 +44,7 @@ chrome.action.onClicked.addListener(async function () {
             focused: true,
             type: 'popup',
             height: 550,
-            width: 750,
+            width: 745,
           })
           .then((currentWindow) => (chromeWindowId = Number(currentWindow.id)));
         return;
