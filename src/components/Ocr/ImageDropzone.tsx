@@ -28,10 +28,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
         <div className="flex items-center justify-center h-full">
           <div
             {...getRootProps()}
-            className={clsx(
-              'h-full flex  relative',
-              "bg-center bg-no-repeat bg-contain bg-[url('@styles/images/rectangle.png')]",
-            )}
+            className={clsx(`h-full flex  relative', 'bg-center bg-no-repeat bg-contain bg-dashed-border`)}
           >
             <input {...getInputProps()} />
             <h1 className="text-gray-true text-center text-[50px] p-10 flex items-center w-[500px]">
