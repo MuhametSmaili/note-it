@@ -13,7 +13,7 @@ export const emptyNote: Note = {
   id: undefined,
   title: 'Default',
   isFavorite: false,
-  noteContent: {},
+  noteContent: '',
 };
 
 export function setStorage(setValue: Partial<LocalStorage>): void {
