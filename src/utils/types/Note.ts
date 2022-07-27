@@ -4,5 +4,5 @@ export interface Note {
   id: number | undefined;
   title: string;
   isFavorite: boolean;
-  noteContent: JSONContent;
+  noteContent: JSONContent | string;
 }

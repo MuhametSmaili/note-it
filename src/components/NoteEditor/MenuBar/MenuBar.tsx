@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Editor } from '@tiptap/react';
-import { Button } from '@components/Elements';
+import { Button, Input } from '@components/Elements';
 import { Note } from '@utils/types/Note';
 // Menu items
 import { Heading } from './MenuItem/Heading';
@@ -17,20 +18,25 @@ import BulletPoints from '@icons/BulletPointsDots.svg';
 import Quote from '@icons/Quote.svg';
 import CodeArrows from '@icons/CodeArrows.svg';
 import ClearFormatting from '@icons/ClearFormatting.svg';
-import NoteIt from '@icons/NoteIt.svg';
+import NoteIt from '@styles/images/note-it.png';
 
 type MenuBarProps = {
   editor: Editor;
-  currentNote?: Note;
+  currentNote: Note;
 };
 
 export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
+  const [title, setTitle] = useState<string>();
+
+  useEffect(() => {
+    // We need effect here because the currentNote is changed afterwards, otherwise the input won't be updatedEditor
+    setTitle(currentNote.title);
+  }, [currentNote]);
+
   return (
     <>
-      <div className="flex flex-row flex-wrap">
-        <div className="bg-gray-light text-blue-prussian p-2 w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1">
-          Default
-        </div>
+      <div className="flex flex-row items-center">
+        <Input name="name" placeholder="Note name" value={title} onChange={(e) => setTitle(e.target.value)} required />
         <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
         </Button>
@@ -90,14 +96,14 @@ export const MenuBar = ({ editor, currentNote }: MenuBarProps) => {
         <Button onClick={() => editor.chain().focus().unsetAllMarks().run()} size="sm" variant="inverse">
           <ClearFormatting />
         </Button>
-        <div className="flex items-center mx-8">
-          <NoteIt />
+        <div className="flex justify-center flex-grow items-center h-full select-none">
+          <img draggable={false} src={NoteIt} alt="note-it text" loading="lazy" width={68} height={28} />
         </div>
         <DownloadNote editor={editor} />
-        <SaveNote currentNote={currentNote} editor={editor} />
+        <SaveNote currentNote={currentNote} editor={editor} title={title || currentNote.title} />
         <ScreenshotArea />
       </div>
-      <div className="block relative border border-gray-light min-w-full w-full my-1" />
+      <div className="block icon-circle relative border border-gray-light w-full my-2" />
     </>
   );
 };

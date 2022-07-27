@@ -29,7 +29,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       <button
         ref={ref}
         className={clsx(
-          'flex justify-center items-center font-bold disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
+          'flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
           variants[variant],
           sizes[size],
           active && '!bg-gray-light',

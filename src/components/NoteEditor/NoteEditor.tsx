@@ -15,17 +15,17 @@ Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
-    content: '',
+    content: currentNote.noteContent,
     editorProps: {
       handleDOMEvents: {
         paste,
       },
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
-    onBeforeCreate: ({ editor }) => {
+    onCreate: ({ editor }) => {
       getFromStorage('currentNote').then((note) => {
         if (note) {
-          editor.commands.insertContent(note.noteContent);
+          editor.commands.setContent(note.noteContent);
         }
       });
     },

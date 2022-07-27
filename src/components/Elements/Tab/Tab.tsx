@@ -8,9 +8,9 @@ type TabProps = {
 const Tab = ({ isActive = false, onClickHandler, children }: TabProps) => (
   <button
     className={clsx(
-      'rounded-md rounded-tr-none rounded-br-none px-4 ml-4 p-2 my-1 ',
-      ' hover:cursor-pointer',
-      isActive ? 'bg-white' : 'bg-transparent',
+      'p-1 my-2 hover:cursor-pointer',
+      'w-full flex justify-center transition-[margin]',
+      isActive ? 'bg-white rounded-md rounded-tr-none rounded-br-none ml-4' : 'bg-transparent',
     )}
     onClick={onClickHandler}
     aria-label="tab-button"
