@@ -8,7 +8,7 @@ import debounce from 'lodash.debounce';
 import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
 import { Note } from '@utils/types/Note';
-import { paste } from './pasteHandler';
+import { paste } from './utils/pasteHandler';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 

@@ -4,7 +4,7 @@ import { EditorContent, useEditor } from '@tiptap/react';
 
 import { setStorage } from '@utils/storage';
 import { Note } from '@utils/types/Note';
-import { useTab } from '../../provider/tabContext';
+import { useTab } from '../../../provider/tabContext';
 import { ConfirmNoteDeletion } from './ConfirmNoteDeletion';
 // Icons
 import StarIcon from '@icons/Star.svg';
