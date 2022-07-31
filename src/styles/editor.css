@@ -34,6 +34,10 @@
   @apply rounded-sm text-white;
 }
 
+.ProseMirror img {
+  border-radius: 5px;
+}
+
 .ProseMirror ul {
   @apply pl-7 list-disc;
 }
