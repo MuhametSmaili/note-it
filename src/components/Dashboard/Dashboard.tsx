@@ -5,13 +5,18 @@ import Logo from '@icons/Logo.svg';
 import Feather from '@icons/Feather';
 import FolderIcon from '@icons/Folder';
 import OcrIcon from '@icons/OcrIcon';
+import { useTab } from '../../provider/tabContext';
 
-type DashboardProps = {
-  onTabClick: (tabId: number) => void;
-  activeTab: number;
-};
+const Dashboard = () => {
+  const {
+    dispatch,
+    state: { activeTab },
+  } = useTab();
 
-const Dashboard = ({ onTabClick, activeTab }: DashboardProps) => {
+  const onTabClick = (tab: number) => {
+    dispatch({ type: 'TAB_HANDLER', payload: tab });
+  };
+
   return (
     <div
       className={clsx(

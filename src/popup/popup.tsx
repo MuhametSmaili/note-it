@@ -1,34 +1,28 @@
 import React from 'react';
 import { rootRender } from '@utils/render';
 import '@styles/tailwind.css';
+
+import { TabContent } from '@components/Elements';
+import Dashboard from '@components/Dashboard/Dashboard';
+
+import { useStore } from '@hooks/useStore';
+import { ActiveTabProvider, useTab } from '../provider/tabContext';
+import { emptyNote } from '@utils/storage';
 // Tab contents
 const NoteEditor = React.lazy(() => import(/* webpackPrefetch: true */ '@components/NoteEditor/NoteEditor'));
 const FolderNotes = React.lazy(() => import('@components/NotesFolder/NotesFolder'));
 const Ocr = React.lazy(() => import('@components/Ocr/Ocr'));
 
-import { TabContent } from '@components/Elements';
-
-import { useStore } from '@hooks/useStore';
-import { ActiveTabProvider, useTab } from '../provider/tabContext';
-import { emptyNote } from '@utils/storage';
-import Dashboard from '@components/Dashboard/Dashboard';
-
 const App: React.FC = () => {
   const {
     state: { activeTab },
-    dispatch,
   } = useTab();
 
   const currentNote = useStore('currentNote', activeTab === 0);
 
-  const updateActiveTabHandler = (tab: number) => {
-    dispatch({ type: 'TAB_HANDLER', payload: tab });
-  };
-
   return (
     <div style={{ minWidth: '745px', minHeight: '550px' }} className="flex flex-row h-full">
-      <Dashboard onTabClick={updateActiveTabHandler} activeTab={activeTab} />
-
+      <Dashboard />
       <TabContent isActive={activeTab === 0}>
         <NoteEditor currentNote={currentNote || emptyNote} />
       </TabContent>
