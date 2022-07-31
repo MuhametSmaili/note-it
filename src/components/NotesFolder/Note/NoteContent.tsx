@@ -27,7 +27,7 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
   });
 
   const onFavoriteToggleHandler = async () => {
-    const currNote = note;
+    const currNote = { ...note };
     const currNoteIndex = notes.findIndex((nt) => nt.id === note.id) || 0;
     currNote.isFavorite = !note.isFavorite;
     notes.splice(currNoteIndex, 1, currNote);
@@ -55,16 +55,28 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
         )}
         <div hidden={confirmDelete}>
           <div className="flex items justify-between">
-            <h2 className="text-xl font-bold hover:cursor-pointer hover:scale-90" onClick={setCurrentNoteHandler}>
+            <button
+              aria-label="select-note"
+              className="text-xl font-bold hover:cursor-pointer hover:scale-90"
+              onClick={setCurrentNoteHandler}
+            >
               {note.title}
-            </h2>
+            </button>
             <div className="flex">
-              <div className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNote}>
+              <button
+                aria-label="delete-note"
+                className="hover:cursor-pointer mr-1 hover:scale-90"
+                onClick={onDeleteNote}
+              >
                 <DeleteIcon />
-              </div>
-              <div className="hover:cursor-pointer hover:scale-90 hover:rotate-12" onClick={onFavoriteToggleHandler}>
+              </button>
+              <button
+                aria-label="make-note-favorite"
+                className="hover:cursor-pointer hover:scale-90 hover:rotate-12"
+                onClick={onFavoriteToggleHandler}
+              >
                 <StarIcon fill={favorite ? '#023047' : 'white'} />
-              </div>
+              </button>
             </div>
           </div>
           <EditorContent editor={editor} />
