@@ -36,6 +36,8 @@
     "tesseract.js": "2.1.5"
   },
   "devDependencies": {
+    "@commitlint/cli": "^17.0.3",
+    "@commitlint/config-conventional": "^17.0.3",
     "@svgr/webpack": "6.3.1",
     "@testing-library/jest-dom": "5.16.4",
     "@testing-library/react": "13.3.0",
