@@ -1,9 +1,11 @@
 ![LOGO](./src/styles/images/noteIt_cover.png 'Logo')
 
-# **NOTE IT**
-
-**NoteIt is a feature-packed note-taking extension with OCR support for chrome.
-You can take notes, convert images to text, download notes to pdf, and more.**
+<div align='center'>
+  <h1>NOTE IT</h1>
+  <p>NoteIt is a feature-packed, note-taking extension with OCR support for chrome.
+You can take notes, convert images to text, download notes to pdf, and more.</p>
+</div>
+<hr/>
 
 ## Features
 

@@ -50,7 +50,7 @@ const CropArea: React.FC = () => {
 
   return (
     <div
-      className="fixed left-0 top-0 w-full h-full z-[99999] cursor-crosshair"
+      className="fixed left-0 top-0 w-full h-full z-[99999] cursor-crosshair select-none"
       onMouseDown={onStartSelectingHandler}
       onMouseMove={onMouseMoveHandler}
       onMouseUp={() => cropArea && onMouseUpHandler(cropArea)}

@@ -1,9 +1,9 @@
 import { ChangeEvent, useMemo, useState } from 'react';
 import { Button } from '@components/Elements';
-import NoteContent from './NoteContent';
+import NoteContent from './Note/NoteContent';
 import { useStore } from '@hooks/useStore';
 import { setStorage } from '@utils/storage';
-import { Filter, getFilteredNotes } from './filterNotes';
+import { Filter, getFilteredNotes } from './utils/filterNotes';
 import { SearchNotes } from './SearchNotes';
 
 const NotesFolder = () => {

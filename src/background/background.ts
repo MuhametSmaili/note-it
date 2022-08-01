@@ -1,3 +1,3 @@
 import './messageListener';
 import './contextMenu';
-import './activeTab';
+import './activeWindow';
