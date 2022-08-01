@@ -16,8 +16,7 @@
   "lint-staged": {
     "**/*.(ts|tsx|js|json|svg|css)": [
       "eslint",
-      "prettier --write",
-      "git add"
+      "prettier --write"
     ]
   },
   "dependencies": {
