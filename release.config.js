@@ -4,6 +4,19 @@ module.exports = {
   plugins: [
     '@semantic-release/commit-analyzer',
     '@semantic-release/release-notes-generator',
-    '@semantic-release/github',
+    [
+      'semantic-release-chrome',
+      {
+        asset: 'note-it.zip',
+        distFolder: 'build',
+        extensionId: 'gkfjolpbhbinhoaehiejoglclongclld',
+      },
+    ],
+    [
+      '@semantic-release/github',
+      {
+        assets: [{ name: 'note-it-${nextRelease.version}.zip', path: 'note-it.zip' }],
+      },
+    ],
   ],
 };
