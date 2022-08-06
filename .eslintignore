@@ -9,3 +9,4 @@ tsconfig.json
 manifest.json
 *.svg
 commitlint.config.js
+release.config.js
