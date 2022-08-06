@@ -20,8 +20,8 @@ const Dashboard = () => {
   return (
     <div
       className={clsx(
-        'pt-2 h-screen overflow-hidden',
-        'flex flex-col  justify-start items-center pt-2 h-screen min-h-full',
+        'pt-2 h-screen min-h-full overflow-hidden',
+        'flex flex-col justify-start items-center',
         'bg-gradient-to-t from-blue-prussian/100 via-blue-prussian/80 to-blue-prussian/100',
         'w-[70px]',
       )}
