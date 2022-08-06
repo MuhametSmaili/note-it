@@ -14,10 +14,12 @@ const FrameScript = () => {
   };
 
   const onRetakeImageHandler = async () => {
-    chrome.runtime.sendMessage({
-      message: MessageRequest.CROP_SCREEN,
-    });
     handleClose();
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        message: MessageRequest.CROP_SCREEN,
+      });
+    }, 0);
   };
 
   return (
