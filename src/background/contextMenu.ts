@@ -46,8 +46,8 @@ chrome.action.onClicked.addListener(async function () {
             url: chrome.runtime.getURL('popup.html'),
             focused: true,
             type: 'popup',
-            height: 550,
-            width: 745,
+            height: 600,
+            width: 800,
           })
           .then((currentWindow) => (chromeWindowId = Number(currentWindow.id))),
       );

@@ -88,7 +88,7 @@ const FrameContent: React.FC = () => {
   return (
     <div className="min-h-screen bg-white rounded-sm z-[99999] p-2 shadow-lg border-2 border-blue-prussian">
       <h3 className="text-xl font-bold">Image cropped</h3>
-      <div className="flex flex-row content-between">
+      <div className="flex flex-row content-between pt-1">
         <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
           <img src={imageSrc} className="object-cover" alt="cropped-image" />
         </div>
