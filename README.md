@@ -4,7 +4,7 @@
 **NoteIt is a feature-packed, note-taking extension with OCR support for chrome.  
 You can take notes, convert images to text, download notes to pdf, and more.**
 
-[![](https://img.shields.io/chrome-web-store/v/gkfjolpbhbinhoaehiejoglclongclld?color=%23023047&style=for-the-badge)](https://chrome.google.com/webstore/detail/noteit/gkfjolpbhbinhoaehiejoglclongclld) ![GitHub](https://img.shields.io/github/license/MuhametSmaili/note-it?color=%23023047&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/MuhametSmaili/note-it?color=%23023047&style=for-the-badge)
+[![](https://img.shields.io/chrome-web-store/v/gkfjolpbhbinhoaehiejoglclongclld?color=%23023047&style=for-the-badge)](https://chrome.google.com/webstore/detail/noteit/gkfjolpbhbinhoaehiejoglclongclld) ![GitHub](https://img.shields.io/github/license/MuhametSmaili/note-it?color=%23023047&style=for-the-badge) ![GitHub last commit](https://img.shields.io/github/last-commit/MuhametSmaili/note-it?color=%23023047&style=for-the-badge) ![GitHub release (latest by date)](https://img.shields.io/github/v/release/MuhametSmaili/note-it?color=%23023047&style=for-the-badge)
 
 * * *
 
