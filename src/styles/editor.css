@@ -4,11 +4,11 @@
 .ProseMirror {
   font-family: 'Poppins', sans-serif;
   min-width: 658px;
+  min-height: 480px;
+  max-height: calc(100vh - 70px);
   overflow-y: auto;
   padding-right: 5px;
-  min-height: 480px;
   font-size: 1rem;
-  max-height: calc(100vh - 100px);
   @apply border-none;
 }
 

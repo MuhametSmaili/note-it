@@ -14,14 +14,16 @@ const FrameScript = () => {
   };
 
   const onRetakeImageHandler = async () => {
-    chrome.runtime.sendMessage({
-      message: MessageRequest.CROP_SCREEN,
-    });
     handleClose();
+    setTimeout(() => {
+      chrome.runtime.sendMessage({
+        message: MessageRequest.CROP_SCREEN,
+      });
+    }, 0);
   };
 
   return (
-    <div className={'fixed min-h-[320px] min-w-[588px] bg-white bottom-0 right-0 rounded-sm m-1 p-2 z-[9999]'}>
+    <div className={'fixed min-h-[335px] min-w-[600px] bg-white bottom-0 right-0 rounded-sm m-1 p-2 z-[9999]'}>
       <div
         className="flex items-center justify-center z-[1]"
         style={{ position: 'absolute', right: '25px', top: '25px' }}

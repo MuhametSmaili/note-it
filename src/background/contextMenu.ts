@@ -16,6 +16,9 @@ chrome.runtime.onInstalled.addListener(function () {
     contexts: ['action'],
     checked: false,
   });
+
+  // Set popup as default on install
+  setStorage({ windowType: 'popup' });
 });
 
 // Listening for menu changes
@@ -43,8 +46,8 @@ chrome.action.onClicked.addListener(async function () {
             url: chrome.runtime.getURL('popup.html'),
             focused: true,
             type: 'popup',
-            height: 550,
-            width: 745,
+            height: 600,
+            width: 800,
           })
           .then((currentWindow) => (chromeWindowId = Number(currentWindow.id))),
       );

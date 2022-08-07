@@ -2,32 +2,39 @@ import { CropArea as CropAreaType } from '@utils/image';
 import { MessageRequest } from '@utils/types/MessageRequest';
 import { rootRender } from '@utils/render';
 import { setStorage } from '@utils/storage';
-import React, { useState, MouseEvent } from 'react';
+import React, { useState, MouseEvent, useEffect } from 'react';
 import '@styles/tailwind.css';
+import { useStore } from '@hooks/useStore';
 
 const CropArea: React.FC = () => {
   const [firstPoint, setFirstPoint] = useState<{ x: number; y: number }>();
   const [cropArea, setCropArea] = useState<CropAreaType>();
+  const screenshoted = useStore('screenshot');
 
   const onMouseUpHandler = (cropArea: CropAreaType) => {
-    if (cropArea) {
-      chrome.runtime.sendMessage(
-        {
-          message: MessageRequest.CAPTURE_SCREEN,
-          cropArea,
-        },
-        function ({ imgSrc }) {
-          try {
-            const screenshot = { capturedImage: imgSrc, cropArea };
-            setStorage({ screenshot });
-            chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
-          } catch (e) {
-            console.log(e);
-          }
-        },
-      );
+    if (cropArea && screenshoted?.capturedImage) {
+      try {
+        const screenshot = { capturedImage: screenshoted.capturedImage, cropArea };
+        setStorage({ screenshot });
+        chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
+      } catch (e) {
+        console.log(e);
+      }
     }
     rootRender.unmount();
+  };
+
+  useEffect(() => {
+    document.addEventListener('keyup', onKeyUpHandler as any);
+    return () => {
+      document.removeEventListener('keyup', onKeyUpHandler as any);
+    };
+  }, []);
+
+  const onKeyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.key === 'Escape') {
+      rootRender.unmount();
+    }
   };
 
   const onStartSelectingHandler = (event: MouseEvent) => {
@@ -55,6 +62,13 @@ const CropArea: React.FC = () => {
       onMouseMove={onMouseMoveHandler}
       onMouseUp={() => cropArea && onMouseUpHandler(cropArea)}
     >
+      <img
+        alt="frozen screen to take screenshot"
+        src={screenshoted?.capturedImage}
+        className="fixed left-0 top-0 select-none"
+        draggable={false}
+        loading="lazy"
+      />
       <div
         className="cursor-crosshair box-border fixed z-[999999] border border-gray-900 border-dotted bg-transparent"
         style={{
