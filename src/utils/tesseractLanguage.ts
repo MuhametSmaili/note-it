@@ -7,7 +7,7 @@ export const tesseractLanguages: SelectOptionType[] = [
 
   { value: 'fin', label: 'Finnish' },
 
-  { value: 'sql', label: 'Albanian' },
+  { value: 'sqi', label: 'Albanian' },
 
   { value: 'nep', label: 'Nepali' },
 
