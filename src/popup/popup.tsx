@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const currentNote = useStore('currentNote', activeTab === 0);
 
   return (
-    <div style={{ width: '768px', minHeight: '550px' }} className="flex flex-row h-full md:!w-screen">
+    <div style={{ width: '768px', minHeight: '550px' }} className="flex flex-row h-full md:!w-screen md:h-screen">
       <Dashboard />
       <TabContent isActive={activeTab === 0}>
         <NoteEditor currentNote={currentNote || emptyNote} />

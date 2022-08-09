@@ -65,7 +65,7 @@ const CropArea: React.FC = () => {
       <img
         alt="frozen screen to take screenshot"
         src={screenshoted?.capturedImage}
-        className="fixed left-0 top-0 select-none"
+        className="fixed left-0 top-0 select-none w-screen h-screen"
         draggable={false}
         loading="lazy"
       />
