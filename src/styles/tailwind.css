@@ -46,6 +46,11 @@
   .icon-circle:after {
     right: -5px;
   }
+  .cursor-custom {
+    cursor: url("data:image/svg+xml,%3Csvg width='23' height='23' viewBox='0 0 23 23' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.2444 11.3203H22.8718M11.5581 0.006558V22.634' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")
+        12.5 12.5,
+      crosshair;
+  }
 }
 
 @import './editor.css';
