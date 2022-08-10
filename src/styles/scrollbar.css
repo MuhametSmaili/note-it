@@ -1,0 +1,24 @@
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+::-webkit-scrollbar:hover {
+  cursor: pointer;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 100vh;
+  background: theme('colors.blue.prussian' / 20%);
+}
+
+::-webkit-scrollbar-thumb {
+  background: theme('colors.blue.prussian' / 80%);
+  border-radius: 100vh;
+  border: 3px solid theme('colors.blue.prussian' / 80%);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: theme('colors.blue.prussian');
+  cursor: pointer;
+}

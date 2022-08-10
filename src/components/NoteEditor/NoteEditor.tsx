@@ -20,9 +20,6 @@ const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
       handleDOMEvents: {
         paste,
       },
-      attributes: {
-        class: 'ProseMirror scrollbar',
-      },
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
     onCreate: ({ editor }) => {

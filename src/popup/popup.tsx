@@ -1,6 +1,7 @@
 import React from 'react';
 import { rootRender } from '@utils/render';
 import '@styles/tailwind.css';
+import '@styles/scrollbar.css';
 
 import { TabContent } from '@components/Elements';
 import Dashboard from '@components/Dashboard/Dashboard';
