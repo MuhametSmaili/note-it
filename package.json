@@ -35,8 +35,8 @@
     "tesseract.js": "2.1.5"
   },
   "devDependencies": {
-    "@commitlint/cli": "^17.0.3",
-    "@commitlint/config-conventional": "^17.0.3",
+    "@commitlint/cli": "17.0.3",
+    "@commitlint/config-conventional": "17.0.3",
     "@svgr/webpack": "6.3.1",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "13.3.0",
@@ -65,8 +65,8 @@
     "lint-staged": "13.0.3",
     "postcss-loader": "7.0.1",
     "prettier": "2.7.1",
-    "semantic-release": "^19.0.3",
-    "semantic-release-chrome": "^3.1.0",
+    "semantic-release": "19.0.3",
+    "semantic-release-chrome": "3.1.0",
     "style-loader": "3.3.1",
     "tailwindcss": "3.1.8",
     "ts-loader": "9.3.1",
