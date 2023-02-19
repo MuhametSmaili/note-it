@@ -41,6 +41,26 @@ const Ocr = () => {
     }, 2000);
   };
 
+  const pasteFromClipBoardHandler = async () => {
+    console.log('HERE');
+    // const imageFormClipboard = navigator.clipboard.read();
+    // const recognizedText = await imageToText('', language);
+
+    try {
+      const clipboardContents = await navigator.clipboard.read();
+      for (const item of clipboardContents) {
+        if (!item.types.includes('image/png')) {
+          throw new Error('Clipboard contains non-image data.');
+        }
+        const blob = await item.getType('image/png');
+        console.log('IMAGE read');
+        console.log(blob);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <div className="relative flex flex-col h-full">
       <div className="flex justify-between items-center">
@@ -74,6 +94,14 @@ const Ocr = () => {
         </h2>
       )}
 
+      <div className="flex justify-center mt-10">
+        <Button
+          name="paste-from-clipboard"
+          disabled={windowType && windowType === 'popup'}
+          title="Paste image from clipboard"
+          onClick={pasteFromClipBoardHandler}
+        />
+      </div>
       {status?.type === 'LOADING' ? (
         <div className="flex-grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
           <Spinner />

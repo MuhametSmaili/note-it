@@ -79,7 +79,7 @@ export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
  */
 export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promise<string | undefined> {
   try {
-    const worker = Tesseract.createWorker({
+    const worker = await Tesseract.createWorker({
       workerBlobURL: false,
       workerPath: '/libraries/worker.min.js',
       corePath: '/libraries/tesseract-core.asm.js',
