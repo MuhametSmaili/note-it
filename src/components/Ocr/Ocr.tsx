@@ -42,19 +42,20 @@ const Ocr = () => {
   };
 
   const pasteFromClipBoardHandler = async () => {
-    console.log('HERE');
-    // const imageFormClipboard = navigator.clipboard.read();
-    // const recognizedText = await imageToText('', language);
-
     try {
+      setStatus({ type: 'LOADING' });
       const clipboardContents = await navigator.clipboard.read();
       for (const item of clipboardContents) {
         if (!item.types.includes('image/png')) {
+          setStatus({ type: 'ERROR', message: 'Your clipboard content is not image' });
           throw new Error('Clipboard contains non-image data.');
         }
         const blob = await item.getType('image/png');
-        console.log('IMAGE read');
-        console.log(blob);
+        const recognizedText = await imageToText(blob, language);
+        navigator.clipboard
+          .writeText(recognizedText || '')
+          .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
+          .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
       }
     } catch (error) {
       console.error(error);
@@ -87,27 +88,31 @@ const Ocr = () => {
         />
       </div>
       <div className="block icon-circle relative border border-gray-light w-full my-2" />
-      {status?.type !== 'DONE' && <h2 className="text-md font-bold text-blue-prussian">{status?.message}</h2>}
+      {status?.type !== 'DONE' && (
+        <h2 className="text-md font-bold text-blue-prussian text-center">{status?.message}</h2>
+      )}
       {windowType && windowType === 'popup' && (
         <h2 className="text-md text-gray-true text-center">
           Please use window type for local images, right-click on extension, and choose window
         </h2>
       )}
 
-      <div className="flex justify-center mt-10">
-        <Button
-          name="paste-from-clipboard"
-          disabled={windowType && windowType === 'popup'}
-          title="Paste image from clipboard"
-          onClick={pasteFromClipBoardHandler}
-        />
-      </div>
       {status?.type === 'LOADING' ? (
         <div className="flex-grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
           <Spinner />
         </div>
       ) : (
-        <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
+        <>
+          <div className="flex justify-center mt-10">
+            <Button
+              name="paste-from-clipboard"
+              disabled={windowType && windowType === 'popup'}
+              title="Paste image from clipboard"
+              onClick={pasteFromClipBoardHandler}
+            />
+          </div>
+          <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
+        </>
       )}
     </div>
   );

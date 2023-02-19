@@ -85,7 +85,7 @@ export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promis
       corePath: '/libraries/tesseract-core.asm.js',
     });
 
-    await worker.load();
+    // await worker.load(); -- workers come pre-loaded
     await worker.loadLanguage(language);
     await worker.initialize(language);
 
