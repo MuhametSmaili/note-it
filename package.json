@@ -62,7 +62,7 @@
     "global-jsdom": "8.7.0",
     "html-webpack-plugin": "5.5.0",
     "husky": "8.0.3",
-    "jsdom": "21.1.0",
+    "jsdom": "21.1.2",
     "lint-staged": "13.1.2",
     "postcss-loader": "7.0.2",
     "prettier": "2.8.4",
