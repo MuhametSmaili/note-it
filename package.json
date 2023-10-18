@@ -41,7 +41,7 @@
     "@svgr/webpack": "6.5.1",
     "@testing-library/jest-dom": "5.16.5",
     "@testing-library/react": "14.0.0",
-    "@types/chrome": "0.0.216",
+    "@types/chrome": "0.0.248",
     "@types/html-to-pdfmake": "2.4.0",
     "@types/node": "18.14.0",
     "@types/react": "18.0.28",
