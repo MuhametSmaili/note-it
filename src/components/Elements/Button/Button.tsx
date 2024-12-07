@@ -3,13 +3,13 @@ import clsx from 'clsx';
 import { Spinner } from '@components/Elements';
 
 const variants = {
-  primary: 'bg-gray-light text-blue-prussian',
+  primary: 'bg-light border border-primary text-secondary',
   inverse: 'bg-white text-blue-prussian active:bg-gray-true',
 };
 
 const sizes = {
   sm: ' text-sm', //py-1 px-1
-  md: 'py-2 px-2 text-md',
+  md: 'py-1 px-2 text-md',
 };
 
 type ButtonProps = {
@@ -40,8 +40,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && <Spinner size="sm" className="text-current" />}
-        <span className="mx-2">{props.children || props.title}</span>
         {icon && icon}
+        <span className="mx-2">{props.children || props.title}</span>
       </button>
     );
   },

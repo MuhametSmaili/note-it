@@ -21,6 +21,7 @@ export const emptyNote: Note = {
   title: 'Default',
   isFavorite: false,
   noteContent: '',
+  created: new Date(Date.now()).toLocaleDateString(),
 };
 
 export class Storage<T> {

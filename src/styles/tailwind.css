@@ -19,6 +19,7 @@
 
     /* colors hsl*/
     --color-acent: 200 93% 18%;
+    --color-white: 100 100% 100%;
     --color-gray-100: 200 20% 97%;
     --color-gray-200: 200 20% 94%;
     --color-gray-300: 202 44% 90%;
@@ -26,6 +27,7 @@
     --color-gray-500: 201 19% 50%;
     --color-gray-600: 201 20% 35%;
     --color-gray-700: 199 94% 7%;
+    --color-gray-900: 200, 95%, 7%, 1;
     --color-red: 4 74% 46%;
     --color-light-blue: 199 64% 73%;
     /* --color-blue: #19a1e5; */
@@ -37,6 +39,7 @@
     --color-bg-highlight: var(--color-gray-300);
 
     --color-text-primary: var(--color-acent);
+    --color-text-secondary: var(--color-gray-900);
     --color-text-body: var(--color-gray-700);
     --color-text-light: var(--color-gray-500);
     --color-text-light2: var(--color-gray-600);
@@ -47,10 +50,11 @@
       --color-bg-primary: 200 94% 13%;
       --color-bg-light: var(--color-acent);
       --color-bg-acent: var(--color-acent);
+      --color-text-secondary: var(--color-gray-100);
       --color-bg-highlight: 201 94% 20%;
 
       --color-text-primary: var(--color-light-blue);
-      --color-text-body: white;
+      --color-text-body: var(--color-white);
       --color-text-light: var(--color-light-blue);
       --color-text-light2: var(--color-gray-500);
 
@@ -60,11 +64,12 @@
     [data-theme='dark'] {
       --color-bg-primary: 200 92% 5%;
       --color-bg-light: 200 100% 10%;
+      --color-text-secondary: var(--color-gray-100);
       --color-bg-acent: 200 100% 10%;
       --color-bg-highlight: 200 75% 15%;
 
       --color-text-primary: var(--color-light-blue);
-      --color-text-body: white;
+      --color-text-body: var(--color-white);
       --color-text-light: var(--color-light-blue);
       --color-text-light2: var(--color-gray-500);
 

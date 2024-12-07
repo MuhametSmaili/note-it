@@ -57,7 +57,7 @@ const NoteEditor = () => {
   return (
     <>
       {editor && <MenuBar editor={editor} />}
-      <EditorContent editor={editor} />
+      <EditorContent editor={editor} className="text-body" />
     </>
   );
 };

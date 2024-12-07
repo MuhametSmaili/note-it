@@ -1,5 +1,11 @@
 import { useStorage } from '@hooks/useStore';
+import ColorPalette from '@icons/ColorPalette.svg';
 
+const themes = [
+  { name: 'light', displayName: 'Light' },
+  { name: 'dim', displayName: 'Dim' },
+  { name: 'dark', displayName: 'Dark' },
+];
 export function Settings() {
   const [settings, setSettings] = useStorage('settings');
 
@@ -9,42 +15,38 @@ export function Settings() {
 
   return (
     <div>
-      <div>
-        <h3>Apperance settings</h3>
-        <ul>
-          <li>
-            <label>
-              <input
-                checked={settings.theme === 'light'}
-                type="checkbox"
-                value="light"
-                id="light"
-                onClick={onThemeChange}
-              />
-              Light
-            </label>
+      <h2 className="text-xl text-primary flex items-center justify-center w-fit mb-1">
+        <ColorPalette />
+        Apperance settings
+      </h2>
+      <ul className="flex gap-3 items-start">
+        {themes.map((t) => (
+          <li key={t.name} data-theme={t.name}>
+            <ApperanceItem
+              checked={settings.theme === t.name}
+              displayName={t.displayName}
+              name={t.name}
+              onChange={onThemeChange}
+            />
           </li>
-          <li>
-            <label>
-              <input checked={settings.theme === 'dim'} id="dim" type="checkbox" value="dim" onChange={onThemeChange} />
-              Dim
-            </label>
-          </li>
-          <li>
-            <label>
-              <input
-                checked={settings.theme === 'dark'}
-                id="dark"
-                name="dark"
-                type="checkbox"
-                value="dark"
-                onChange={onThemeChange}
-              />
-              Dark
-            </label>
-          </li>
-        </ul>
-      </div>
+        ))}
+      </ul>
     </div>
+  );
+}
+
+type ApperanceItemProps = {
+  onChange: (e: React.FormEvent<HTMLInputElement>) => void;
+  checked: boolean;
+  name: string;
+  displayName: string;
+};
+
+export function ApperanceItem({ onChange, checked, name, displayName }: ApperanceItemProps) {
+  return (
+    <label className="h-16 w-24 border border-primary rounded-sm bg-primary text-primary flex justify-center items-center min-w-10">
+      <input checked={checked} id={name} name={name} type="checkbox" value={name} onChange={onChange} />
+      <span className="ml-1">{displayName}</span>
+    </label>
   );
 }

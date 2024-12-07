@@ -18,10 +18,16 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
       return;
     }
 
+    const title = editor.getText().split('\n')[0];
+
     if (currentNote && currentNote.id && notes) {
       const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
-      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON(), title: 'tst' });
-
+      notes.splice(findNoteIndex, 1, {
+        ...currentNote,
+        title,
+        noteContent: editor.getJSON(),
+        updated: new Date(Date.now()).toLocaleDateString(),
+      });
       setNotes(notes);
       setCurrentNote(emptyNote);
       editor.commands.clearContent();
@@ -33,11 +39,13 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
   };
 
   const createNewNoteHandler = (notes?: Note[]) => {
+    const title = editor.getText().split('\n')[0];
     const newNote = {
+      title,
       id: Date.now() + (notes?.length || 0),
+      created: new Date(Date.now()).toLocaleDateString(),
       isFavorite: false,
       noteContent: editor.getJSON(),
-      title: 'test',
     };
 
     if (!notes) {

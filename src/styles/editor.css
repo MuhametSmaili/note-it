@@ -9,7 +9,7 @@
   overflow-y: auto;
   padding-right: 5px;
   font-size: 1rem;
-  @apply border-none;
+  @apply border-none text-body;
 }
 
 .ProseMirror-focused {
@@ -31,7 +31,7 @@
   /* background: theme('colors.blue.prussian' / 90%); */
   width: 100%;
   padding: 1rem;
-  /* @apply rounded-sm text-white; */
+  @apply rounded-sm text-light bg-acent;
 }
 
 .ProseMirror img {
@@ -43,26 +43,27 @@
 }
 
 .ProseMirror blockquote {
-  @apply pl-7 ml-5 border-l-2 border-solid italic;
+  @apply pl-7 ml-5 border-l-2 border-solid italic border-primary text-light2;
   /* border-color: theme('colors.blue.prussian' / 20%); */
   /* color: theme('colors.blue.prussian' / 80%); */
 }
 
 .ProseMirror h1 {
-  @apply text-xl font-bold;
+  @apply text-xl font-bold text-light;
 }
 
 .ProseMirror h2 {
-  @apply text-md font-bold;
+  @apply text-md font-bold text-light;
 }
 
 .ProseMirror h3 {
-  @apply text-sm font-bold;
+  @apply text-sm font-bold text-light;
 }
 
 .ProseMirror a {
   /* color: theme('colors.blue.prussian'); */
   text-decoration: underline;
+  @apply text-light;
 }
 
 .ProseMirror a:hover {

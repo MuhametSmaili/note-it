@@ -51,6 +51,7 @@ export const SelectFieldSpinner = ({
     <div
       className={clsx(
         'flex flex-col justify-between bg-light ml-1 h-full rounded-sm relative text-sm',
+        'border border-primary',
         active && 'bg-gray-true',
         disabled && 'disabled:opacity-70 disabled:cursor-not-allowed',
       )}

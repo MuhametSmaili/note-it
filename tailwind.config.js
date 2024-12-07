@@ -13,6 +13,7 @@ const borderColors = {
 
 const textColors = {
   primary: 'hsl(var(--color-text-primary) / <alpha-value>)',
+  secondary: 'hsl(var(--color-text-secondary) / <alpha-value>)',
   body: 'hsl(var(--color-text-body) / <alpha-value>)',
   light: 'hsl(var(--color-text-light) / <alpha-value>)',
   light2: 'hsl(var(--color-text-light2) / <alpha-value>)',

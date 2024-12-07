@@ -5,4 +5,6 @@ export interface Note {
   title: string;
   isFavorite: boolean;
   noteContent: JSONContent | string;
+  created?: string;
+  updated?: string;
 }

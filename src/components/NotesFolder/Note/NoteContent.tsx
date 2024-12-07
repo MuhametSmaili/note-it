@@ -23,7 +23,7 @@ const NoteContent = ({ note, onDeleteNoteHandler }: NoteContentProps) => {
     editable: false,
     editorProps: {
       attributes: {
-        class: 'ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden',
+        class: 'ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden text-ellipsis',
       },
     },
   });

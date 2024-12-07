@@ -4,7 +4,8 @@ import { useTab } from '../../../provider/tabContext';
 // Icons
 import { useStorage } from '@hooks/useStore';
 import DeleteIcon from '@icons/Delete.svg';
-import StarIcon from '@icons/Star.svg';
+import StarIcon from '@icons/Star2.svg';
+import clsx from 'clsx';
 
 type NoteHeaderProps = {
   note: Note;
@@ -26,7 +27,6 @@ const NoteHeader = ({ note }: NoteHeaderProps) => {
         className="text-md text-primary font-medium hover:cursor-pointer hover:scale-90"
         onClick={setCurrentNoteHandler}
       >
-        {/* TODO: add text-ellipse */}
         {note.title.substring(0, 10)}
       </button>
     </div>
@@ -56,14 +56,14 @@ export function SingleNoteFooter({ note, onDeleteNote }: SingleNoteFooterProps) 
 
   return (
     <div className="flex items-center text-primary border-t border-t-primary items justify-between bg-light p-2">
-      <div>20 Oct, 2024</div>
+      <div>{note.created || note.updated || 'no-date'}</div>
       <div className="flex">
         <button
           aria-label="make-note-favorite"
-          className="hover:cursor-pointer hover:scale-90 hover:rotate-12"
+          className={clsx('hover:cursor-pointer hover:scale-90 hover:rotate-12')}
           onClick={onFavoriteToggleHandler}
         >
-          <StarIcon fill={favorite ? '#023047' : 'white'} />
+          <StarIcon fill={favorite ? '#19A1E5' : 'transparent'} />
         </button>
         <button aria-label="delete-note" className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNote}>
           <DeleteIcon />

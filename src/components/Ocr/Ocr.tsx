@@ -1,6 +1,8 @@
 import { Button, SelectField, Spinner } from '@components/Elements';
 import { useStorage } from '@hooks/useStore';
 import AddCamera from '@icons/AddCamera.svg';
+import Upload from '@icons/Upload.svg';
+import PasteIcon from '@icons/PasteFromClipboard.svg';
 import { imageToText } from '@utils/image';
 import { tesseractLanguages } from '@utils/tesseractLanguage';
 import { useCallback, useState } from 'react';
@@ -65,14 +67,23 @@ const Ocr = () => {
   return (
     <div className="relative flex flex-col h-full">
       <div className="flex justify-between items-center">
-        <div className="flex">
+        <div className="flex gap-2">
           <Button
             variant="primary"
             title="Upload Image"
             disabled={status?.type === 'LOADING'}
-            className="mr-2 py-0"
+            className="py-0"
             onClick={open}
             icon={<AddCamera />}
+          />
+          <Button
+            variant="primary"
+            name="paste-from-clipboard"
+            disabled={windowType && windowType === 'popup'}
+            title="Paste image from clipboard"
+            className="py-0"
+            onClick={pasteFromClipBoardHandler}
+            icon={<PasteIcon />}
           />
           <SelectField
             disabled={status?.type === 'LOADING'}
@@ -81,18 +92,16 @@ const Ocr = () => {
           />
         </div>
         <Button
-          variant="inverse"
+          variant="primary"
           title="Convert"
           disabled={status?.type === 'LOADING'}
           onClick={convertToTextHandler}
         />
       </div>
-      <div className="block icon-circle relative border border-gray-light w-full my-2" />
-      {status?.type !== 'DONE' && (
-        <h2 className="text-md font-bold text-blue-prussian text-center">{status?.message}</h2>
-      )}
+      <div className="block relative border-b border-primary w-full my-2" />
+      {status?.type !== 'DONE' && <h2 className="text-md font-bold text-red text-center">{status?.message}</h2>}
       {windowType && windowType === 'popup' && (
-        <h2 className="text-md text-gray-true text-center">
+        <h2 className="text-md text-light2 text-center">
           Please use window type for local images, right-click on extension, and choose window
         </h2>
       )}
@@ -103,14 +112,6 @@ const Ocr = () => {
         </div>
       ) : (
         <>
-          <div className="flex justify-center mt-10">
-            <Button
-              name="paste-from-clipboard"
-              disabled={windowType && windowType === 'popup'}
-              title="Paste image from clipboard"
-              onClick={pasteFromClipBoardHandler}
-            />
-          </div>
           <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
         </>
       )}
