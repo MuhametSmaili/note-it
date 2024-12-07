@@ -17,7 +17,7 @@ import Quote from '@icons/Quote.svg';
 import Redo from '@icons/Redo.svg';
 import Underline from '@icons/Underline.svg';
 import Undo from '@icons/Undo.svg';
-import NoteIt from '@styles/images/note-it.png';
+import NoteIt from '@icons/note-it.svg';
 
 type MenuBarProps = {
   editor: Editor;
@@ -93,7 +93,7 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
         </Button>
         <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
         <div className="flex justify-center flex-grow items-center h-full select-none">
-          <img draggable={false} src={NoteIt} alt="note-it text" loading="lazy" width={68} height={28} />
+          <NoteIt />
         </div>
         <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
         <Button onClick={() => alert('implement')} size="sm" variant="inverse" className="border-r-primary">
