@@ -1,8 +1,10 @@
 import React from 'react';
 
+//@es-ignore
 enum Actions {
   TAB_HANDLER = 'TAB_HANDLER',
 }
+
 type Dispatch = (action: Action) => void;
 type State = { activeTab: number };
 type ActiveTabProviderProps = { children: React.ReactNode };

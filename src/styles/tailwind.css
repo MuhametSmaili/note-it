@@ -5,7 +5,7 @@
 @layer base {
   :root {
     /* colors HEX*/
-    /* --color-primary: #033c59; */
+    /* --color-acent: #033c59; */
     /* --color-gray-100: #f6f8f9; */
     /* --color-gray-200: #edf1f3; */
     /* --color-gray-300: #dbe9f1; */
@@ -18,25 +18,25 @@
     /* --color-blue: #19a1e5; */
 
     /* colors hsl*/
-    --color-primary: 200, 93%, 18%;
-    --color-gray-100: 200, 20%, 97%;
-    --color-gray-200: 200, 20%, 94%;
-    --color-gray-300: 202, 44%, 90%;
-    --color-gray-400: 199, 20%, 84%;
-    --color-gray-500: 201, 19%, 50%;
-    --color-gray-600: 201, 20%, 35%;
-    --color-gray-700: 199, 94%, 7%;
-    --color-red: 4, 74%, 46%;
-    --color-light-blue: 199, 64%, 73%;
+    --color-acent: 200 93% 18%;
+    --color-gray-100: 200 20% 97%;
+    --color-gray-200: 200 20% 94%;
+    --color-gray-300: 202 44% 90%;
+    --color-gray-400: 200 20% 84%;
+    --color-gray-500: 201 19% 50%;
+    --color-gray-600: 201 20% 35%;
+    --color-gray-700: 199 94% 7%;
+    --color-red: 4 74% 46%;
+    --color-light-blue: 199 64% 73%;
     /* --color-blue: #19a1e5; */
 
     /* semantic colors */
     --color-bg-primary: var(--color-gray-100);
     --color-bg-light: var(--color-gray-200);
-    --color-bg-acent: var(--color-primary);
+    --color-bg-acent: var(--color-acent);
     --color-bg-highlight: var(--color-gray-300);
 
-    --color-text-primary: var(--color-primary);
+    --color-text-primary: var(--color-acent);
     --color-text-body: var(--color-gray-700);
     --color-text-light: var(--color-gray-500);
     --color-text-light2: var(--color-gray-600);
@@ -44,31 +44,31 @@
     --color-border-primary: var(--color-gray-400);
 
     [data-theme='dim'] {
-      --color-bg-primary: 200, 94%, 13%;
-      --color-bg-light: var(--color-primary);
-      --color-bg-acent: var(--color-primary);
-      --color-bg-highlight: 201, 94%, 20%;
+      --color-bg-primary: 200 94% 13%;
+      --color-bg-light: var(--color-acent);
+      --color-bg-acent: var(--color-acent);
+      --color-bg-highlight: 201 94% 20%;
 
       --color-text-primary: var(--color-light-blue);
       --color-text-body: white;
       --color-text-light: var(--color-light-blue);
       --color-text-light2: var(--color-gray-500);
 
-      --color-border-primary: 201, 40%, 30%;
+      --color-border-primary: 201 40% 30%;
     }
 
     [data-theme='dark'] {
-      --color-bg-primary: 200, 92%, 5%;
-      --color-bg-light: 200, 100%, 10%;
-      --color-bg-acent: 200, 100%, 10%;
-      --color-bg-highlight: 200, 75%, 15%;
+      --color-bg-primary: 200 92% 5%;
+      --color-bg-light: 200 100% 10%;
+      --color-bg-acent: 200 100% 10%;
+      --color-bg-highlight: 200 75% 15%;
 
       --color-text-primary: var(--color-light-blue);
       --color-text-body: white;
       --color-text-light: var(--color-light-blue);
       --color-text-light2: var(--color-gray-500);
 
-      --color-border-primary: 200, 39%, 22%;
+      --color-border-primary: 200 39% 22%;
     }
   }
 }
@@ -82,7 +82,7 @@
     border-radius: 50%;
     position: absolute;
     top: -5px;
-    background: theme('colors.gray.light');
+    /* background: theme('colors.gray.light'); */
   }
 
   .icon-circle:before {

@@ -1,21 +1,20 @@
-import { CropArea as CropAreaType } from '@utils/image';
-import { MessageRequest } from '@utils/types/MessageRequest';
-import { rootRender } from '@utils/render';
-import { setStorage } from '@utils/storage';
-import React, { useState, MouseEvent, useEffect } from 'react';
+import { useStorage } from '@hooks/useStore';
 import '@styles/tailwind.css';
-import { useStore } from '@hooks/useStore';
+import { CropArea as CropAreaType } from '@utils/image';
+import { rootRender } from '@utils/render';
+import { MessageRequest } from '@utils/types/MessageRequest';
+import React, { MouseEvent, useEffect, useState } from 'react';
 
 const CropArea: React.FC = () => {
   const [firstPoint, setFirstPoint] = useState<{ x: number; y: number }>();
   const [cropArea, setCropArea] = useState<CropAreaType>();
-  const screenshoted = useStore('screenshot');
+  const [screenshoted, setScreenshot] = useStorage('screenshot');
 
   const onMouseUpHandler = (cropArea: CropAreaType) => {
     if (cropArea && screenshoted?.capturedImage) {
       try {
         const screenshot = { capturedImage: screenshoted.capturedImage, cropArea };
-        setStorage({ screenshot });
+        setScreenshot(screenshot);
         chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
       } catch (e) {
         console.log(e);

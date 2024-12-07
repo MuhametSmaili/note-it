@@ -1,4 +1,4 @@
-import { setStorage } from '@utils/storage';
+import { localStorage } from '@utils/storage';
 import { MessageRequest } from '@utils/types/MessageRequest';
 // Communicating with worker/client
 chrome.runtime.onMessage.addListener((request, sender, _response) => {
@@ -16,7 +16,7 @@ chrome.runtime.onMessage.addListener((request, sender, _response) => {
 
     // TODO needs checking for better implementation for passing the
     chrome.tabs.captureVisibleTab(query.windowId, {}, function (dataUrl) {
-      setStorage({ screenshot: { capturedImage: dataUrl, cropArea: { height: 0, width: 0, x: 0, y: 0 } } });
+      localStorage.set('screenshot', { capturedImage: dataUrl, cropArea: { height: 0, width: 0, x: 0, y: 0 } });
       chrome.scripting.executeScript({
         target: { tabId: Number(query.tabId) },
         files: ['cropArea.js'],

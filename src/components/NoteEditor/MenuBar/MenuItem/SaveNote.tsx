@@ -1,26 +1,29 @@
-import { Editor } from '@tiptap/react';
-import { getFromStorage, emptyNote, setStorage } from '@utils/storage';
 import { Button } from '@components/Elements';
+import { useStorage } from '@hooks/useStore';
+import Save from '@icons/Save.svg';
+import { Editor } from '@tiptap/react';
+import { emptyNote } from '@utils/storage';
 import { Note } from '@utils/types/Note';
 import { useTab } from '../../../../provider/tabContext';
-import Save from '@icons/Save.svg';
 
-type SaveNoteProps = { editor: Editor; currentNote?: Note; title: string };
+type SaveNoteProps = { editor: Editor };
 
-export const SaveNote = ({ editor, currentNote, title }: SaveNoteProps) => {
+export const SaveNote = ({ editor }: SaveNoteProps) => {
   const { dispatch } = useTab();
+  const [notes, setNotes] = useStorage('notes');
+  const [currentNote, setCurrentNote] = useStorage('currentNote');
+
   const saveNoteHandler = async () => {
-    if (editor.getText().trim() === '' || title.trim() === '') {
+    if (editor.getText().trim() === '') {
       return;
     }
 
-    const notes = await getFromStorage('notes');
-
     if (currentNote && currentNote.id && notes) {
-      // update note
       const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
-      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON(), title });
-      setStorage({ notes, currentNote: emptyNote });
+      notes.splice(findNoteIndex, 1, { ...currentNote, noteContent: editor.getJSON(), title: 'tst' });
+
+      setNotes(notes);
+      setCurrentNote(emptyNote);
       editor.commands.clearContent();
     } else {
       // create new note
@@ -34,7 +37,7 @@ export const SaveNote = ({ editor, currentNote, title }: SaveNoteProps) => {
       id: Date.now() + (notes?.length || 0),
       isFavorite: false,
       noteContent: editor.getJSON(),
-      title,
+      title: 'test',
     };
 
     if (!notes) {
@@ -42,7 +45,8 @@ export const SaveNote = ({ editor, currentNote, title }: SaveNoteProps) => {
     }
     notes.push(newNote);
 
-    setStorage({ notes, currentNote: emptyNote });
+    setNotes(notes);
+    setCurrentNote(emptyNote);
     editor.commands.clearContent();
   };
 

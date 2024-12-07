@@ -7,7 +7,7 @@ type ConfirmDeleteProps = {
 
 export const ConfirmNoteDeletion = ({ onConfirmHandler, onDeclineHandler }: ConfirmDeleteProps) => {
   return (
-    <div className="h-full flex flex-col items-center justify-center">
+    <div className="h-full absolute z-10 bg-primary flex flex-col items-center justify-center">
       <h2 className="text-xl mb-5 text-center">Are you sure you want to delete this note?</h2>
       <div className="flex w-full justify-center">
         <Button variant="primary" onClick={onDeclineHandler}>

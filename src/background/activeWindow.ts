@@ -1,4 +1,4 @@
-import { setStorage } from '@utils/storage';
+import { localStorage } from '@utils/storage';
 
 // active tab changed
 // Needs to save last two active tabs
@@ -7,5 +7,5 @@ let activeWindows: Array<{ windowId: number }> = [];
 chrome.windows.onFocusChanged.addListener((windowId) => {
   activeWindows = activeWindows.slice(0, 1);
   activeWindows.unshift({ windowId });
-  setStorage({ activeWindow: activeWindows });
+  localStorage.set('activeWindow', activeWindows);
 });

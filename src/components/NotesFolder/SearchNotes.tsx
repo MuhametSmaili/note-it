@@ -9,7 +9,7 @@ export const SearchNotes = ({ onSearchHandler, value }: SearchNotesProps) => {
   return (
     <div className="relative">
       <Input name="name" onChange={onSearchHandler} placeholder="Search" className="!text-left !w-44" value={value} />
-      <div className="absolute right-2 top-2 hover:cursor-pointer">
+      <div className="absolute right-2 top-1 hover:cursor-pointer">
         <Search />
       </div>
     </div>

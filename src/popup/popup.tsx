@@ -1,14 +1,14 @@
-import React from 'react';
-import { rootRender } from '@utils/render';
-import '@styles/tailwind.css';
 import '@styles/scrollbar.css';
+import '@styles/tailwind.css';
+import { rootRender } from '@utils/render';
+import React from 'react';
 
-import { TabContent } from '@components/Elements';
 import Dashboard from '@components/Dashboard/Dashboard';
+import { TabContent } from '@components/Elements';
 
-import { useStore } from '@hooks/useStore';
+import { Settings } from '@components/settings/settings';
+import { preloadSettings, useStorage } from '@hooks/useStore';
 import { ActiveTabProvider, useTab } from '../provider/tabContext';
-import { emptyNote } from '@utils/storage';
 // Tab contents
 const NoteEditor = React.lazy(() => import(/* webpackPrefetch: true */ '@components/NoteEditor/NoteEditor'));
 const FolderNotes = React.lazy(() => import('@components/NotesFolder/NotesFolder'));
@@ -19,13 +19,17 @@ const App: React.FC = () => {
     state: { activeTab },
   } = useTab();
 
-  const currentNote = useStore('currentNote', activeTab === 0);
+  const [settings] = useStorage('settings', { theme: 'light' });
 
   return (
-    <div style={{ width: '768px', minHeight: '550px' }} className="flex flex-row h-full md:!w-screen md:h-screen">
+    <div
+      data-theme={settings.theme}
+      style={{ width: '768px', minHeight: '550px' }}
+      className="bg-primary flex flex-row h-full md:!w-screen md:h-screen"
+    >
       <Dashboard />
       <TabContent isActive={activeTab === 0}>
-        <NoteEditor currentNote={currentNote || emptyNote} />
+        <NoteEditor />
       </TabContent>
       <TabContent isActive={activeTab === 1}>
         <FolderNotes />
@@ -33,10 +37,14 @@ const App: React.FC = () => {
       <TabContent isActive={activeTab === 2}>
         <Ocr />
       </TabContent>
+      <TabContent isActive={activeTab === 3}>
+        <Settings />
+      </TabContent>
     </div>
   );
 };
 
+await preloadSettings();
 rootRender.render(
   <React.StrictMode>
     <ActiveTabProvider>

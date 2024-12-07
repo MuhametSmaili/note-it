@@ -1,10 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
-import { rootRender } from '@utils/render';
-import { copyBlobToClipboard, CropArea, imageToBlob, blobToBase64, imageToText } from '@utils/image';
-import { getFromStorage, removeFromStorage } from '@utils/storage';
-import { tesseractLanguages } from '@utils/tesseractLanguage';
-import { Button, Spinner, SelectField } from '@components/Elements';
+import { Button, SelectField, Spinner } from '@components/Elements';
 import '@styles/tailwind.css';
+import { blobToBase64, copyBlobToClipboard, CropArea, imageToBlob, imageToText } from '@utils/image';
+import { rootRender } from '@utils/render';
+import { localStorage } from '@utils/storage';
+import { tesseractLanguages } from '@utils/tesseractLanguage';
+import React, { useCallback, useEffect, useState } from 'react';
 
 export type Screenshot = {
   capturedImage: string;
@@ -23,7 +23,7 @@ const FrameContent: React.FC = () => {
   const [language, setLanguage] = useState('eng');
 
   const handleImageToText = useCallback(async () => {
-    const res = await getFromStorage('screenshot');
+    const res = await localStorage.get('screenshot');
     if (!res) return;
     const imageBlob = await imageToBlob(res.capturedImage, res.cropArea);
     const bs64 = await blobToBase64(imageBlob);
@@ -34,7 +34,7 @@ const FrameContent: React.FC = () => {
   useEffect(() => {
     handleImageToText();
     return () => {
-      removeFromStorage(['screenshot']);
+      localStorage.remove('screenshot');
     };
   }, [handleImageToText]);
 
@@ -79,7 +79,7 @@ const FrameContent: React.FC = () => {
         anchor.click();
         document.body.removeChild(anchor);
       }
-    } catch (e) {
+    } catch (_) {
       setStatus({ type: 'ERROR', message: '❌ There was an error try again' });
       processDoneHandler();
     }

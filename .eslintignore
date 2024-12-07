@@ -1,5 +1,6 @@
 postcss.config.js
 tailwind.config.js
+eslintrc.json
 tailwind.css
 editor.css
 package.json

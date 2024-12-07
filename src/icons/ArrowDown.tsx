@@ -6,7 +6,7 @@ const ArrowDown = (props: SVGProps<SVGSVGElement>) => (
       fillRule="evenodd"
       clipRule="evenodd"
       d="m12 17.414 9.707-9.707-1.414-1.414L12 14.586 3.707 6.293 2.293 7.707 12 17.414Z"
-      fill="#023047"
+      fill="currentcolor"
     />
   </svg>
 );

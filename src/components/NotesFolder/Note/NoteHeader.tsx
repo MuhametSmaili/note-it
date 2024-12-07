@@ -1,48 +1,63 @@
-import { useState } from 'react';
-import { setStorage } from '@utils/storage';
 import { Note } from '@utils/types/Note';
+import { useState } from 'react';
 import { useTab } from '../../../provider/tabContext';
 // Icons
-import StarIcon from '@icons/Star.svg';
+import { useStorage } from '@hooks/useStore';
 import DeleteIcon from '@icons/Delete.svg';
+import StarIcon from '@icons/Star.svg';
 
 type NoteHeaderProps = {
-  notes: Note[];
-  onDeleteNote: () => void;
   note: Note;
 };
 
-const NoteHeader = ({ notes, note, onDeleteNote }: NoteHeaderProps) => {
-  const [favorite, setFavorite] = useState<boolean>(note.isFavorite);
+const NoteHeader = ({ note }: NoteHeaderProps) => {
   const { dispatch } = useTab();
-
-  const onFavoriteToggleHandler = async () => {
-    const currNote = { ...note };
-    const currNoteIndex = notes.findIndex((nt) => nt.id === note.id) || 0;
-    currNote.isFavorite = !note.isFavorite;
-    notes.splice(currNoteIndex, 1, currNote);
-    setStorage({ notes });
-    setFavorite((isFav) => !isFav);
-  };
+  const [_, setCurrentNote] = useStorage('currentNote');
 
   const setCurrentNoteHandler = () => {
-    setStorage({ currentNote: note });
+    setCurrentNote(note);
     dispatch({ type: 'TAB_HANDLER', payload: 0 }); // set the first tab as active tab
   };
 
   return (
-    <div className="flex items justify-between">
+    <div className="flex items border-b mx-2 py-2 border-primary">
       <button
         aria-label="select-note"
-        className="text-xl font-bold hover:cursor-pointer hover:scale-90"
+        className="text-md text-primary font-medium hover:cursor-pointer hover:scale-90"
         onClick={setCurrentNoteHandler}
       >
-        {note.title}
+        {/* TODO: add text-ellipse */}
+        {note.title.substring(0, 10)}
       </button>
+    </div>
+  );
+};
+// TODO move buttons in own component
+export default NoteHeader;
+
+type SingleNoteFooterProps = {
+  onDeleteNote: () => void;
+  note: Note;
+};
+export function SingleNoteFooter({ note, onDeleteNote }: SingleNoteFooterProps) {
+  const [favorite, setFavorite] = useState<boolean>(note.isFavorite);
+  const [notes, setNotes] = useStorage('notes');
+
+  const onFavoriteToggleHandler = async () => {
+    const newNotes = [...(notes ?? [])];
+    const currNote = { ...note };
+    const currNoteIndex = notes?.findIndex((nt) => nt.id === note.id) || 0;
+    currNote.isFavorite = !note.isFavorite;
+    newNotes.splice(currNoteIndex, 1, currNote);
+
+    setNotes(newNotes);
+    setFavorite((isFav) => !isFav);
+  };
+
+  return (
+    <div className="flex items-center text-primary border-t border-t-primary items justify-between bg-light p-2">
+      <div>20 Oct, 2024</div>
       <div className="flex">
-        <button aria-label="delete-note" className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNote}>
-          <DeleteIcon />
-        </button>
         <button
           aria-label="make-note-favorite"
           className="hover:cursor-pointer hover:scale-90 hover:rotate-12"
@@ -50,9 +65,10 @@ const NoteHeader = ({ notes, note, onDeleteNote }: NoteHeaderProps) => {
         >
           <StarIcon fill={favorite ? '#023047' : 'white'} />
         </button>
+        <button aria-label="delete-note" className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNote}>
+          <DeleteIcon />
+        </button>
       </div>
     </div>
   );
-};
-// TODO move buttons in own component
-export default NoteHeader;
+}

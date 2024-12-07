@@ -7,7 +7,7 @@
     "plugin:react/recommended",
     "plugin:react-hooks/recommended"
   ],
-  "ignorePatterns": [".eslintrc.js", "build/**/*", "node_modules/**/*", "webpack/*"],
+  "ignorePatterns": [".eslintrc.json", "build/**/*", "node_modules/**/*", "webpack/*"],
   "parser": "@typescript-eslint/parser",
   "overrides": [{ "settings": { "react": { "version": "detect" } }, "files": ["**/*.ts", "**/*.tsx"] }],
   "rules": {
@@ -20,7 +20,7 @@
     "@typescript-eslint/naming-convention": [
       "error",
       {
-        "format": ["camelCase"],
+        "format": ["camelCase", "PascalCase"],
         "selector": "default"
       },
       {
@@ -56,10 +56,13 @@
     "@typescript-eslint/no-dupe-class-members": ["error"],
     "@typescript-eslint/no-empty-function": ["error"],
     "@typescript-eslint/no-explicit-any": ["warn"],
-    "@typescript-eslint/no-extra-semi": ["error"],
     "@typescript-eslint/no-unused-vars": [
-      "error",
+      "warn",
       {
+        "vars": "all",
+        "args": "after-used",
+        "ignoreRestSiblings": true,
+        "varsIgnorePattern": "^_",
         "argsIgnorePattern": "^_"
       }
     ],

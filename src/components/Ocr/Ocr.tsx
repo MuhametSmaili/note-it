@@ -1,11 +1,11 @@
+import { Button, SelectField, Spinner } from '@components/Elements';
+import { useStorage } from '@hooks/useStore';
+import AddCamera from '@icons/AddCamera.svg';
+import { imageToText } from '@utils/image';
+import { tesseractLanguages } from '@utils/tesseractLanguage';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Button, SelectField, Spinner } from '@components/Elements';
-import { tesseractLanguages } from '@utils/tesseractLanguage';
-import { imageToText } from '@utils/image';
-import AddCamera from '@icons/AddCamera.svg';
 import { ImageDropzone } from './ImageDropzone';
-import { useStore } from '@hooks/useStore';
 
 type StatusHandler = {
   type: 'LOADING' | 'DONE' | 'ERROR';
@@ -17,7 +17,7 @@ const Ocr = () => {
   const [droppedImage, setDroppedImage] = useState<Blob>();
   const [language, setLanguage] = useState('eng');
   const [status, setStatus] = useState<StatusHandler>();
-  const windowType = useStore('windowType');
+  const [{ windowType }] = useStorage('settings');
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     acceptedFiles.forEach((file: File) => {

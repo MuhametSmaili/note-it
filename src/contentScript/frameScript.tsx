@@ -1,15 +1,15 @@
 import { rootRender } from '@utils/render';
-import { removeFromStorage } from '@utils/storage';
 import { MessageRequest } from '@utils/types/MessageRequest';
 import '@styles/tailwind.css';
 // ICONS
 import Close from '@icons/X.svg';
 import CameraRetake from '@icons/CameraRetake.svg';
+import { localStorage } from '@utils/storage';
 
 const FrameScript = () => {
   const handleClose = () => {
     document.getElementById(`OCRFrame`)?.remove();
-    removeFromStorage(['screenshot']);
+    localStorage.remove('screenshot');
     rootRender.unmount();
   };
 

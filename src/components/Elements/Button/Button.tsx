@@ -40,7 +40,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && <Spinner size="sm" className="text-current" />}
-        <span className="mx-1">{props.children || props.title}</span>
+        <span className="mx-2">{props.children || props.title}</span>
         {icon && icon}
       </button>
     );

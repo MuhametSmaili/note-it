@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import { Note } from '@utils/types/Note';
 import { ConfirmNoteDeletion } from './ConfirmNoteDeletion';
-import NoteHeader from './NoteHeader';
+import NoteHeader, { SingleNoteFooter } from './NoteHeader';
 // Note editor extensions
 import StarterKit from '@tiptap/starter-kit';
 import Link from '@tiptap/extension-link';
@@ -11,11 +11,10 @@ import Image from '@tiptap/extension-image';
 
 type NoteContentProps = {
   note: Note;
-  notes: Note[];
   onDeleteNoteHandler: (id: number) => void;
 };
 
-const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => {
+const NoteContent = ({ note, onDeleteNoteHandler }: NoteContentProps) => {
   const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
 
   const editor = useEditor({
@@ -24,7 +23,7 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
     editable: false,
     editorProps: {
       attributes: {
-        class: 'ProseMirror pr-0 min-w-[182px] max-h-[300px] overflow-hidden',
+        class: 'ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden',
       },
     },
   });
@@ -34,18 +33,16 @@ const NoteContent = ({ note, notes, onDeleteNoteHandler }: NoteContentProps) => 
   };
 
   return (
-    <div className="border border-blue-light p-2 rounded-sm overflow-hidden max-h-72 max-w-[200px] m-2 h-screen">
+    <div className="border m-2 relative border-primary rounded-sm overflow-hidden h-full max-h-[300px] max-w-[200px]">
       {confirmDelete ? (
         <ConfirmNoteDeletion
           onDeclineHandler={onDeleteNote}
           onConfirmHandler={() => note.id && onDeleteNoteHandler(note.id)}
         />
-      ) : (
-        <>
-          <NoteHeader note={note} notes={notes} onDeleteNote={onDeleteNote} />
-          <EditorContent editor={editor} />
-        </>
-      )}
+      ) : null}
+      <NoteHeader note={note} />
+      <EditorContent editor={editor} style={{ maxHeight: '200px', overflow: 'hidden' }} />
+      <SingleNoteFooter note={note} onDeleteNote={onDeleteNote} />
     </div>
   );
 };

@@ -1,15 +1,15 @@
-import { getFromStorage } from './storage';
+import { localStorage } from './storage';
 
 export async function getCurrentTab() {
-  const isPopup = await getFromStorage('windowType');
-  const activatedTabs = await getFromStorage('activeWindow');
+  const isPopup = await localStorage.get('settings');
+  const activatedTabs = await localStorage.get('activeWindow');
   const queryOptions: any = {
     active: true,
     windowType: 'normal',
     url: 'https://*/*',
   };
 
-  if (isPopup && isPopup === 'popup') {
+  if (isPopup.windowType && isPopup.windowType === 'popup') {
     queryOptions.currentWindow = true;
   } else {
     if (activatedTabs) {

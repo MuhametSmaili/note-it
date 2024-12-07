@@ -1,21 +1,23 @@
-import { useEditor, EditorContent, Editor } from '@tiptap/react';
-import StarterKit from '@tiptap/starter-kit';
+import { useStorage } from '@hooks/useStore';
 import Image from '@tiptap/extension-image';
 import Link from '@tiptap/extension-link';
-import { MenuBar } from './MenuBar/MenuBar';
-import { useCallback, useEffect, useMemo } from 'react';
-import debounce from 'lodash.debounce';
-import { getFromStorage, setStorage } from '@utils/storage';
 import Underline from '@tiptap/extension-underline';
-import { Note } from '@utils/types/Note';
+import { Editor, EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import { localStorage } from '@utils/storage';
+import debounce from 'lodash.debounce';
+import { useCallback, useEffect, useMemo } from 'react';
+import { MenuBar } from './MenuBar/MenuBar';
 import { paste } from './utils/pasteHandler';
 // eslint-disable-next-line @typescript-eslint/naming-convention
 Image.configure({ HTMLAttributes: { class: 'block mx-auto' } });
 
-const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
+const NoteEditor = () => {
+  const [currentNote, setCurrentNote] = useStorage('currentNote');
+
   const editor = useEditor({
     extensions: [StarterKit, Image, Link, Underline],
-    content: currentNote.noteContent,
+    content: currentNote?.noteContent,
     editorProps: {
       handleDOMEvents: {
         paste,
@@ -23,7 +25,7 @@ const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
     },
     onUpdate: ({ editor }) => debouncedEventHandler(editor),
     onCreate: ({ editor }) => {
-      getFromStorage('currentNote').then((note) => {
+      localStorage.get('currentNote').then((note) => {
         if (note) {
           editor.commands.setContent(note.noteContent);
         }
@@ -33,13 +35,15 @@ const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
 
   const saveNoteHandler = useCallback(
     (updatedEditor: Editor) => {
+      console.log('calling here');
       if (updatedEditor && currentNote) {
-        setStorage({
-          currentNote: { ...currentNote, noteContent: updatedEditor?.getJSON() },
+        setCurrentNote({
+          ...currentNote,
+          noteContent: updatedEditor?.getJSON(),
         });
       }
     },
-    [currentNote],
+    [currentNote, setCurrentNote],
   );
 
   const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), [saveNoteHandler]);
@@ -52,7 +56,7 @@ const NoteEditor = ({ currentNote }: { currentNote: Note }) => {
 
   return (
     <>
-      {editor && <MenuBar editor={editor} currentNote={currentNote} />}
+      {editor && <MenuBar editor={editor} />}
       <EditorContent editor={editor} />
     </>
   );

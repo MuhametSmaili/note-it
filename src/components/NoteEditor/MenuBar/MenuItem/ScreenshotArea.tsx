@@ -2,13 +2,13 @@ import { Button } from '@components/Elements';
 import { getCurrentTab } from '@utils/getCurrentTab';
 import { MessageRequest } from '@utils/types/MessageRequest';
 import Camera from '@icons/Camera.svg';
-import { getFromStorage } from '@utils/storage';
+import { localStorage } from '@utils/storage';
 
 export const ScreenshotArea = () => {
   const screenshotHandler = async () => {
-    const isWindow = await getFromStorage('windowType');
+    const isWindow = await localStorage.get('settings');
     const tab = await getCurrentTab();
-    if (isWindow && isWindow === 'popup') {
+    if (isWindow.windowType && isWindow.windowType === 'popup') {
       setTimeout(() => {
         window.close();
       }, 200);

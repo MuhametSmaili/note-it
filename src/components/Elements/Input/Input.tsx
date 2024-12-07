@@ -13,8 +13,8 @@ export const Input = (props: InputProps): JSX.Element => {
     <input
       defaultValue={value && value}
       className={clsx(
-        'bg-gray-light border border-transparent text-blue-prussian p-2 w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1',
-        'focus:outline-blue-prussian/50',
+        'bg-light border border-primary pl-2 h-[30px] w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1',
+        'focus:outline-primary',
         'focus:invalid:outline-red',
         'invalid:border-red',
         className,
