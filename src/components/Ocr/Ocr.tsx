@@ -1,12 +1,9 @@
 import { Button, SelectField, Spinner } from '@components/Elements';
 import { useStorage } from '@hooks/useStore';
-import AddCamera from '@icons/AddCamera.svg';
-import Upload from '@icons/Upload.svg';
 import PasteIcon from '@icons/PasteFromClipboard.svg';
 import { imageToText } from '@utils/image';
 import { tesseractLanguages } from '@utils/tesseractLanguage';
 import { useCallback, useState } from 'react';
-import { useDropzone } from 'react-dropzone';
 import { ImageDropzone } from './ImageDropzone';
 
 type StatusHandler = {
@@ -26,7 +23,6 @@ const Ocr = () => {
       if (allowedMimeTypes.includes(file.type)) setDroppedImage(file);
     });
   }, []);
-  const { open } = useDropzone({ onDrop });
 
   const convertToTextHandler = async () => {
     if (!droppedImage) return;
@@ -68,14 +64,14 @@ const Ocr = () => {
     <div className="relative flex flex-col h-full">
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-          <Button
-            variant="primary"
-            title="Upload Image"
-            disabled={status?.type === 'LOADING'}
-            className="py-0"
-            onClick={open}
-            icon={<AddCamera />}
-          />
+          {/* <Button */}
+          {/*   variant="primary" */}
+          {/*   title="Upload Image" */}
+          {/*   disabled={status?.type === 'LOADING'} */}
+          {/*   className="py-0" */}
+          {/*   onClick={open} */}
+          {/*   icon={<AddCamera />} */}
+          {/* /> */}
           <Button
             variant="primary"
             name="paste-from-clipboard"

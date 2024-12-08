@@ -1,7 +1,9 @@
+import AddCamera from '@icons/AddCamera.svg';
 import Upload from '@icons/Upload.svg';
 import Close from '@icons/X.svg';
 import clsx from 'clsx';
 import { useDropzone } from 'react-dropzone';
+
 type ImageDropzoneProps = {
   droppedImage: Blob | undefined;
   clearImage: () => void;
@@ -9,7 +11,7 @@ type ImageDropzoneProps = {
 };
 
 export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzoneProps) => {
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+  const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop,
     maxFiles: 1,
     noClick: true,
@@ -31,9 +33,16 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
             <input {...getInputProps()} />
             <div className="flex flex-col items-center justify-items-center">
               <Upload />
-              <h1 className="text-primary text-center text-xl flex items-center w-full">
-                {isDragActive ? ' Drop here...' : 'Upload an image or drag and drop it here'}
-              </h1>
+              <div className="text-primary text-center text-xl flex items-center w-full">
+                {isDragActive ? (
+                  ' Drop here...'
+                ) : (
+                  <span onClick={open} role="button" className="flex justify-center items-center">
+                    <AddCamera />
+                    Upload an image or drag and drop it here
+                  </span>
+                )}
+              </div>
             </div>
           </div>
         </div>
