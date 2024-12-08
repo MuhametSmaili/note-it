@@ -22,7 +22,7 @@ jobs:
       - name: Use NodeJS
         uses: actions/setup-node@v1
         with:
-          node-version: '18'
+          node-version: '20.8.1'
       - run: npm ci
       - run: npx lint-staged
       - run: npm run test
