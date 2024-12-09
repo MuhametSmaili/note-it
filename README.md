@@ -15,6 +15,7 @@ You can take notes, convert images to text, download notes to pdf, and more.**
     - ✅ Markdown support
 
 - 👀 Open the extension as a pop-up or re-sizable window.
+- 🎨 Three different themes: Light, dark & dim.
 - 📸 Take a screenshot of the active tab and:
 
     - ✂️ Copy the cropped image
