@@ -1,6 +1,5 @@
 import React from 'react';
 
-//@es-ignore
 enum Actions {
   TAB_HANDLER = 'TAB_HANDLER',
 }
@@ -15,7 +14,7 @@ interface Action {
 
 const ActiveTabStateContext = React.createContext<{ state: State; dispatch: Dispatch } | undefined>(undefined);
 
-function activeTabProvider(state: State, action: Action) {
+function activeTabProvider(_state: State, action: Action) {
   switch (action.type) {
     case 'TAB_HANDLER': {
       return { activeTab: action.payload };

@@ -1,5 +1,5 @@
-import { Screenshot } from 'src/contentScript/frameContent';
-import { Note } from './types/Note';
+import type { Screenshot } from 'src/contentScript/frameContent';
+import type { Note } from './types/Note';
 
 export type Theme = 'dark' | 'dim' | 'light';
 

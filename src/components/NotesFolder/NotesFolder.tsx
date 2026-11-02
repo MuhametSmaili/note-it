@@ -2,16 +2,18 @@ import { Button } from '@components/Elements';
 import { useStorage } from '@hooks/useStore';
 import StarIcon from '@icons/Star.svg';
 import { emptyNote } from '@utils/storage';
-import { ChangeEvent, useMemo, useState } from 'react';
+import type { ChangeEvent } from 'react';
+import { useMemo, useState } from 'react';
 import { useTab } from '../../provider/tabContext';
 import NoteContent from './Note/NoteContent';
 import { SearchNotes } from './SearchNotes';
-import { Filter, getFilteredNotes } from './utils/filterNotes';
+import type { Filter } from './utils/filterNotes';
+import { getFilteredNotes } from './utils/filterNotes';
 
 const NotesFolder = () => {
   const [filter, setFilter] = useState<Filter>({ showFavorites: false });
   const [notes, setNotes] = useStorage('notes');
-  const [_, setCurrentNote] = useStorage('currentNote');
+  const [, setCurrentNote] = useStorage('currentNote');
   const { dispatch } = useTab();
 
   const visibleNotes = useMemo(() => getFilteredNotes(filter, notes), [notes, filter]);

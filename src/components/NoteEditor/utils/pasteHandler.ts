@@ -1,24 +1,34 @@
-// Handle paste image into note editor
-export function paste(view: any, event: any) {
-  // USED when we paste image from clipboard
-  let hasFiles = false;
-  const reader = new FileReader();
-  reader.onload = function (event) {
-    const imageUrl = event?.target?.result;
-    const node = view.state.schema.nodes.image.create({ src: imageUrl });
-    const transaction = view.state.tr.replaceSelectionWith(node);
-    view.dispatch(transaction);
-  };
+import type { EditorView } from '@tiptap/pm/view';
+import { Fragment, Slice } from '@tiptap/pm/model';
 
-  Array.from(event?.clipboardData?.files)
-    .filter((item: any) => item.type.startsWith('image'))
-    .forEach((item: any) => {
-      reader.readAsDataURL(item);
-      hasFiles = true;
+function readImage(file: File): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener('load', () => {
+      if (typeof reader.result === 'string') {
+        resolve(reader.result);
+      } else {
+        reject(new Error('Could not read pasted image.'));
+      }
     });
+    reader.addEventListener('error', () => reject(new Error('Could not read pasted image.')));
+    reader.readAsDataURL(file);
+  });
+}
 
-  if (hasFiles) {
-    event.preventDefault();
-    return true;
-  }
+// Handle pasted images without intercepting text or other clipboard content.
+export function paste(view: EditorView, event: ClipboardEvent): boolean {
+  const images = Array.from(event.clipboardData?.files ?? []).filter((file) => file.type.startsWith('image/'));
+  if (images.length === 0) return false;
+
+  event.preventDefault();
+  Promise.all(images.map(readImage))
+    .then((sources) => {
+      if (view.isDestroyed) return;
+      const nodes = sources.map((src) => view.state.schema.nodes.image.create({ src }));
+      view.dispatch(view.state.tr.replaceSelection(new Slice(Fragment.fromArray(nodes), 0, 0)));
+    })
+    .catch((error: unknown) => console.error('Could not paste images:', error));
+
+  return true;
 }

@@ -1,4 +1,5 @@
-import React, { LazyExoticComponent } from 'react';
+import type { LazyExoticComponent } from 'react';
+import React from 'react';
 import { Spinner } from '../Spinner/Spinner';
 
 type TabContentProps = {

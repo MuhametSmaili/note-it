@@ -1,4 +1,4 @@
-import { Note } from '@utils/types/Note';
+import type { Note } from '@utils/types/Note';
 
 export type Filter = {
   showFavorites: boolean;

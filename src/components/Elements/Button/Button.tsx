@@ -1,4 +1,5 @@
-import { ButtonHTMLAttributes, forwardRef } from 'react';
+import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef } from 'react';
 import clsx from 'clsx';
 import { Spinner } from '@components/Elements';
 
@@ -27,6 +28,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   ) => {
     return (
       <button
+        type="button"
         ref={ref}
         className={clsx(
           'flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
@@ -40,7 +42,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         {...props}
       >
         {isLoading && <Spinner size="sm" className="text-current" />}
-        {icon && icon}
+        {icon}
         <span className="mx-2">{props.children || props.title}</span>
       </button>
     );

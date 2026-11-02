@@ -1,4 +1,4 @@
-import { SVGProps } from 'react';
+import type { SVGProps } from 'react';
 
 const Feather = ({ active, ...props }: SVGProps<SVGSVGElement> & { active?: boolean }) => {
   return (

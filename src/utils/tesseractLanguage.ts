@@ -1,4 +1,4 @@
-import { SelectOptionType } from '@components/Elements';
+import type { SelectOptionType } from '@components/Elements';
 
 export const tesseractLanguages: SelectOptionType[] = [
   { value: 'eng', label: 'English' },

@@ -1,4 +1,5 @@
-import { LocalSettings, LocalStorage, localStorage } from '@utils/storage';
+import type { LocalSettings, LocalStorage } from '@utils/storage';
+import { localStorage } from '@utils/storage';
 import React, { useSyncExternalStore } from 'react';
 
 const cache: Partial<LocalStorage> = {};

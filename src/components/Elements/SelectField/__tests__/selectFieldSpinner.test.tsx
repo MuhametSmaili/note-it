@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react';
-import { SelectOptionType, SelectValue } from '../SelectField';
+import type { SelectOptionType, SelectValue } from '../SelectField';
 import { SelectFieldSpinner } from '../SelectFieldSpinner';
 
 describe('SelectFieldSpinner', () => {

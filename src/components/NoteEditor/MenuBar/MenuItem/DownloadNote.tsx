@@ -1,4 +1,4 @@
-import { Editor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 import htmlToPdfMake from 'html-to-pdfmake';
 import * as pdfMake from 'pdfmake/build/pdfmake';
 import * as pdfFonts from 'pdfmake/build/vfs_fonts';
@@ -21,7 +21,7 @@ export const DownloadNote = ({ editor }: { editor: Editor }) => {
   };
 
   return (
-    <Button variant="inverse" size="sm" onClick={downloadHandler}>
+    <Button variant="inverse" size="sm" aria-label="Download note as PDF" onClick={downloadHandler}>
       <Download />
     </Button>
   );

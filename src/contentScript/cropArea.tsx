@@ -1,40 +1,41 @@
 import { useStorage } from '@hooks/useStore';
 import '@styles/tailwind.css';
-import { CropArea as CropAreaType } from '@utils/image';
+import type { CropArea as CropAreaType } from '@utils/image';
 import { rootRender } from '@utils/render';
 import { MessageRequest } from '@utils/types/MessageRequest';
-import React, { MouseEvent, useEffect, useState } from 'react';
+import type { MouseEvent } from 'react';
+import React, { useEffect, useState } from 'react';
+
+const onKeyUpHandler = (event: KeyboardEvent) => {
+  if (event.key === 'Escape') {
+    rootRender.unmount();
+  }
+};
 
 const CropArea: React.FC = () => {
   const [firstPoint, setFirstPoint] = useState<{ x: number; y: number }>();
   const [cropArea, setCropArea] = useState<CropAreaType>();
   const [screenshoted, setScreenshot] = useStorage('screenshot');
 
-  const onMouseUpHandler = (cropArea: CropAreaType) => {
-    if (cropArea && screenshoted?.capturedImage) {
+  const onMouseUpHandler = (selectedArea: CropAreaType) => {
+    if (selectedArea && screenshoted?.capturedImage) {
       try {
-        const screenshot = { capturedImage: screenshoted.capturedImage, cropArea };
+        const screenshot = { capturedImage: screenshoted.capturedImage, cropArea: selectedArea };
         setScreenshot(screenshot);
         chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
       } catch (e) {
-        console.log(e);
+        console.error(e);
       }
     }
     rootRender.unmount();
   };
 
   useEffect(() => {
-    document.addEventListener('keyup', onKeyUpHandler as any);
+    document.addEventListener('keyup', onKeyUpHandler);
     return () => {
-      document.removeEventListener('keyup', onKeyUpHandler as any);
+      document.removeEventListener('keyup', onKeyUpHandler);
     };
   }, []);
-
-  const onKeyUpHandler = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (event.key === 'Escape') {
-      rootRender.unmount();
-    }
-  };
 
   const onStartSelectingHandler = (event: MouseEvent) => {
     setFirstPoint({
@@ -56,6 +57,7 @@ const CropArea: React.FC = () => {
 
   return (
     <div
+      role="presentation"
       className="fixed left-0 top-0 w-full h-full z-[99999] cursor-custom select-none"
       onMouseDown={onStartSelectingHandler}
       onMouseMove={onMouseMoveHandler}

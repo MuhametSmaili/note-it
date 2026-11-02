@@ -1,9 +1,9 @@
 import { Button } from '@components/Elements';
 import { useStorage } from '@hooks/useStore';
 import Save from '@icons/Save.svg';
-import { Editor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 import { emptyNote } from '@utils/storage';
-import { Note } from '@utils/types/Note';
+import type { Note } from '@utils/types/Note';
 import { useTab } from '../../../../provider/tabContext';
 
 type SaveNoteProps = { editor: Editor };
@@ -13,7 +13,7 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
   const [notes, setNotes] = useStorage('notes');
   const [currentNote, setCurrentNote] = useStorage('currentNote');
 
-  const saveNoteHandler = async () => {
+  const saveNoteHandler = () => {
     if (editor.getText().trim() === '') {
       return;
     }
@@ -21,14 +21,15 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
     const title = editor.getText().split('\n')[0];
 
     if (currentNote && currentNote.id && notes) {
-      const findNoteIndex = notes.findIndex((note) => note.id === currentNote.id);
-      notes.splice(findNoteIndex, 1, {
+      const updatedNote = {
         ...currentNote,
         title,
         noteContent: editor.getJSON(),
-        updated: new Date(Date.now()).toLocaleDateString(),
-      });
-      setNotes(notes);
+        // This timestamp is evaluated only on click, never during render.
+        // oxlint-disable-next-line react/purity
+        updated: new Date().toLocaleDateString(),
+      };
+      setNotes(notes.map((note) => (note.id === currentNote.id ? updatedNote : note)));
       setCurrentNote(emptyNote);
       editor.commands.clearContent();
     } else {
@@ -38,28 +39,23 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
     dispatch({ type: 'TAB_HANDLER', payload: 1 }); // go to notes folder
   };
 
-  const createNewNoteHandler = (notes?: Note[]) => {
+  const createNewNoteHandler = (existingNotes: Note[] = []) => {
     const title = editor.getText().split('\n')[0];
     const newNote = {
       title,
-      id: Date.now() + (notes?.length || 0),
-      created: new Date(Date.now()).toLocaleDateString(),
+      id: Date.now() + existingNotes.length,
+      created: new Date().toLocaleDateString(),
       isFavorite: false,
       noteContent: editor.getJSON(),
     };
 
-    if (!notes) {
-      notes = [];
-    }
-    notes.push(newNote);
-
-    setNotes(notes);
+    setNotes([...existingNotes, newNote]);
     setCurrentNote(emptyNote);
     editor.commands.clearContent();
   };
 
   return (
-    <Button variant="inverse" size="sm" onClick={saveNoteHandler}>
+    <Button variant="inverse" size="sm" aria-label="Save note" onClick={saveNoteHandler}>
       <Save />
     </Button>
   );

@@ -14,8 +14,11 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      // eslint-disable-next-line @typescript-eslint/naming-convention
-      '@icons': path.resolve('/src/icons'),
+      '@components': path.resolve(__dirname, 'src/components'),
+      '@utils': path.resolve(__dirname, 'src/utils'),
+      '@styles': path.resolve(__dirname, 'src/styles'),
+      '@icons': path.resolve(__dirname, 'src/icons'),
+      '@hooks': path.resolve(__dirname, 'src/hooks'),
     },
   },
 });

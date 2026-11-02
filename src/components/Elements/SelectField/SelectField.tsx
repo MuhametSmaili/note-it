@@ -1,4 +1,5 @@
-import React, { SelectHTMLAttributes, useState } from 'react';
+import type { SelectHTMLAttributes } from 'react';
+import React, { useState } from 'react';
 import clsx from 'clsx';
 import { SelectFieldSpinner } from './SelectFieldSpinner';
 
@@ -39,8 +40,8 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
             }
           }}
         >
-          {options.map(({ label, value }) => (
-            <option key={label?.toString()} value={value} className="text-md">
+          {options.map(({ label, value: optionValue }) => (
+            <option key={label?.toString()} value={optionValue} className="text-md">
               {label}
             </option>
           ))}

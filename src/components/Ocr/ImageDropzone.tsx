@@ -22,10 +22,15 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
     <div className="m-5 ">
       {droppedImage ? (
         <div className="border border-primary p-1 relative mt-16">
-          <div className="absolute -top-6 -right-2 bg-primary rounded-md" onClick={clearImage} role="button">
+          <button
+            type="button"
+            aria-label="Remove uploaded image"
+            className="absolute -top-6 -right-2 bg-primary rounded-md"
+            onClick={clearImage}
+          >
             <Close />
-          </div>
-          <img src={URL.createObjectURL(droppedImage)} alt="dropped-image" loading="lazy" />
+          </button>
+          <img src={URL.createObjectURL(droppedImage)} alt="Uploaded document" loading="lazy" />
         </div>
       ) : (
         <div className="flex items-center justify-center border border-primary border-dashed min-h-40 h-2/5">
@@ -37,10 +42,10 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
                 {isDragActive ? (
                   ' Drop here...'
                 ) : (
-                  <span onClick={open} role="button" className="flex justify-center items-center">
+                  <button type="button" onClick={open} className="flex justify-center items-center">
                     <AddCamera />
                     Upload an image or drag and drop it here
-                  </span>
+                  </button>
                 )}
               </div>
             </div>

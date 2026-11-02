@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Editor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 import clsx from 'clsx';
 import { SelectFieldSpinner } from '@components/Elements';
 import H from '@icons/H.svg';
@@ -14,7 +14,9 @@ export const Heading = ({ editor }: { editor: Editor }) => {
         editor.isActive('heading', { level: value }) ? 'bg-gray-true' : '',
       )}
     >
-      <div
+      <button
+        type="button"
+        aria-label="Toggle heading"
         onClick={() =>
           editor
             .chain()
@@ -24,7 +26,7 @@ export const Heading = ({ editor }: { editor: Editor }) => {
         }
       >
         <H />
-      </div>
+      </button>
       <SelectFieldSpinner
         active={editor.isActive('heading', { level: value })}
         showIndex={true}

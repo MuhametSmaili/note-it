@@ -1,0 +1,6 @@
+/node_modules/
+/build/
+/coverage/
+/src/static/libraries/
+*.svg
+*.tsbuildinfo

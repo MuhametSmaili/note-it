@@ -6,13 +6,13 @@ import Close from '@icons/X.svg';
 import CameraRetake from '@icons/CameraRetake.svg';
 import { localStorage } from '@utils/storage';
 
-const FrameScript = () => {
-  const handleClose = () => {
-    document.getElementById(`OCRFrame`)?.remove();
-    localStorage.remove('screenshot');
-    rootRender.unmount();
-  };
+const handleClose = () => {
+  document.getElementById('OCRFrame')?.remove();
+  localStorage.remove('screenshot');
+  rootRender.unmount();
+};
 
+const FrameScript = () => {
   const onRetakeImageHandler = async () => {
     handleClose();
     setTimeout(() => {
@@ -28,14 +28,17 @@ const FrameScript = () => {
         className="flex items-center justify-center z-[1]"
         style={{ position: 'absolute', right: '25px', top: '25px' }}
       >
-        <div className="mr-2" onClick={onRetakeImageHandler} role="button">
+        <button type="button" aria-label="Retake screenshot" className="mr-2" onClick={onRetakeImageHandler}>
           <CameraRetake />
-        </div>
-        <div onClick={handleClose} role="button">
+        </button>
+        <button type="button" aria-label="Close screenshot" onClick={handleClose}>
           <Close />
-        </div>
+        </button>
       </div>
+      {/* This trusted extension page needs its origin and Chrome APIs, which sandboxing would remove. */}
+      {/* oxlint-disable-next-line react/iframe-missing-sandbox */}
       <iframe
+        title="Screenshot preview and OCR"
         allow="clipboard-write;"
         referrerPolicy="same-origin"
         id={`OCRFrame`}

@@ -1,10 +1,11 @@
 import { Button, SelectField, Spinner } from '@components/Elements';
 import '@styles/tailwind.css';
-import { blobToBase64, copyBlobToClipboard, CropArea, imageToBlob, imageToText } from '@utils/image';
+import type { CropArea } from '@utils/image';
+import { blobToBase64, copyBlobToClipboard, imageToBlob, imageToText } from '@utils/image';
 import { rootRender } from '@utils/render';
 import { localStorage } from '@utils/storage';
 import { tesseractLanguages } from '@utils/tesseractLanguage';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 export type Screenshot = {
   capturedImage: string;
@@ -22,21 +23,20 @@ const FrameContent: React.FC = () => {
   const [imageSrc, setImageSrc] = useState<string>();
   const [language, setLanguage] = useState('eng');
 
-  const handleImageToText = useCallback(async () => {
-    const res = await localStorage.get('screenshot');
-    if (!res) return;
-    const imageBlob = await imageToBlob(res.capturedImage, res.cropArea);
-    const bs64 = await blobToBase64(imageBlob);
-    setImageSrc(bs64 as string);
-    setScreenshot(res);
-  }, []);
-
   useEffect(() => {
+    const handleImageToText = async () => {
+      const res = await localStorage.get('screenshot');
+      if (!res) return;
+      const imageBlob = await imageToBlob(res.capturedImage, res.cropArea);
+      const bs64 = await blobToBase64(imageBlob);
+      setImageSrc(bs64 as string);
+      setScreenshot(res);
+    };
     handleImageToText();
     return () => {
       localStorage.remove('screenshot');
     };
-  }, [handleImageToText]);
+  }, []);
 
   const imageToTextHandler = async () => {
     if (!imageSrc) return;
@@ -79,7 +79,7 @@ const FrameContent: React.FC = () => {
         anchor.click();
         document.body.removeChild(anchor);
       }
-    } catch (_) {
+    } catch {
       setStatus({ type: 'ERROR', message: '❌ There was an error try again' });
       processDoneHandler();
     }
@@ -90,7 +90,7 @@ const FrameContent: React.FC = () => {
       <h3 className="text-xl font-bold">Image cropped</h3>
       <div className="flex flex-row content-between pt-1">
         <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
-          <img src={imageSrc} className="object-cover" alt="cropped-image" />
+          <img src={imageSrc} className="object-cover" alt="Selected screenshot area" />
         </div>
         <div className="flex w-1/3 flex-col pt-7">
           <SelectField

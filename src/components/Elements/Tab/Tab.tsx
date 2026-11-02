@@ -8,6 +8,7 @@ type TabProps = {
 };
 const Tab = ({ isActive = false, onClickHandler, children, className }: TabProps) => (
   <button
+    type="button"
     className={clsx(
       'p-1 my-2 hover:cursor-pointer',
       'w-full flex justify-center transition-[margin]',

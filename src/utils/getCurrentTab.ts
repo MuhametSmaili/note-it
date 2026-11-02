@@ -3,7 +3,7 @@ import { localStorage } from './storage';
 export async function getCurrentTab() {
   const isPopup = await localStorage.get('settings');
   const activatedTabs = await localStorage.get('activeWindow');
-  const queryOptions: any = {
+  const queryOptions: chrome.tabs.QueryInfo = {
     active: true,
     windowType: 'normal',
     url: 'https://*/*',

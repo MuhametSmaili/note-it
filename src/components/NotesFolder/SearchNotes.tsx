@@ -1,4 +1,4 @@
-import { ChangeEvent } from 'react';
+import type { ChangeEvent } from 'react';
 import { Input } from '@components/Elements';
 // icons
 import Search from '@icons/Search.svg';

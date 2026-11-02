@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { SVGProps } from 'react';
+import type { SVGProps } from 'react';
 
 const OcrIcon = ({ active, ...props }: SVGProps<SVGSVGElement> & { active: boolean }) => (
   <svg data-name="Layer 1" xmlns="http://www.w3.org/2000/svg" width={23.8} height={23.8} {...props}>

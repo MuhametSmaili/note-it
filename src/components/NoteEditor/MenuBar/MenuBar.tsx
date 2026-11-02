@@ -1,5 +1,5 @@
 import { Button } from '@components/Elements';
-import { Editor } from '@tiptap/react';
+import type { Editor } from '@tiptap/react';
 // Menu items
 import { DownloadNote } from './MenuItem/DownloadNote';
 import { Heading } from './MenuItem/Heading';

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { EditorContent, useEditor } from '@tiptap/react';
-import { Note } from '@utils/types/Note';
+import type { Note } from '@utils/types/Note';
 import { ConfirmNoteDeletion } from './ConfirmNoteDeletion';
 import NoteHeader, { SingleNoteFooter } from './NoteHeader';
 // Note editor extensions

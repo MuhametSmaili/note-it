@@ -1,0 +1,34 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "vitest", "import"],
+  "categories": {
+    "correctness": "error",
+    "suspicious": "error"
+  },
+  "env": {
+    "browser": true,
+    "webextensions": true,
+    "node": false
+  },
+  "ignorePatterns": ["node_modules/**", "build/**", "coverage/**", "src/static/libraries/**"],
+  "rules": {
+    "eqeqeq": ["error", "always"],
+    "no-debugger": "error",
+    "no-console": ["error", { "allow": ["warn", "error"] }],
+    "prefer-const": "error",
+    "react/react-in-jsx-scope": "off",
+    "import/no-unassigned-import": "off",
+    "import/no-named-as-default": "off",
+    "react/rules-of-hooks": "error",
+    "react/button-has-type": "error",
+    "typescript/no-explicit-any": "error",
+    "typescript/no-non-null-assertion": "error",
+    "typescript/consistent-type-imports": "error"
+  },
+  "overrides": [
+    {
+      "files": ["*.config.{js,ts}", "webpack/**/*.js"],
+      "env": { "node": true, "browser": false, "webextensions": false }
+    }
+  ]
+}

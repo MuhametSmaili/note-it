@@ -1,4 +1,5 @@
-import Tesseract, { ImageLike } from 'tesseract.js';
+import type { ImageLike } from 'tesseract.js';
+import Tesseract from 'tesseract.js';
 
 export type CropArea = { x: number; y: number; width: number; height: number };
 
@@ -19,10 +20,9 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
   const ctx = canvas.getContext('2d');
 
   img.crossOrigin = '';
-  img.src = imageURL;
 
   return new Promise((resolve, reject) => {
-    img.onload = function () {
+    img.addEventListener('load', () => {
       canvas.width = width;
       canvas.height = height;
       ctx?.drawImage(img, left, top, width, height, 0, 0, width, height);
@@ -38,11 +38,12 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
         'image/png',
         0.95,
       );
-    };
+    });
 
-    img.onerror = function () {
+    img.addEventListener('error', () => {
       reject(new Error('Could not load image at ' + imageURL));
-    };
+    });
+    img.src = imageURL;
   });
 }
 
@@ -64,7 +65,7 @@ export async function copyBlobToClipboard(imageBlob: Blob) {
  * @returns base64 image
  */
 export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
-  return new Promise((resolve, _) => {
+  return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onloadend = () => resolve(reader.result);
     return reader.readAsDataURL(blob);

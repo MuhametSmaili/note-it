@@ -1,4 +1,4 @@
-import { Note } from '@utils/types/Note';
+import type { Note } from '@utils/types/Note';
 import { useState } from 'react';
 import { useTab } from '../../../provider/tabContext';
 // Icons
@@ -13,7 +13,7 @@ type NoteHeaderProps = {
 
 const NoteHeader = ({ note }: NoteHeaderProps) => {
   const { dispatch } = useTab();
-  const [_, setCurrentNote] = useStorage('currentNote');
+  const [, setCurrentNote] = useStorage('currentNote');
 
   const setCurrentNoteHandler = () => {
     setCurrentNote(note);
@@ -23,6 +23,7 @@ const NoteHeader = ({ note }: NoteHeaderProps) => {
   return (
     <div className="flex items border-b mx-2 py-2 border-primary">
       <button
+        type="button"
         aria-label="select-note"
         className="text-md text-primary font-medium hover:cursor-pointer hover:scale-90"
         onClick={setCurrentNoteHandler}
@@ -59,13 +60,19 @@ export function SingleNoteFooter({ note, onDeleteNote }: SingleNoteFooterProps) 
       <div>{note.created || note.updated || 'no-date'}</div>
       <div className="flex">
         <button
+          type="button"
           aria-label="make-note-favorite"
           className={clsx('hover:cursor-pointer hover:scale-90 hover:rotate-12')}
           onClick={onFavoriteToggleHandler}
         >
           <StarIcon fill={favorite ? '#19A1E5' : 'transparent'} />
         </button>
-        <button aria-label="delete-note" className="hover:cursor-pointer mr-1 hover:scale-90" onClick={onDeleteNote}>
+        <button
+          type="button"
+          aria-label="delete-note"
+          className="hover:cursor-pointer mr-1 hover:scale-90"
+          onClick={onDeleteNote}
+        >
           <DeleteIcon />
         </button>
       </div>
