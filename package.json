@@ -6,10 +6,11 @@
     "node": "^24.15.0 || >=26.0.0"
   },
   "scripts": {
-    "start": "webpack --watch --progress --config ./webpack/webpack.dev.js",
-    "build": "NODE_ENV=production webpack --progress --config ./webpack/webpack.prod.js",
+    "start": "node scripts/build.mts --watch",
+    "build": "npm run typecheck && node scripts/build.mts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:extension": "npm run build && playwright test",
     "coverage": "vitest run --coverage",
     "update:deps": "npx npm-check-updates --interactive --format group",
     "format": "prettier --write .",
@@ -46,7 +47,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
-    "@svgr/webpack": "8.1.0",
+    "@playwright/test": "1.65.0",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
@@ -59,22 +60,15 @@
     "@types/react-dom": "19.3.0",
     "@vitest/coverage-v8": "5.1.0",
     "autoprefixer": "10.6.2",
-    "copy-webpack-plugin": "14.0.0",
-    "css-loader": "7.1.5",
-    "html-webpack-plugin": "5.6.8",
     "husky": "9.1.7",
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
     "oxlint": "1.93.0",
-    "postcss-loader": "8.2.1",
     "prettier": "3.10.1",
-    "style-loader": "4.0.0",
     "tailwindcss": "3.4.19",
-    "ts-loader": "9.6.2",
-    "typescript": "^5.9.3",
+    "typescript": "7.0.2",
     "vite": "8.3.8",
-    "vitest": "5.1.0",
-    "webpack": "5.112.2",
-    "webpack-cli": "7.3.1"
+    "vite-plugin-svgr": "5.2.0",
+    "vitest": "5.1.0"
   }
 }

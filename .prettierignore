@@ -2,6 +2,7 @@
 /build/
 /coverage/
 /.vitest/
+/.playwright/
 /src/static/libraries/
 *.svg
 *.tsbuildinfo

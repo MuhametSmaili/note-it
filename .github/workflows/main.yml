@@ -27,5 +27,8 @@ jobs:
         env:
           CI: true
 
-      - name: Build project
-        run: npm run build
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Build and smoke-test extension
+        run: npm run test:extension

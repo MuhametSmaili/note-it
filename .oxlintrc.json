@@ -10,7 +10,14 @@
     "webextensions": true,
     "node": false
   },
-  "ignorePatterns": ["node_modules/**", "build/**", "coverage/**", ".vitest/**", "src/static/libraries/**"],
+  "ignorePatterns": [
+    "node_modules/**",
+    "build/**",
+    "coverage/**",
+    ".vitest/**",
+    ".playwright/**",
+    "src/static/libraries/**"
+  ],
   "rules": {
     "eqeqeq": ["error", "always"],
     "no-debugger": "error",
@@ -27,7 +34,7 @@
   },
   "overrides": [
     {
-      "files": ["*.config.{js,ts,mts}", "webpack/**/*.js"],
+      "files": ["*.config.{js,ts,mts}", "scripts/**/*.mts"],
       "env": { "node": true, "browser": false, "webextensions": false }
     }
   ]

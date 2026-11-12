@@ -1,0 +1,23 @@
+import { rm } from 'node:fs/promises';
+import { build } from 'vite';
+import pages, { scriptConfig } from '../vite.config.mts';
+
+const watch = process.argv.includes('--watch');
+
+// Clean once: all four builds share this directory, including in watch mode.
+await rm(new URL('../build', import.meta.url), { recursive: true, force: true });
+
+for (const config of [pages, scriptConfig('background'), scriptConfig('cropArea'), scriptConfig('frameScript')]) {
+  await build({
+    ...config,
+    configFile: false,
+    mode: watch ? 'development' : 'production',
+    define: { 'process.env.NODE_ENV': JSON.stringify(watch ? 'development' : 'production') },
+    build: {
+      ...config.build,
+      watch: watch ? {} : null,
+      sourcemap: watch,
+      minify: watch ? false : undefined,
+    },
+  });
+}

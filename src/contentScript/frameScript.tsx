@@ -1,6 +1,6 @@
 import { rootRender } from '@utils/render';
 import { MessageRequest } from '@utils/types/MessageRequest';
-import '@styles/tailwind.css';
+import './styles';
 // ICONS
 import Close from '@icons/X.svg';
 import CameraRetake from '@icons/CameraRetake.svg';

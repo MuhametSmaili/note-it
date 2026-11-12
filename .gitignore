@@ -8,6 +8,7 @@
 # testing
 /coverage
 /.vitest
+/.playwright
 
 # production
 /build

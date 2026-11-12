@@ -1,5 +1,5 @@
 import { useStorage } from '@hooks/useStore';
-import '@styles/tailwind.css';
+import './styles';
 import type { CropArea as CropAreaType } from '@utils/image';
 import { rootRender } from '@utils/render';
 import { MessageRequest } from '@utils/types/MessageRequest';
