@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import { Editor } from '@tiptap/react';
+import Image from '@tiptap/extension-image';
 import StarterKit from '@tiptap/starter-kit';
 import type { Note } from '@utils/types/Note';
 import { SaveNote } from '../SaveNote';
@@ -36,7 +37,7 @@ beforeEach(() => {
   storage.getCurrentNote.mockReturnValue(note);
   Object.freeze(storage.notes);
   Object.freeze(note);
-  editor = new Editor({ extensions: [StarterKit], content: '<p>Updated content</p>' });
+  editor = new Editor({ extensions: [StarterKit, Image], content: '<p>Updated content</p>' });
 });
 
 afterEach(() => {
@@ -84,5 +85,34 @@ describe('saving notes', () => {
 
     expect(storage.setNotes).not.toHaveBeenCalled();
     expect(storage.dispatch).not.toHaveBeenCalled();
+  });
+
+  it('does not save or clear a whitespace-only note', () => {
+    editor.commands.setContent('<p>   </p><p> </p>');
+    const content = editor.getJSON();
+    render(<SaveNote editor={editor} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+
+    expect(storage.setNotes).not.toHaveBeenCalled();
+    expect(storage.setCurrentNote).not.toHaveBeenCalled();
+    expect(storage.dispatch).not.toHaveBeenCalled();
+    expect(editor.getJSON()).toEqual(content);
+  });
+
+  it.each(['new', 'existing'])('saves an image-only %s note with a readable title', (kind) => {
+    if (kind === 'new') storage.getCurrentNote.mockReturnValue(undefined);
+    editor.commands.clearContent();
+    editor.commands.setImage({ src: 'data:image/png;base64,aW1hZ2U=' });
+    const content = editor.getJSON();
+    expect(editor.getText().trim()).toBe('');
+    render(<SaveNote editor={editor} />);
+    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+
+    const savedNote = expect.objectContaining({ title: 'Image note', noteContent: content });
+    expect(storage.setNotes).toHaveBeenCalledWith(kind === 'new' ? [storage.notes[0], savedNote] : [savedNote]);
+    expect(storage.notes[0].title).toBe('Original');
+    expect(editor.isEmpty).toBe(true);
+    expect(storage.setCurrentNote).toHaveBeenCalled();
+    expect(storage.dispatch).toHaveBeenCalledWith({ type: 'TAB_HANDLER', payload: 1 });
   });
 });

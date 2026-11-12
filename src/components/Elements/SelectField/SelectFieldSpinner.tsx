@@ -1,3 +1,4 @@
+import type { JSX } from 'react';
 import type { SelectOptionType, SelectValue } from './SelectField';
 import ArrowUp from '@icons/ArrowUp';
 import ArrowDown from '@icons/ArrowDown';

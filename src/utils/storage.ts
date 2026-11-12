@@ -1,4 +1,4 @@
-import type { Screenshot } from 'src/contentScript/frameContent';
+import type { Screenshot } from '../contentScript/frameContent';
 import type { Note } from './types/Note';
 
 export type Theme = 'dark' | 'dim' | 'light';

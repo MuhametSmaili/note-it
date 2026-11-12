@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react';
+import type { ButtonHTMLAttributes, JSX } from 'react';
 import { forwardRef } from 'react';
 import clsx from 'clsx';
 import { Spinner } from '@components/Elements';

@@ -51,7 +51,9 @@ chrome.action.onClicked.addListener(async function () {
             height: 600,
             width: 800,
           })
-          .then((currentWindow) => (chromeWindowId = Number(currentWindow.id))),
+          .then((currentWindow) => {
+            chromeWindowId = currentWindow?.id ?? -1;
+          }),
       );
   } else {
     chrome.action.setPopup({ popup: 'popup.html' });

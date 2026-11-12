@@ -1,7 +1,6 @@
 const path = require('path');
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
 const tailwindcss = require('tailwindcss');
 const autoprefixer = require('autoprefixer');
 
@@ -65,9 +64,6 @@ module.exports = {
     },
   },
   plugins: [
-    new CleanWebpackPlugin({
-      cleanStaleWebpackAssets: false,
-    }),
     new CopyPlugin({
       patterns: [
         {
@@ -79,6 +75,7 @@ module.exports = {
     ...getHtmlPlugins(['popup', ...scripts]),
   ],
   output: {
+    clean: true,
     filename: '[name].js',
     path: path.resolve('build'),
   },

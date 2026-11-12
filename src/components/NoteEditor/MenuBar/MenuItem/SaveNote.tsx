@@ -14,11 +14,17 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
   const [currentNote, setCurrentNote] = useStorage('currentNote');
 
   const saveNoteHandler = () => {
-    if (editor.getText().trim() === '') {
-      return;
+    const text = editor.getText().trim();
+    if (text === '') {
+      let hasImage = false;
+      editor.state.doc.descendants((node) => {
+        if (node.type.name === 'image') hasImage = true;
+        return !hasImage;
+      });
+      if (!hasImage) return;
     }
 
-    const title = editor.getText().split('\n')[0];
+    const title = text.split('\n')[0] || 'Image note';
 
     if (currentNote && currentNote.id && notes) {
       const updatedNote = {
@@ -34,13 +40,12 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
       editor.commands.clearContent();
     } else {
       // create new note
-      createNewNoteHandler(notes);
+      createNewNoteHandler(title, notes);
     }
     dispatch({ type: 'TAB_HANDLER', payload: 1 }); // go to notes folder
   };
 
-  const createNewNoteHandler = (existingNotes: Note[] = []) => {
-    const title = editor.getText().split('\n')[0];
+  const createNewNoteHandler = (title: string, existingNotes: Note[] = []) => {
     const newNote = {
       title,
       id: Date.now() + existingNotes.length,

@@ -11,12 +11,11 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "module": "esnext",
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "resolveJsonModule": true,
     "isolatedModules": false,
     "jsx": "react-jsx",
     "incremental": true,
-    "baseUrl": ".",
     "types": ["vitest/globals", "chrome"],
     "paths": {
       "@components/*": ["./src/components/*"],
@@ -26,6 +25,6 @@
       "@hooks/*": ["./src/hooks/*"]
     }
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.mts"],
   "exclude": ["node_modules", "build"]
 }

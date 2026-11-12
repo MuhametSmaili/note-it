@@ -28,16 +28,18 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
     <>
       <div className="flex flex-row items-center text-primary">
         {/* <Input name="name" placeholder="Note name" value={title} onChange={(e) => setTitle(e.target.value)} required /> */}
-        <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
+        <Button aria-label="Undo" variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
         </Button>
-        <Button variant="inverse" size="sm" onClick={() => editor.chain().focus().redo().run()}>
+        <Button aria-label="Redo" variant="inverse" size="sm" onClick={() => editor.chain().focus().redo().run()}>
           <Redo />
         </Button>
         <Button
           variant="inverse"
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
+          aria-label="Bold"
+          aria-pressed={editor.isActive('bold')}
           active={editor.isActive('bold')}
         >
           <Bold />
@@ -46,6 +48,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           variant="inverse"
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
+          aria-label="Italic"
+          aria-pressed={editor.isActive('italic')}
           active={editor.isActive('italic')}
         >
           <Italic />
@@ -54,6 +58,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           variant="inverse"
           size="sm"
           onClick={() => editor.commands.toggleUnderline()}
+          aria-label="Underline"
+          aria-pressed={editor.isActive('underline')}
           active={editor.isActive('underline')}
         >
           <Underline />
@@ -63,6 +69,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           variant="inverse"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
+          aria-label="Bullet list"
+          aria-pressed={editor.isActive('bulletList')}
           active={editor.isActive('bulletList')}
         >
           <BulletPoints />
@@ -71,6 +79,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           variant="inverse"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
+          aria-label="Blockquote"
+          aria-pressed={editor.isActive('blockquote')}
           active={editor.isActive('blockquote')}
         >
           <Quote />
@@ -79,12 +89,15 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           variant="inverse"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
+          aria-label="Code block"
+          aria-pressed={editor.isActive('codeBlock')}
           active={editor.isActive('codeBlock')}
         >
           <CodeArrows />
         </Button>
         <Button
           onClick={() => editor.chain().focus().unsetAllMarks().run()}
+          aria-label="Clear formatting"
           size="sm"
           variant="inverse"
           className="border-r-primary"
@@ -96,7 +109,13 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           <NoteIt />
         </div>
         <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
-        <Button onClick={() => alert('implement')} size="sm" variant="inverse" className="border-r-primary">
+        <Button
+          aria-label="Delete note"
+          onClick={() => alert('implement')}
+          size="sm"
+          variant="inverse"
+          className="border-r-primary"
+        >
           <DeleteIcon />
         </Button>
 
