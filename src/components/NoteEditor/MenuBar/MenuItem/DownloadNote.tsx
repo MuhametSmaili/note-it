@@ -19,7 +19,14 @@ export const DownloadNote = ({ editor }: { editor: Editor }) => {
   };
 
   return (
-    <Button variant="inverse" size="sm" aria-label="Download note as PDF" onClick={downloadHandler}>
+    <Button
+      variant="inverse"
+      size="sm"
+      aria-label="Download note as PDF"
+      onClick={() => {
+        downloadHandler().catch((error: unknown) => console.error('Cannot download PDF:', error));
+      }}
+    >
       <Download />
     </Button>
   );

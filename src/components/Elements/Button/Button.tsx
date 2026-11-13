@@ -1,7 +1,7 @@
 import type { ButtonHTMLAttributes, JSX } from 'react';
 import { forwardRef } from 'react';
 import clsx from 'clsx';
-import { Spinner } from '@components/Elements';
+import { Spinner } from '../Spinner/Spinner';
 
 const variants = {
   primary: 'bg-light border border-primary text-secondary',

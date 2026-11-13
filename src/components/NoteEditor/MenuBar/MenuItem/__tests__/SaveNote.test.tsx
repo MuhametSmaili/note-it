@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Editor } from '@tiptap/react';
 import Image from '@tiptap/extension-image';
 import StarterKit from '@tiptap/starter-kit';
@@ -11,8 +11,8 @@ const storage = vi.hoisted(() => {
   return {
     notes,
     getCurrentNote: vi.fn<() => Note | undefined>(),
-    setNotes: vi.fn<(notes: Note[]) => void>(),
-    setCurrentNote: vi.fn<(note: Note) => void>(),
+    setNotes: vi.fn<(notes: Note[]) => Promise<void>>(),
+    setCurrentNote: vi.fn<(note: Note) => Promise<void>>(),
     dispatch: vi.fn<(action: { type: string; payload: number }) => void>(),
   };
 });
@@ -33,6 +33,8 @@ let editor: Editor;
 
 beforeEach(() => {
   vi.clearAllMocks();
+  storage.setNotes.mockResolvedValue(undefined);
+  storage.setCurrentNote.mockResolvedValue(undefined);
   const note: Note = { id: 1, title: 'Original', isFavorite: false, noteContent: '<p>Original</p>' };
   storage.notes = [note];
   storage.getCurrentNote.mockReturnValue(note);
@@ -43,9 +45,26 @@ beforeEach(() => {
 
 afterEach(() => {
   editor.destroy();
+  vi.restoreAllMocks();
 });
 
 describe('saving notes', () => {
+  it('keeps the draft and editor when persistence fails', async () => {
+    const failure = new Error('Storage quota exceeded');
+    storage.setNotes.mockRejectedValue(failure);
+    const report = vi.spyOn(console, 'error').mockImplementation(() => {});
+    render(<SaveNote editor={editor} />);
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    });
+
+    expect(editor.getText()).toBe('Updated content');
+    expect(storage.setCurrentNote).not.toHaveBeenCalled();
+    expect(storage.dispatch).not.toHaveBeenCalled();
+    expect(report).toHaveBeenCalledWith('Cannot save note:', failure);
+  });
+
   it('preserves stored rich-text JSON when saving again', () => {
     editor.commands.setContent(richNote.noteContent);
     render(<SaveNote editor={editor} />);
@@ -53,7 +72,7 @@ describe('saving notes', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
 
     expect(storage.setNotes).toHaveBeenCalledOnce();
-    expect(storage.setNotes.mock.calls[0][0]).toMatchObject([{ id: 1, noteContent: richNote.noteContent }]);
+    expect(storage.setNotes.mock.calls[0]?.[0]).toMatchObject([{ id: 1, noteContent: richNote.noteContent }]);
   });
 
   it('does not save or clear the editor during render', () => {
@@ -64,13 +83,15 @@ describe('saving notes', () => {
     expect(editor.getText()).toBe('Updated content');
   });
 
-  it('updates an existing note without mutating the storage snapshot', () => {
+  it('updates an existing note without mutating the storage snapshot', async () => {
     const onUpdate = vi.fn<() => void>();
     editor.on('update', onUpdate);
     render(<SaveNote editor={editor} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    });
 
-    expect(storage.notes[0].title).toBe('Original');
+    expect(storage.notes[0]?.title).toBe('Original');
     expect(storage.setNotes).toHaveBeenCalledWith([
       expect.objectContaining({ id: 1, title: 'Updated content', updated: expect.any(String) }),
     ]);
@@ -79,12 +100,14 @@ describe('saving notes', () => {
     expect(storage.dispatch).toHaveBeenCalledWith({ type: 'TAB_HANDLER', payload: 1 });
   });
 
-  it('appends a new note without mutating the storage snapshot', () => {
+  it('appends a new note without mutating the storage snapshot', async () => {
     const onUpdate = vi.fn<() => void>();
     editor.on('update', onUpdate);
     storage.getCurrentNote.mockReturnValue(undefined);
     render(<SaveNote editor={editor} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    });
 
     expect(storage.notes).toHaveLength(1);
     expect(storage.setNotes).toHaveBeenCalledWith([
@@ -116,18 +139,20 @@ describe('saving notes', () => {
     expect(editor.getJSON()).toEqual(content);
   });
 
-  it.each(['new', 'existing'])('saves an image-only %s note with a readable title', (kind) => {
+  it.each(['new', 'existing'])('saves an image-only %s note with a readable title', async (kind) => {
     if (kind === 'new') storage.getCurrentNote.mockReturnValue(undefined);
     editor.commands.clearContent();
     editor.commands.setImage({ src: 'data:image/png;base64,aW1hZ2U=' });
     const content = editor.getJSON();
     expect(editor.getText().trim()).toBe('');
     render(<SaveNote editor={editor} />);
-    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    await act(async () => {
+      fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+    });
 
     const savedNote = expect.objectContaining({ title: 'Image note', noteContent: content });
     expect(storage.setNotes).toHaveBeenCalledWith(kind === 'new' ? [storage.notes[0], savedNote] : [savedNote]);
-    expect(storage.notes[0].title).toBe('Original');
+    expect(storage.notes[0]?.title).toBe('Original');
     expect(editor.isEmpty).toBe(true);
     expect(storage.setCurrentNote).toHaveBeenCalled();
     expect(storage.dispatch).toHaveBeenCalledWith({ type: 'TAB_HANDLER', payload: 1 });

@@ -12,8 +12,11 @@ export async function getCurrentTab() {
   if (isPopup.windowType && isPopup.windowType === 'popup') {
     queryOptions.currentWindow = true;
   } else {
-    if (activatedTabs) {
-      queryOptions.windowId = activatedTabs[1].windowId;
+    const previousWindow = activatedTabs?.[1];
+    if (previousWindow) {
+      queryOptions.windowId = previousWindow.windowId;
+    } else {
+      queryOptions.lastFocusedWindow = true;
     }
   }
 

@@ -7,7 +7,7 @@ const require = createRequire(import.meta.url);
 
 it('packages the pinned OCR worker, LSTM hardware cores, and licenses', async () => {
   const libraries = new URL('../../build/libraries/', import.meta.url);
-  const sources = [
+  const sources: Array<[string, string]> = [
     ['worker.min.js', 'tesseract.js/dist/worker.min.js'],
     ['tesseract-core-lstm.wasm.js', 'tesseract.js-core/tesseract-core-lstm.wasm.js'],
     ['tesseract-core-simd-lstm.wasm.js', 'tesseract.js-core/tesseract-core-simd-lstm.wasm.js'],

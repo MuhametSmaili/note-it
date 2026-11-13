@@ -26,6 +26,7 @@ vi.mock('../MenuBar/MenuBar', () => ({
 
 beforeEach(() => {
   vi.clearAllMocks();
+  storage.setCurrentNote.mockResolvedValue(undefined);
 });
 
 it('loads and autosaves editor changes under React StrictMode', async () => {
@@ -48,7 +49,7 @@ it('loads and autosaves editor changes under React StrictMode', async () => {
       ),
     { timeout: 2000 },
   );
-  expect(JSON.stringify(storage.setCurrentNote.mock.calls[0][0].noteContent)).toContain('Added content');
+  expect(JSON.stringify(storage.setCurrentNote.mock.calls[0]?.[0].noteContent)).toContain('Added content');
 });
 
 it('cancels pending autosave when the editor unmounts', async () => {

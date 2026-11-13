@@ -70,7 +70,12 @@ const Ocr = () => {
             disabled={windowType && windowType === 'popup'}
             title="Paste image from clipboard"
             className="py-0"
-            onClick={pasteFromClipBoardHandler}
+            onClick={() => {
+              pasteFromClipBoardHandler().catch((error: unknown) => {
+                console.error('Cannot read clipboard:', error);
+                setStatus({ type: 'ERROR', message: 'Cannot read clipboard' });
+              });
+            }}
             icon={<PasteIcon />}
           />
           <SelectField
@@ -83,7 +88,12 @@ const Ocr = () => {
           variant="primary"
           title="Convert"
           disabled={status?.type === 'LOADING'}
-          onClick={convertToTextHandler}
+          onClick={() => {
+            convertToTextHandler().catch((error: unknown) => {
+              console.error('Cannot convert image:', error);
+              setStatus({ type: 'ERROR', message: 'Cannot convert image' });
+            });
+          }}
         />
       </div>
       <div className="block relative border-b border-primary w-full my-2" />

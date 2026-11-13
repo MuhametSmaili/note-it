@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "vitest", "import"],
+  "options": { "typeAware": true },
   "categories": {
     "correctness": "error",
     "suspicious": "error"
@@ -19,13 +20,51 @@
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": "off",
     "import/no-named-as-default": "off",
+    "import/no-cycle": "error",
     "react/rules-of-hooks": "error",
+    "react/exhaustive-deps": "error",
+    "react/error-boundaries": "error",
+    "react/globals": "error",
+    "react/immutability": "error",
+    "react/incompatible-library": "error",
+    "react/preserve-manual-memoization": "error",
+    "react/purity": "error",
+    "react/refs": "error",
+    "react/set-state-in-effect": "error",
+    "react/set-state-in-render": "error",
+    "react/static-components": "error",
+    "react/unsupported-syntax": "error",
+    "react/use-memo": "error",
+    "react/void-use-memo": "error",
     "react/button-has-type": "error",
+    "typescript/no-floating-promises": ["error", { "ignoreVoid": false }],
+    "typescript/no-misused-promises": "error",
+    "typescript/no-unsafe-assignment": "error",
+    "typescript/no-unsafe-member-access": "error",
+    "typescript/no-unsafe-call": "error",
+    "typescript/no-unsafe-return": "error",
+    "typescript/no-unsafe-argument": "error",
+    "typescript/only-throw-error": "error",
+    "typescript/prefer-promise-reject-errors": "error",
+    "typescript/switch-exhaustiveness-check": "error",
     "typescript/no-explicit-any": "error",
     "typescript/no-non-null-assertion": "error",
     "typescript/consistent-type-imports": "error"
   },
   "overrides": [
+    {
+      "files": ["**/*.test.{ts,tsx,mts}"],
+      "rules": {
+        "typescript/unbound-method": "off",
+        "typescript/no-unsafe-assignment": "off",
+        "vitest/expect-expect": "error",
+        "vitest/no-commented-out-tests": "error",
+        "vitest/no-conditional-expect": "error",
+        "vitest/require-mock-type-parameters": "error",
+        "vitest/valid-expect": "error",
+        "vitest/valid-expect-in-promise": "error"
+      }
+    },
     {
       "files": ["*.config.{js,ts,mts}", "scripts/**/*.mts"],
       "env": { "node": true, "browser": false, "webextensions": false }

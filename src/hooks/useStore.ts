@@ -1,85 +1,74 @@
 import type { LocalSettings, LocalStorage } from '@utils/storage';
-import { localStorage } from '@utils/storage';
-import React, { useSyncExternalStore } from 'react';
+import { defaultSettings, localStorage } from '@utils/storage';
+import { useCallback, useSyncExternalStore } from 'react';
 
-const cache: Partial<LocalStorage> = {};
+const cache: LocalStorage = { settings: defaultSettings };
+const listeners = new Map<keyof LocalStorage, Set<() => void>>();
+const revisions = new Map<keyof LocalStorage, number>();
 
-const initializeCacheSync = <K extends keyof LocalStorage>(key: K, defaultValue?: LocalStorage[K]) => {
-  if (cache[key] === undefined) {
-    chrome.storage.local.get<Partial<LocalStorage>>([key], (result) => {
-      cache[key] = result[key] !== undefined ? result[key] : defaultValue;
-    });
-  }
+const publish = <K extends keyof LocalStorage>(key: K, value: LocalStorage[K]) => {
+  revisions.set(key, (revisions.get(key) ?? 0) + 1);
+  cache[key] = value;
+  listeners.get(key)?.forEach((listener) => listener());
 };
-const subscribeToStorage = <K extends keyof LocalStorage>(key: K, callback: () => void) => {
-  const handleChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
-    if (changes[key]) {
-      cache[key] = changes[key].newValue as LocalStorage[K] | undefined;
-      callback();
+
+const refresh = async (key: keyof LocalStorage, isActive: () => boolean) => {
+  const revision = revisions.get(key);
+  const value = await localStorage.get(key);
+  if (isActive() && revisions.get(key) === revision) publish(key, value);
+};
+
+const subscribeToStorage = (key: keyof LocalStorage, callback: () => void) => {
+  const subscribers = listeners.get(key) ?? new Set<() => void>();
+  subscribers.add(callback);
+  listeners.set(key, subscribers);
+  let active = true;
+  const reload = () => {
+    refresh(key, () => active).catch((error: unknown) => console.error('Cannot load stored value:', error));
+  };
+  const handleChange = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+    if (area === 'local' && key in changes) {
+      revisions.set(key, (revisions.get(key) ?? 0) + 1);
+      reload();
     }
   };
-
   chrome.storage.onChanged.addListener(handleChange);
-  return () => chrome.storage.onChanged.removeListener(handleChange);
-};
-
-const getSnapshot = <K extends keyof LocalStorage>(key: K, defaultValue?: LocalStorage[K]): LocalStorage[K] => {
-  return cache[key] !== undefined ? cache[key] : (defaultValue as LocalStorage[K]);
-};
-
-const initializeCache = async <K extends keyof LocalStorage>(key: K, defaultValue?: LocalStorage[K]): Promise<void> => {
-  if (cache[key] === undefined) {
-    const value = await localStorage.get(key);
-    cache[key] = value !== undefined ? value : (defaultValue as LocalStorage[K]);
-  }
+  reload();
+  return () => {
+    active = false;
+    subscribers.delete(callback);
+    if (subscribers.size === 0) listeners.delete(key);
+    chrome.storage.onChanged.removeListener(handleChange);
+  };
 };
 
 export function useStorage<K extends keyof LocalStorage>(
   key: K,
   defaultValue?: LocalStorage[K],
 ): [LocalStorage[K], (value: LocalStorage[K]) => Promise<void>] {
-  initializeCacheSync(key, defaultValue);
-
-  React.useEffect(() => {
-    initializeCache(key, defaultValue);
-  }, [key, defaultValue]);
-
-  const value = useSyncExternalStore(
-    (callback) => subscribeToStorage(key, callback),
-    () => getSnapshot(key, defaultValue),
-    () => getSnapshot(key, defaultValue),
+  const subscribe = useCallback((callback: () => void) => subscribeToStorage(key, callback), [key]);
+  const getSnapshot = useCallback(() => cache[key] ?? defaultValue ?? cache[key], [key, defaultValue]);
+  const value = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+  const setValue = useCallback(
+    async (newValue: LocalStorage[K]) => {
+      await localStorage.set(key, newValue);
+      publish(key, newValue);
+    },
+    [key],
   );
 
-  const setValue = async (newValue: LocalStorage[K]) => {
-    cache[key] = newValue;
-    await localStorage.set(key, newValue);
-  };
-
-  return [value as LocalStorage[K], setValue];
+  return [value, setValue];
 }
 
 export async function setSettings(newSettings: Partial<LocalSettings>): Promise<void> {
-  const currentSettings = (await localStorage.get('settings')) || { theme: 'light', windowType: 'popup' };
-
-  const updatedSettings = { ...currentSettings, ...newSettings };
-  await localStorage.set('settings', updatedSettings);
+  const currentSettings = await localStorage.get('settings');
+  await localStorage.set('settings', { ...currentSettings, ...newSettings });
 }
 
 export async function preloadSettings(): Promise<void> {
   try {
-    const result = await new Promise<LocalSettings>((resolve, reject) => {
-      chrome.storage.local.get<Partial<LocalStorage>>('settings', (data) => {
-        if (chrome.runtime.lastError) {
-          reject(chrome.runtime.lastError);
-        } else {
-          resolve(data.settings || { theme: 'light', windowType: 'popup' });
-        }
-      });
-    });
-
-    cache.settings = result;
+    publish('settings', await localStorage.get('settings'));
   } catch (error) {
-    console.error('Error preloading settings:', error);
-    cache.settings = { theme: 'light', windowType: 'popup' };
+    console.error('Cannot load settings:', error);
   }
 }

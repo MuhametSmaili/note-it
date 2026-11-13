@@ -10,7 +10,9 @@ export function Settings() {
   const [settings, setSettings] = useStorage('settings');
 
   const onThemeChange = (event: React.FormEvent<HTMLInputElement>) => {
-    setSettings({ ...settings, theme: event.currentTarget.value as 'dark' });
+    const theme = event.currentTarget.value;
+    if (theme !== 'light' && theme !== 'dim' && theme !== 'dark') return;
+    setSettings({ ...settings, theme }).catch((error: unknown) => console.error('Cannot save theme:', error));
   };
 
   return (

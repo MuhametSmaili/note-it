@@ -1,34 +1,48 @@
 import { localStorage } from '@utils/storage';
 import { MessageRequest } from '@utils/types/MessageRequest';
-chrome.runtime.onMessage.addListener((request, sender, _response) => {
+
+async function handleMessage(request: object & Record<'message', unknown>, sender: chrome.runtime.MessageSender) {
   if (request.message === MessageRequest.CROP_SCREEN) {
-    const query: QueryTab = { tabId: 0, windowId: 0 };
-
-    if (!request.tab) {
-      request.tab = sender.tab;
+    const tab = 'tab' in request ? request.tab : sender.tab;
+    if (!tab || typeof tab !== 'object' || !('id' in tab) || !('windowId' in tab)) {
+      throw new Error('Screenshot target is missing.');
     }
-
-    query.tabId = Number(request.tab?.id);
-    query.windowId = Number(request.tab?.windowId);
-
-    chrome.tabs.captureVisibleTab(query.windowId, {}, function (dataUrl) {
-      localStorage.set('screenshot', { capturedImage: dataUrl, cropArea: { height: 0, width: 0, x: 0, y: 0 } });
-      chrome.scripting.executeScript({
-        target: { tabId: Number(query.tabId) },
-        files: ['cropArea.js'],
-      });
-    });
-    return true;
-  } else if (request.message === MessageRequest.INSERT_FRAME) {
-    chrome.scripting.executeScript({
-      target: { tabId: Number(sender.tab?.id) },
-      files: ['frameScript.js'],
-    });
-    return true;
+    const { id, windowId } = tab;
+    if (
+      typeof id !== 'number' ||
+      !Number.isInteger(id) ||
+      id < 0 ||
+      typeof windowId !== 'number' ||
+      !Number.isInteger(windowId) ||
+      windowId < 0
+    ) {
+      throw new Error('Screenshot target is invalid.');
+    }
+    const capturedImage = await chrome.tabs.captureVisibleTab(windowId, {});
+    await localStorage.set('screenshot', { capturedImage, cropArea: { height: 0, width: 0, x: 0, y: 0 } });
+    await chrome.scripting.executeScript({ target: { tabId: id }, files: ['cropArea.js'] });
+  } else {
+    const tabId = sender.tab?.id;
+    if (tabId === undefined) throw new Error('Screenshot frame target is missing.');
+    await chrome.scripting.executeScript({ target: { tabId }, files: ['frameScript.js'] });
   }
-});
+}
 
-type QueryTab = {
-  tabId: number;
-  windowId: number;
-};
+chrome.runtime.onMessage.addListener((request: unknown, sender, respond) => {
+  if (
+    !request ||
+    typeof request !== 'object' ||
+    !('message' in request) ||
+    (request.message !== MessageRequest.CROP_SCREEN && request.message !== MessageRequest.INSERT_FRAME)
+  ) {
+    return false;
+  }
+  handleMessage(request, sender).then(
+    () => respond({ ok: true }),
+    (error: unknown) => {
+      console.error('Screenshot request failed:', error);
+      respond({ ok: false });
+    },
+  );
+  return true;
+});

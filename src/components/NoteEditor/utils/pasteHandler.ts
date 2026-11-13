@@ -22,13 +22,14 @@ function readImage(file: File): Promise<string> {
  */
 export function paste(view: EditorView, event: ClipboardEvent): boolean {
   const images = Array.from(event.clipboardData?.files ?? []).filter((file) => file.type.startsWith('image/'));
-  if (images.length === 0) return false;
+  const image = view.state.schema.nodes.image;
+  if (images.length === 0 || !image) return false;
 
   event.preventDefault();
   Promise.all(images.map(readImage))
     .then((sources) => {
       if (view.isDestroyed) return;
-      const nodes = sources.map((src) => view.state.schema.nodes.image.create({ src }));
+      const nodes = sources.map((src) => image.create({ src }));
       view.dispatch(view.state.tr.replaceSelection(new Slice(Fragment.fromArray(nodes), 0, 0)));
     })
     .catch((error: unknown) => console.error('Could not paste images:', error));

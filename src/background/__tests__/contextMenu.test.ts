@@ -8,7 +8,7 @@ const { getSettings, setSettings } = vi.hoisted(() => ({
 vi.mock('@utils/storage', () => ({ localStorage: { get: getSettings } }));
 vi.mock('@hooks/useStore', () => ({ setSettings }));
 
-const onClicked = vi.fn<(listener: () => Promise<boolean>) => void>();
+const onClicked = vi.fn<(listener: () => void) => void>();
 const setPopup = vi.fn<(details: chrome.action.PopupDetails) => Promise<void>>();
 const openPopup = vi.fn<() => Promise<void>>();
 const getWindow = vi.fn<(id: number) => Promise<Pick<chrome.windows.Window, 'id'>>>();
@@ -35,10 +35,10 @@ afterEach(() => {
   vi.unstubAllGlobals();
 });
 
-async function clickAction() {
+function clickAction() {
   const listener = onClicked.mock.calls[0]?.[0];
   if (!listener) throw new Error('The action click listener was not registered.');
-  await listener();
+  listener();
 }
 
 it('opens the popup on the first click after its configuration completes', async () => {
@@ -51,10 +51,10 @@ it('opens the popup on the first click after its configuration completes', async
     expect(configured).toBe(true);
   });
 
-  await clickAction();
+  clickAction();
 
-  expect(setPopup).toHaveBeenCalledWith({ popup: 'popup.html' });
-  expect(openPopup).toHaveBeenCalledExactlyOnceWith();
+  await vi.waitFor(() => expect(setPopup).toHaveBeenCalledWith({ popup: 'popup.html' }));
+  await vi.waitFor(() => expect(openPopup).toHaveBeenCalledExactlyOnceWith());
 });
 
 it('creates a separate window without opening the toolbar popup in window mode', async () => {
@@ -62,7 +62,7 @@ it('creates a separate window without opening the toolbar popup in window mode',
   getWindow.mockRejectedValue(new Error('Window not found'));
   createWindow.mockResolvedValue({ id: 42 });
 
-  await clickAction();
+  clickAction();
 
   await vi.waitFor(() => {
     expect(createWindow).toHaveBeenCalledWith({

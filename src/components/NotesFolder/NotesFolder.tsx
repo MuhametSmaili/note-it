@@ -19,9 +19,9 @@ const NotesFolder = () => {
   const visibleNotes = useMemo(() => getFilteredNotes(filter, notes), [notes, filter]);
 
   const onDeleteNoteHandler = (id: number) => {
-    if (visibleNotes) {
-      const newNotes = visibleNotes.filter((nt) => nt.id !== id);
-      setNotes(newNotes);
+    if (notes) {
+      const newNotes = notes.filter((nt) => nt.id !== id);
+      setNotes(newNotes).catch((error: unknown) => console.error('Cannot delete note:', error));
     }
   };
 
@@ -30,14 +30,15 @@ const NotesFolder = () => {
   };
 
   const createNewNoteHandler = () => {
-    setCurrentNote(emptyNote);
-    dispatch({ type: 'TAB_HANDLER', payload: 0 });
+    setCurrentNote(emptyNote)
+      .then(() => dispatch({ type: 'TAB_HANDLER', payload: 0 }))
+      .catch((error: unknown) => console.error('Cannot create note:', error));
   };
 
   return (
     <>
       <div className="flex items-center border-b border-b-primary m-2 pb-1">
-        <SearchNotes onSearchHandler={onSearchHandler} value={filter.title} />
+        <SearchNotes onSearchHandler={onSearchHandler} value={filter.title ?? ''} />
         <Button
           className="mx-2 text-primary"
           variant="primary"

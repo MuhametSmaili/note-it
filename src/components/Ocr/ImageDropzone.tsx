@@ -2,6 +2,7 @@ import AddCamera from '@icons/AddCamera.svg';
 import Upload from '@icons/Upload.svg';
 import Close from '@icons/X.svg';
 import { useDropzone } from 'react-dropzone';
+import { useEffect, useRef } from 'react';
 
 type ImageDropzoneProps = {
   droppedImage: Blob | undefined;
@@ -10,6 +11,13 @@ type ImageDropzoneProps = {
 };
 
 export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzoneProps) => {
+  const preview = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    if (!droppedImage || !preview.current) return undefined;
+    const url = URL.createObjectURL(droppedImage);
+    preview.current.src = url;
+    return () => URL.revokeObjectURL(url);
+  }, [droppedImage]);
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
     onDrop: (files, rejections) => {
       if (rejections.length === 0) onDrop(files);
@@ -33,7 +41,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
           >
             <Close />
           </button>
-          <img src={URL.createObjectURL(droppedImage)} alt="Uploaded document" loading="lazy" />
+          <img ref={preview} alt="Uploaded document" loading="lazy" />
         </div>
       ) : (
         <div className="flex items-center justify-center border border-primary border-dashed min-h-40 h-2/5">

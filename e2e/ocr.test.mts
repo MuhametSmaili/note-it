@@ -47,7 +47,7 @@ for (const view of ['upload', 'screenshot']) {
       ).setFiles({
         name: 'ocr.png',
         mimeType: 'image/png',
-        buffer: Buffer.from(image.split(',')[1], 'base64'),
+        buffer: Buffer.from(image.slice(image.indexOf(',') + 1), 'base64'),
       });
       await page.getByRole('img', { name: 'Uploaded document' }).waitFor();
     } else {

@@ -18,7 +18,7 @@ type SelectFieldProps = {
 
 export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
   ({ className, options, ...props }, ref) => {
-    const [value, setValue] = useState(props.value || props.defaultValue || options[0].value);
+    const [value, setValue] = useState(props.value ?? props.defaultValue ?? options[0]?.value ?? '');
     return (
       <div className="flex justify-center items-center hover:cursor-pointer">
         <select
@@ -41,13 +41,13 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
           }}
         >
           {options.map(({ label, value: optionValue }) => (
-            <option key={label?.toString()} value={optionValue} className="text-md">
+            <option key={String(optionValue)} value={optionValue} className="text-md">
               {label}
             </option>
           ))}
         </select>
         <SelectFieldSpinner
-          disabled={props.disabled}
+          disabled={props.disabled ?? false}
           currentValue={value}
           options={options}
           onChange={(val) => setValue(val)}

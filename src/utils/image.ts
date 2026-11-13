@@ -46,22 +46,23 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
 }
 
 export async function copyBlobToClipboard(imageBlob: Blob) {
-  try {
-    await navigator.clipboard.write([
-      new window.ClipboardItem({
-        [imageBlob.type]: imageBlob,
-      }),
-    ]);
-  } catch (e) {
-    console.warn(e);
-  }
+  await navigator.clipboard.write([
+    new window.ClipboardItem({
+      [imageBlob.type]: imageBlob,
+    }),
+  ]);
 }
 
 /** Read the blob. Return a data URL with base64 encoding. */
-export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
-  return new Promise((resolve) => {
+export function blobToBase64(blob: Blob): Promise<string> {
+  return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.onloadend = () => resolve(reader.result);
+    reader.addEventListener('load', () => {
+      if (typeof reader.result === 'string') resolve(reader.result);
+      else reject(new Error('Cannot read image data.'));
+    });
+    reader.addEventListener('error', () => reject(new Error('Cannot read image data.')));
+    reader.addEventListener('abort', () => reject(new Error('Image read was cancelled.')));
     return reader.readAsDataURL(blob);
   });
 }
@@ -91,5 +92,6 @@ export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promis
     }
   } catch (error) {
     console.error('Error converting image to text', error);
+    return undefined;
   }
 }

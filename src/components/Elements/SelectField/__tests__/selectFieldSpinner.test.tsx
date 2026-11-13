@@ -15,12 +15,12 @@ describe('SelectFieldSpinner', () => {
       result = selectedValue;
     };
 
-    render(<SelectFieldSpinner currentValue={options[0].value} options={options} onChange={onChangeHandler} />);
+    render(<SelectFieldSpinner currentValue={1} options={options} onChange={onChangeHandler} />);
 
     const incrementButton = screen.getByRole('button', { name: /increment/i });
     incrementButton.click();
 
-    expect(result).toBe(options[1].value);
+    expect(result).toBe(2);
   });
 
   it('should decrease Value in button up', () => {
@@ -35,11 +35,11 @@ describe('SelectFieldSpinner', () => {
       result = selectedValue;
     };
 
-    render(<SelectFieldSpinner currentValue={options[1].value} options={options} onChange={onChangeHandler} />);
+    render(<SelectFieldSpinner currentValue={2} options={options} onChange={onChangeHandler} />);
 
     const decrementButton = screen.getByRole('button', { name: /decrement/i });
     decrementButton.click();
 
-    expect(result).toBe(options[0].value);
+    expect(result).toBe(1);
   });
 });

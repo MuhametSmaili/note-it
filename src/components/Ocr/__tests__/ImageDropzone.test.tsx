@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
 import { ImageDropzone } from '../ImageDropzone';
 
 function clipboardFiles(files: File[]) {
@@ -99,7 +99,7 @@ it('restricts the native picker to one PNG or JPEG', () => {
 it('shows the selected image preview', () => {
   const image = new Blob(['image'], { type: 'image/png' });
   const createUrl = vi.fn<() => string>().mockReturnValue('blob:preview');
-  vi.stubGlobal('URL', { createObjectURL: createUrl });
+  vi.stubGlobal('URL', { createObjectURL: createUrl, revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     render(
       <ImageDropzone droppedImage={image} clearImage={vi.fn<() => void>()} onDrop={vi.fn<(files: File[]) => void>()} />,
@@ -108,13 +108,38 @@ it('shows the selected image preview', () => {
     expect(screen.getByRole('img', { name: 'Uploaded document' })).toHaveAttribute('src', 'blob:preview');
     expect(createUrl).toHaveBeenCalledWith(image);
   } finally {
+    cleanup();
+    vi.unstubAllGlobals();
+  }
+});
+
+it('releases preview URLs when replacing the image and unmounting', () => {
+  const createUrl = vi
+    .fn<(blob: Blob) => string>()
+    .mockReturnValueOnce('blob:first')
+    .mockReturnValueOnce('blob:second');
+  const revokeUrl = vi.fn<(url: string) => void>();
+  vi.stubGlobal('URL', { createObjectURL: createUrl, revokeObjectURL: revokeUrl });
+  const clearImage = vi.fn<() => void>();
+  const onDrop = vi.fn<(files: File[]) => void>();
+  try {
+    const { rerender, unmount } = render(
+      <ImageDropzone droppedImage={new Blob()} clearImage={clearImage} onDrop={onDrop} />,
+    );
+
+    rerender(<ImageDropzone droppedImage={new Blob()} clearImage={clearImage} onDrop={onDrop} />);
+    unmount();
+
+    expect(revokeUrl.mock.calls).toEqual([['blob:first'], ['blob:second']]);
+  } finally {
+    cleanup();
     vi.unstubAllGlobals();
   }
 });
 
 it('requests removal of the selected image', () => {
   const clearImage = vi.fn<() => void>();
-  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview' });
+  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview', revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     render(
       <ImageDropzone droppedImage={new Blob()} clearImage={clearImage} onDrop={vi.fn<(files: File[]) => void>()} />,
@@ -124,6 +149,7 @@ it('requests removal of the selected image', () => {
 
     expect(clearImage).toHaveBeenCalledOnce();
   } finally {
+    cleanup();
     vi.unstubAllGlobals();
   }
 });
@@ -132,7 +158,7 @@ it('accepts the same file after its preview is cleared', async () => {
   const file = new File(['image'], 'note.png', { type: 'image/png' });
   const onDrop = vi.fn<(files: File[]) => void>();
   const clearImage = vi.fn<() => void>();
-  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview' });
+  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview', revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     const { rerender } = render(<ImageDropzone droppedImage={file} clearImage={clearImage} onDrop={onDrop} />);
     rerender(<ImageDropzone droppedImage={undefined} clearImage={clearImage} onDrop={onDrop} />);
@@ -143,6 +169,7 @@ it('accepts the same file after its preview is cleared', async () => {
 
     expect(onDrop).toHaveBeenCalledExactlyOnceWith([file]);
   } finally {
+    cleanup();
     vi.unstubAllGlobals();
   }
 });

@@ -1,7 +1,7 @@
 import { setSettings } from '@hooks/useStore';
 import { localStorage } from '@utils/storage';
 
-chrome.runtime.onInstalled.addListener(async function () {
+chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({
     id: 'popup',
     type: 'radio',
@@ -17,24 +17,22 @@ chrome.runtime.onInstalled.addListener(async function () {
     checked: false,
   });
 
-  setSettings({ windowType: 'popup' });
+  setSettings({ windowType: 'popup' }).catch((error: unknown) => console.error('Cannot initialize settings:', error));
 });
 
 chrome.contextMenus.onClicked.addListener((e) => {
-  setSettings({ windowType: e.menuItemId as 'popup' | 'window' });
-
-  if (e.menuItemId === 'popup') {
-    chrome.action.setPopup({ popup: 'popup.html' });
-  } else {
-    chrome.action.setPopup({ popup: '' });
-  }
+  const windowType = e.menuItemId;
+  if (windowType !== 'popup' && windowType !== 'window') return;
+  setSettings({ windowType })
+    .then(() => chrome.action.setPopup({ popup: windowType === 'popup' ? 'popup.html' : '' }))
+    .catch((error: unknown) => console.error('Cannot change window type:', error));
 });
 
 let chromeWindowId = -1;
-chrome.action.onClicked.addListener(async function () {
+const openNoteWindow = async () => {
   const windowType = await localStorage.get('settings');
   if (windowType.windowType === 'window') {
-    chrome.windows
+    await chrome.windows
       .get(chromeWindowId)
       .then(() => chrome.windows.update(chromeWindowId, { focused: true }))
       .catch(() =>
@@ -54,5 +52,8 @@ chrome.action.onClicked.addListener(async function () {
     await chrome.action.setPopup({ popup: 'popup.html' });
     await chrome.action.openPopup();
   }
-  return true;
+};
+
+chrome.action.onClicked.addListener(() => {
+  openNoteWindow().catch((error: unknown) => console.error('Cannot open Note It:', error));
 });

@@ -1,5 +1,4 @@
 import type { Note } from '@utils/types/Note';
-import { useState } from 'react';
 import { useTab } from '../../../provider/tabContext';
 import { useStorage } from '@hooks/useStore';
 import DeleteIcon from '@icons/Delete.svg';
@@ -15,8 +14,9 @@ const NoteHeader = ({ note }: NoteHeaderProps) => {
   const [, setCurrentNote] = useStorage('currentNote');
 
   const setCurrentNoteHandler = () => {
-    setCurrentNote(note);
-    dispatch({ type: 'TAB_HANDLER', payload: 0 });
+    setCurrentNote(note)
+      .then(() => dispatch({ type: 'TAB_HANDLER', payload: 0 }))
+      .catch((error: unknown) => console.error('Cannot select note:', error));
   };
 
   return (
@@ -39,18 +39,14 @@ type SingleNoteFooterProps = {
   note: Note;
 };
 export function SingleNoteFooter({ note, onDeleteNote }: SingleNoteFooterProps) {
-  const [favorite, setFavorite] = useState<boolean>(note.isFavorite);
   const [notes, setNotes] = useStorage('notes');
 
-  const onFavoriteToggleHandler = async () => {
-    const newNotes = [...(notes ?? [])];
-    const currNote = { ...note };
-    const currNoteIndex = notes?.findIndex((nt) => nt.id === note.id) || 0;
-    currNote.isFavorite = !note.isFavorite;
-    newNotes.splice(currNoteIndex, 1, currNote);
-
-    setNotes(newNotes);
-    setFavorite((isFav) => !isFav);
+  const onFavoriteToggleHandler = () => {
+    if (!notes) return;
+    const newNotes = notes.map((storedNote) =>
+      storedNote.id === note.id ? { ...storedNote, isFavorite: !storedNote.isFavorite } : storedNote,
+    );
+    setNotes(newNotes).catch((error: unknown) => console.error('Cannot change favorite:', error));
   };
 
   return (
@@ -63,7 +59,7 @@ export function SingleNoteFooter({ note, onDeleteNote }: SingleNoteFooterProps) 
           className={clsx('hover:cursor-pointer hover:scale-90 hover:rotate-12')}
           onClick={onFavoriteToggleHandler}
         >
-          <StarIcon fill={favorite ? '#19A1E5' : 'transparent'} />
+          <StarIcon fill={note.isFavorite ? '#19A1E5' : 'transparent'} />
         </button>
         <button
           type="button"

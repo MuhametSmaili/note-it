@@ -29,19 +29,13 @@ export const SelectFieldSpinner = ({
   const maxIndex = options.length - 1;
 
   const onUpHandler = () => {
-    if (currentPosition > 0) {
-      onChange(options[currentPosition - 1].value);
-    } else {
-      onChange(options[maxIndex].value);
-    }
+    const option = options[currentPosition > 0 ? currentPosition - 1 : maxIndex];
+    if (option) onChange(option.value);
   };
 
   const onDownHandler = () => {
-    if (currentPosition < maxIndex) {
-      onChange(options[currentPosition + 1].value);
-    } else {
-      onChange(options[0].value);
-    }
+    const option = options[currentPosition < maxIndex ? currentPosition + 1 : 0];
+    if (option) onChange(option.value);
   };
 
   return (

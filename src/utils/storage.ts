@@ -16,75 +16,46 @@ export interface LocalStorage {
   activeWindow?: Array<{ windowId: number }>;
 }
 
+export const defaultSettings: LocalSettings = { theme: 'light', windowType: 'popup' };
+
 export const emptyNote: Note = {
   id: undefined,
   title: 'Default',
   isFavorite: false,
   noteContent: '',
-  created: new Date(Date.now()).toLocaleDateString(),
+  created: new Date().toLocaleDateString(),
 };
 
-export class Storage<T> {
-  constructor(private storageArea: chrome.storage.StorageArea) {}
+export class Storage<T extends object> {
+  constructor(
+    private storageArea: chrome.storage.StorageArea,
+    private defaults: T,
+  ) {}
 
-  async set(key: keyof T, value: T[keyof T]): Promise<void> {
-    try {
+  async set<K extends keyof T>(key: K, value: T[K]): Promise<void> {
+    if (value === undefined) {
+      await this.remove(key);
+    } else {
       await this.storageArea.set({ [key]: value });
-    } catch (error) {
-      console.error('Error setting value in storage: ', error);
     }
   }
 
   async get<K extends keyof T>(key: K): Promise<T[K]> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.storageArea.get([key], (result: T) => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve(result[key]);
-          }
-        });
-      } catch (error) {
-        console.error('Error getting value from storage: ', error);
-        reject(error);
-      }
-    });
+    const result = await this.storageArea.get<Partial<T>>(key);
+    return result[key] ?? this.defaults[key];
   }
 
   async remove(key: keyof T): Promise<void> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.storageArea.remove(key, () => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve();
-          }
-        });
-      } catch (error) {
-        console.error('Error removing value from storage: ', error);
-        reject(error);
-      }
-    });
+    await this.storageArea.remove(String(key));
   }
 
   async getAll(): Promise<T> {
-    return new Promise((resolve, reject) => {
-      try {
-        this.storageArea.get(null, (result) => {
-          if (chrome.runtime.lastError) {
-            reject(chrome.runtime.lastError);
-          } else {
-            resolve(result as T);
-          }
-        });
-      } catch (error) {
-        console.error('Error getting all values from storage: ', error);
-        reject(error);
-      }
-    });
+    return { ...this.defaults, ...(await this.storageArea.get<Partial<T>>(null)) };
   }
 }
 
-export const localStorage = new Storage<LocalStorage>(chrome.storage.local);
+export const localStorage = new Storage<LocalStorage>(chrome.storage.local, {
+  settings: defaultSettings,
+  currentNote: emptyNote,
+  notes: [],
+});

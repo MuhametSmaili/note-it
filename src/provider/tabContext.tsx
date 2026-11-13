@@ -20,7 +20,7 @@ function activeTabProvider(_state: State, action: Action) {
       return { activeTab: action.payload };
     }
     default: {
-      throw new Error(`Unhandled action type: ${action.type}`);
+      throw new Error('Unhandled tab action.');
     }
   }
 }

@@ -24,17 +24,23 @@ const FrameContent: React.FC = () => {
   const [language, setLanguage] = useState('eng');
 
   useEffect(() => {
+    let active = true;
     const handleImageToText = async () => {
       const res = await localStorage.get('screenshot');
       if (!res) return;
       const imageBlob = await imageToBlob(res.capturedImage, res.cropArea);
       const bs64 = await blobToBase64(imageBlob);
-      setImageSrc(bs64 as string);
-      setScreenshot(res);
+      if (active) {
+        setImageSrc(bs64);
+        setScreenshot(res);
+      }
     };
-    handleImageToText();
+    handleImageToText().catch((error: unknown) => {
+      console.error('Cannot load screenshot:', error);
+      if (active) setStatus({ type: 'ERROR', message: 'Cannot load screenshot' });
+    });
     return () => {
-      localStorage.remove('screenshot');
+      active = false;
     };
   }, []);
 
@@ -68,7 +74,7 @@ const FrameContent: React.FC = () => {
     }, 2000);
   };
 
-  const downloadImageHandler = async () => {
+  const downloadImageHandler = () => {
     try {
       if (imageSrc) {
         const anchor = document.createElement('a');
@@ -103,14 +109,24 @@ const FrameContent: React.FC = () => {
             size="md"
             className="my-4 font-bold"
             title="Convert to text "
-            onClick={imageToTextHandler}
+            onClick={() => {
+              imageToTextHandler().catch((error: unknown) => {
+                console.error('Cannot convert screenshot:', error);
+                setStatus({ type: 'ERROR', message: 'Cannot convert screenshot' });
+              });
+            }}
             disabled={status?.type === 'LOADING'}
           />
           <Button
             size="md"
             className="mb-4 font-bold"
             title="Copy Image "
-            onClick={copyImageHandler}
+            onClick={() => {
+              copyImageHandler().catch((error: unknown) => {
+                console.error('Cannot copy screenshot:', error);
+                setStatus({ type: 'ERROR', message: 'Cannot copy screenshot' });
+              });
+            }}
             disabled={status?.type === 'LOADING'}
           />
           <Button

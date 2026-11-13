@@ -19,7 +19,7 @@ const NoteEditor = () => {
         setCurrentNote({
           ...currentNote,
           noteContent: updatedEditor?.getJSON(),
-        });
+        }).catch((error: unknown) => console.error('Cannot autosave note:', error));
       }
     },
     [currentNote, setCurrentNote],
@@ -33,7 +33,7 @@ const NoteEditor = () => {
   const editor = useEditor({
     extensions: [StarterKit, Image],
     shouldRerenderOnTransaction: true,
-    content: currentNote?.noteContent,
+    content: currentNote?.noteContent ?? '',
     editorProps: {
       handleDOMEvents: {
         paste,
@@ -41,11 +41,14 @@ const NoteEditor = () => {
     },
     onUpdate: ({ editor: updatedEditor }) => debouncedSaveNote(updatedEditor, saveNoteHandler),
     onCreate: ({ editor: createdEditor }) => {
-      localStorage.get('currentNote').then((note) => {
-        if (note && !createdEditor.isDestroyed) {
-          createdEditor.commands.setContent(note.noteContent, { emitUpdate: false });
-        }
-      });
+      localStorage
+        .get('currentNote')
+        .then((note) => {
+          if (note && !createdEditor.isDestroyed) {
+            createdEditor.commands.setContent(note.noteContent, { emitUpdate: false });
+          }
+        })
+        .catch((error: unknown) => console.error('Cannot load note:', error));
     },
   });
 

@@ -6,7 +6,7 @@ import H from '@icons/H.svg';
 
 type Level = 1 | 2 | 3;
 export const Heading = ({ editor }: { editor: Editor }) => {
-  const [value, setValue] = useState(1);
+  const [value, setValue] = useState<Level>(1);
   return (
     <div
       className={clsx(
@@ -17,13 +17,7 @@ export const Heading = ({ editor }: { editor: Editor }) => {
       <button
         type="button"
         aria-label="Toggle heading"
-        onClick={() =>
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: Number(value) as Level })
-            .run()
-        }
+        onClick={() => editor.chain().focus().toggleHeading({ level: value }).run()}
       >
         <H />
       </button>
@@ -33,12 +27,9 @@ export const Heading = ({ editor }: { editor: Editor }) => {
         currentValue={value}
         options={headingStyle}
         onChange={(val) => {
-          setValue(Number(val));
-          editor
-            .chain()
-            .focus()
-            .toggleHeading({ level: Number(val) as Level })
-            .run();
+          if (val !== 1 && val !== 2 && val !== 3) return;
+          setValue(val);
+          editor.chain().focus().toggleHeading({ level: val }).run();
         }}
       />
     </div>

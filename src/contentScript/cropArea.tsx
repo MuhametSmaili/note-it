@@ -17,12 +17,12 @@ const CropArea: React.FC = () => {
   const [cropArea, setCropArea] = useState<CropAreaType>();
   const [screenshoted, setScreenshot] = useStorage('screenshot');
 
-  const onMouseUpHandler = (selectedArea: CropAreaType) => {
+  const onMouseUpHandler = async (selectedArea: CropAreaType) => {
     if (selectedArea && screenshoted?.capturedImage) {
       try {
         const screenshot = { capturedImage: screenshoted.capturedImage, cropArea: selectedArea };
-        setScreenshot(screenshot);
-        chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
+        await setScreenshot(screenshot);
+        await chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
       } catch (e) {
         console.error(e);
       }
@@ -61,7 +61,10 @@ const CropArea: React.FC = () => {
       className="fixed left-0 top-0 w-full h-full z-[99999] cursor-custom select-none"
       onMouseDown={onStartSelectingHandler}
       onMouseMove={onMouseMoveHandler}
-      onMouseUp={() => cropArea && onMouseUpHandler(cropArea)}
+      onMouseUp={() => {
+        if (cropArea)
+          onMouseUpHandler(cropArea).catch((error: unknown) => console.error('Cannot crop screenshot:', error));
+      }}
     >
       <img
         alt="frozen screen to take screenshot"

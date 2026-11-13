@@ -32,7 +32,7 @@ for (const config of [pages, scriptConfig('background'), scriptConfig('cropArea'
       ...config.build,
       watch: watch ? {} : null,
       sourcemap: watch,
-      minify: watch ? false : undefined,
+      ...(watch ? { minify: false } : {}),
     },
   });
 }
