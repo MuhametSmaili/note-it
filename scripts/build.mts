@@ -11,6 +11,7 @@ for (const config of [pages, scriptConfig('background'), scriptConfig('cropArea'
     ...config,
     configFile: false,
     mode: watch ? 'development' : 'production',
+    css: { ...config.css, devSourcemap: watch },
     define: { 'process.env.NODE_ENV': JSON.stringify(watch ? 'development' : 'production') },
     build: {
       ...config.build,

@@ -24,7 +24,7 @@ const App: React.FC = () => {
     <div
       data-theme={settings.theme}
       style={{ width: '768px', minHeight: '550px' }}
-      className="bg-primary flex flex-row h-full md:!w-screen md:h-screen"
+      className="bg-primary flex flex-row h-full md:w-screen! md:h-screen"
     >
       <Dashboard />
       <TabContent isActive={activeTab === 0}>

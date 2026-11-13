@@ -1,7 +1,6 @@
 import AddCamera from '@icons/AddCamera.svg';
 import Upload from '@icons/Upload.svg';
 import Close from '@icons/X.svg';
-import clsx from 'clsx';
 import { useDropzone } from 'react-dropzone';
 
 type ImageDropzoneProps = {
@@ -12,10 +11,14 @@ type ImageDropzoneProps = {
 
 export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzoneProps) => {
   const { getRootProps, getInputProps, isDragActive, open } = useDropzone({
-    onDrop,
-    maxFiles: 1,
+    onDrop: (files, rejections) => {
+      if (rejections.length === 0) onDrop(files);
+    },
+    accept: { 'image/png': [], 'image/jpeg': [] },
+    multiple: false,
     noClick: true,
     noKeyboard: true,
+    noPaste: true,
   });
 
   return (
@@ -34,8 +37,14 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
         </div>
       ) : (
         <div className="flex items-center justify-center border border-primary border-dashed min-h-40 h-2/5">
-          <div {...getRootProps()} className={clsx(`flex  relative', 'bg-center bg-no-repeat bg-contain bg-center`)}>
-            <input {...getInputProps()} />
+          <div
+            {...getRootProps({
+              role: 'group',
+              'aria-label': 'Image upload',
+              className: 'flex relative bg-center bg-no-repeat bg-contain',
+            })}
+          >
+            <input {...getInputProps({ 'aria-label': 'Choose an image' })} />
             <div className="flex flex-col items-center justify-items-center">
               <Upload />
               <div className="text-primary text-center text-xl flex items-center w-full">

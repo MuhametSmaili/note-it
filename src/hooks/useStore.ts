@@ -6,15 +6,15 @@ const cache: Partial<LocalStorage> = {};
 
 const initializeCacheSync = <K extends keyof LocalStorage>(key: K, defaultValue?: LocalStorage[K]) => {
   if (cache[key] === undefined) {
-    chrome.storage.local.get([key], (result) => {
+    chrome.storage.local.get<Partial<LocalStorage>>([key], (result) => {
       cache[key] = result[key] !== undefined ? result[key] : defaultValue;
     });
   }
 };
-const subscribeToStorage = (key: keyof LocalStorage, callback: () => void) => {
+const subscribeToStorage = <K extends keyof LocalStorage>(key: K, callback: () => void) => {
   const handleChange = (changes: { [key: string]: chrome.storage.StorageChange }) => {
     if (changes[key]) {
-      cache[key] = changes[key].newValue;
+      cache[key] = changes[key].newValue as LocalStorage[K] | undefined;
       callback();
     }
   };
@@ -68,7 +68,7 @@ export async function setSettings(newSettings: Partial<LocalSettings>): Promise<
 export async function preloadSettings(): Promise<void> {
   try {
     const result = await new Promise<LocalSettings>((resolve, reject) => {
-      chrome.storage.local.get('settings', (data) => {
+      chrome.storage.local.get<Partial<LocalStorage>>('settings', (data) => {
         if (chrome.runtime.lastError) {
           reject(chrome.runtime.lastError);
         } else {

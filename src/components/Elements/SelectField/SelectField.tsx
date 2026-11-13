@@ -29,7 +29,7 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
             'border border-primary ',
             'text-secondary bg-light text-center',
             'disabled:opacity-70 disabled:cursor-not-allowed',
-            'appearance-none focus:outline-none',
+            'appearance-none focus:outline-hidden',
             className,
           )}
           {...props}

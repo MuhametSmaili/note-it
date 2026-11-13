@@ -1,10 +1,65 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
+@import 'tailwindcss' source(none);
 @import './editor.css';
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@source '../**/*.{js,jsx,ts,tsx,svg}';
+
+@theme inline {
+  --color-*: initial;
+  --color-red: hsl(var(--palette-red));
+
+  --text-*: initial;
+  --text-sm: 0.625rem;
+  --text-md: 0.875rem;
+  --text-xl: 1.25rem;
+
+  --radius-*: initial;
+  --radius-none: 0;
+  --radius-sm: 0.3125rem;
+  --radius-md: 1.25rem;
+
+  --background-color-primary: hsl(var(--color-bg-primary));
+  --background-color-light: hsl(var(--color-bg-light));
+  --background-color-acent: hsl(var(--color-bg-acent));
+  --background-color-highlight: hsl(var(--color-bg-highlight));
+
+  --border-color-primary: hsl(var(--color-border-primary));
+  --stroke-primary: hsl(var(--color-border-primary));
+  --outline-color-primary: hsl(var(--color-border-primary));
+  --ring-color-primary: hsl(var(--color-border-primary));
+
+  --text-color-primary: hsl(var(--color-text-primary));
+  --text-color-secondary: hsl(var(--color-text-secondary));
+  --text-color-body: hsl(var(--color-text-body));
+  --text-color-light: hsl(var(--color-text-light));
+  --text-color-light2: hsl(var(--color-text-light2));
+
+  --fill-primary: hsl(var(--color-text-primary));
+  --fill-secondary: hsl(var(--color-text-secondary));
+  --fill-body: hsl(var(--color-text-body));
+  --fill-light: hsl(var(--color-text-light));
+  --fill-light2: hsl(var(--color-text-light2));
+}
 
 @layer base {
+  *,
+  ::before,
+  ::after,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: #e5e7eb;
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #9ca3af;
+  }
+
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+
   :root {
     --color-acent: 200 93% 18%;
     --color-white: 100 100% 100%;
@@ -16,7 +71,7 @@
     --color-gray-600: 201 20% 35%;
     --color-gray-700: 199 94% 7%;
     --color-gray-900: 200, 95%, 7%, 1;
-    --color-red: 4 74% 46%;
+    --palette-red: 4 74% 46%;
     --color-light-blue: 199 64% 73%;
 
     --color-bg-primary: var(--color-gray-100);
@@ -64,9 +119,9 @@
   }
 }
 
-@layer utilities {
-  .icon-circle:before,
-  .icon-circle:after {
+@utility icon-circle {
+  &::before,
+  &::after {
     content: '';
     width: 10px;
     height: 10px;
@@ -75,17 +130,18 @@
     top: -5px;
   }
 
-  .icon-circle:before {
+  &::before {
     left: -5px;
   }
 
-  .icon-circle:after {
+  &::after {
     right: -5px;
   }
-  .cursor-custom {
-    cursor:
-      url("data:image/svg+xml,%3Csvg width='23' height='23' viewBox='0 0 23 23' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.2444 11.3203H22.8718M11.5581 0.006558V22.634' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")
-        12.5 12.5,
-      crosshair;
-  }
+}
+
+@utility cursor-custom {
+  cursor:
+    url("data:image/svg+xml,%3Csvg width='23' height='23' viewBox='0 0 23 23' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.2444 11.3203H22.8718M11.5581 0.006558V22.634' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")
+      12.5 12.5,
+    crosshair;
 }

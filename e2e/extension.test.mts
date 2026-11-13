@@ -2,6 +2,7 @@ import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 import { test as base, expect } from '@playwright/test';
 import type { Worker } from '@playwright/test';
+import type { LocalStorage } from '../src/utils/storage';
 
 const root = path.resolve(import.meta.dirname, '..');
 const extensionPath = path.join(root, 'build');
@@ -77,7 +78,9 @@ test('opens the editor, exports a PDF, and saves and reopens a note', async ({
   await expect
     .poll(() =>
       serviceWorker.evaluate(async () =>
-        JSON.stringify((await chrome.storage.local.get('currentNote')).currentNote.noteContent),
+        JSON.stringify(
+          (await chrome.storage.local.get<Pick<LocalStorage, 'currentNote'>>('currentNote')).currentNote?.noteContent,
+        ),
       ),
     )
     .toContain('"type":"underline"');
@@ -224,6 +227,8 @@ test('injects styled crop scripts repeatedly and opens the screenshot iframe', a
     await inject(serviceWorker, 'cropArea.js');
     await expect(page.getByRole('img', { name: 'frozen screen to take screenshot' })).toBeVisible();
     await expect(page.locator('[role="presentation"]')).toHaveCSS('position', 'fixed');
+    await expect(page.locator('[role="presentation"]')).toHaveCSS('z-index', '99999');
+    await expect(page.locator('[role="presentation"]')).toHaveCSS('cursor', /crosshair$/);
     await page.keyboard.press('Escape');
     await expect(page.getByRole('img', { name: 'frozen screen to take screenshot' })).toHaveCount(0);
   }
@@ -232,6 +237,7 @@ test('injects styled crop scripts repeatedly and opens the screenshot iframe', a
   await expect(page.locator('#note-it-content-styles')).toHaveCount(1);
   const preview = page.frameLocator('#OCRFrame');
   await expect(preview.getByRole('heading', { name: 'Image cropped' })).toBeVisible();
+  await expect(preview.getByRole('heading', { name: 'Image cropped' })).toHaveCSS('font-size', '20px');
   await expect
     .poll(() =>
       preview
@@ -256,4 +262,136 @@ test('serves the bundled OCR worker and core locally', async ({ page, extensionI
       size: (await readFile(path.join(root, 'src/static/libraries', file))).byteLength,
     });
   }
+});
+
+test('applies theme colors and editor styles after changing the theme', async ({
+  page,
+  serviceWorker,
+  extensionId,
+}) => {
+  await serviceWorker.evaluate(() =>
+    chrome.storage.local.set({
+      settings: { theme: 'light', windowType: 'window' },
+      currentNote: {
+        title: 'Theme check',
+        isFavorite: false,
+        noteContent:
+          '<h1>Heading one</h1><h2>Heading two</h2><h3>Heading three</h3><ul><li>List item</li></ul><blockquote>Quote</blockquote><pre><code>Code</code></pre>',
+      },
+      notes: [],
+    }),
+  );
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  const editor = page.locator('[contenteditable="true"]');
+  await expect(editor.locator('h1')).toHaveCSS('font-size', '20px');
+  await expect(editor.locator('h2')).toHaveCSS('font-size', '14px');
+  await expect(editor.locator('h3')).toHaveCSS('font-size', '10px');
+  await expect(editor.locator('ul')).toHaveCSS('list-style-type', 'disc');
+  await expect(editor.locator('ul')).toHaveCSS('padding-left', '28px');
+  await expect(editor.locator('blockquote')).toHaveCSS('border-left-width', '2px');
+  await expect(editor.locator('code')).toHaveCSS('border-radius', '5px');
+  await expect(page.getByRole('button', { name: 'Bold', exact: true })).toHaveCSS('cursor', 'pointer');
+  await expect(page.locator('[data-theme]').first()).toHaveCSS('width', '800px');
+  await page.setViewportSize({ width: 700, height: 600 });
+  await expect(page.locator('[data-theme]').first()).toHaveCSS('width', '768px');
+  await page.setViewportSize({ width: 800, height: 600 });
+
+  const themes = [
+    {
+      name: 'Light',
+      id: 'light',
+      background: 'rgb(246, 248, 249)',
+      text: 'rgb(3, 60, 89)',
+      body: 'rgb(1, 24, 35)',
+      border: 'rgb(206, 217, 222)',
+    },
+    {
+      name: 'Dim',
+      id: 'dim',
+      background: 'rgb(2, 44, 64)',
+      text: 'rgb(142, 202, 230)',
+      body: 'rgb(255, 255, 255)',
+      border: 'rgb(46, 86, 107)',
+    },
+    {
+      name: 'Dark',
+      id: 'dark',
+      background: 'rgb(1, 17, 24)',
+      text: 'rgb(142, 202, 230)',
+      body: 'rgb(255, 255, 255)',
+      border: 'rgb(34, 63, 78)',
+    },
+  ];
+  await page.getByRole('button', { name: 'tab-button', exact: true }).nth(3).click();
+  for (const swatch of themes) {
+    const label = page.locator(`[data-theme="${swatch.id}"] > label`);
+    await expect(label).toHaveCSS('background-color', swatch.background);
+    await expect(label).toHaveCSS('color', swatch.text);
+    await expect(label).toHaveCSS('border-color', swatch.border);
+    await expect(label).toHaveCSS('border-radius', '5px');
+  }
+  for (const theme of themes) {
+    await page.getByRole('button', { name: 'tab-button', exact: true }).nth(3).click();
+    await page.getByRole('checkbox', { name: theme.name, exact: true }).check();
+    await page.getByRole('button', { name: 'tab-button', exact: true }).nth(0).click();
+    await expect(page.locator('[data-theme]').first()).toHaveAttribute('data-theme', theme.id);
+    await expect(page.locator('[data-theme]').first()).toHaveCSS('background-color', theme.background);
+    await expect(editor).toHaveCSS('color', theme.body);
+    await expect(editor.locator('blockquote')).toHaveCSS('border-left-color', theme.border);
+    await expect(page.getByRole('button', { name: 'Bold', exact: true })).toHaveCSS('color', theme.text);
+  }
+});
+
+test('selects and drops images in the OCR view', async ({ page, serviceWorker, extensionId }) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  await serviceWorker.evaluate(() =>
+    chrome.storage.local.set({
+      settings: { theme: 'light', windowType: 'window' },
+      currentNote: { title: 'Default', isFavorite: false, noteContent: '' },
+      notes: [],
+    }),
+  );
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  await page.getByRole('button', { name: 'tab-button', exact: true }).nth(2).click();
+  const upload = page.getByRole('button', { name: 'Upload an image or drag and drop it here' });
+  const preview = page.getByRole('img', { name: 'Uploaded document' });
+  await expect(upload).toBeVisible();
+  const png = await page.screenshot({ type: 'png' });
+  const jpeg = await page.screenshot({ type: 'jpeg' });
+
+  for (const file of [
+    { name: 'note.png', mimeType: 'image/png', buffer: png },
+    { name: 'note.jpg', mimeType: 'image/jpeg', buffer: jpeg },
+  ]) {
+    const choosing = page.waitForEvent('filechooser');
+    await upload.click();
+    const chooser = await choosing;
+    expect(chooser.isMultiple()).toBe(false);
+    await chooser.setFiles(file);
+    await expect(preview).toBeVisible();
+    await expect.poll(() => preview.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(800);
+    await page.getByRole('button', { name: 'Remove uploaded image' }).click();
+    await expect(upload).toBeVisible();
+  }
+
+  const transfer = await page.evaluateHandle((data) => {
+    const result = new DataTransfer();
+    const bytes = Uint8Array.from(atob(data), (character) => character.charCodeAt(0));
+    result.items.add(new File([bytes], 'dropped.png', { type: 'image/png' }));
+    return result;
+  }, png.toString('base64'));
+  try {
+    const dropzone = page.getByRole('group', { name: 'Image upload' });
+    await dropzone.dispatchEvent('dragenter', { dataTransfer: transfer });
+    await expect(dropzone).toContainText('Drop here...');
+    await dropzone.dispatchEvent('drop', { dataTransfer: transfer });
+    await expect(preview).toBeVisible();
+    await expect.poll(() => preview.evaluate((image: HTMLImageElement) => image.naturalWidth)).toBe(800);
+    await page.getByRole('button', { name: 'Remove uploaded image' }).click();
+    await expect(upload).toBeVisible();
+  } finally {
+    await transfer.dispose();
+  }
+  expect(errors).toEqual([]);
 });

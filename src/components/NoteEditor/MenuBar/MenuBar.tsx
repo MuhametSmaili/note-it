@@ -102,7 +102,7 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           <ClearFormatting />
         </Button>
         <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
-        <div className="flex justify-center flex-grow items-center h-full select-none">
+        <div className="flex justify-center grow items-center h-full select-none">
           <NoteIt />
         </div>
         <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />

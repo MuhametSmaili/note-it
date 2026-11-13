@@ -7,7 +7,7 @@ type SearchNotesProps = { onSearchHandler: (e: ChangeEvent<HTMLInputElement>) =>
 export const SearchNotes = ({ onSearchHandler, value }: SearchNotesProps) => {
   return (
     <div className="relative">
-      <Input name="name" onChange={onSearchHandler} placeholder="Search" className="!text-left !w-44" value={value} />
+      <Input name="name" onChange={onSearchHandler} placeholder="Search" className="text-left! w-44!" value={value} />
       <div className="absolute right-2 top-1 hover:cursor-pointer">
         <Search />
       </div>

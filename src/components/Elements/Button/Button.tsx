@@ -31,10 +31,10 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         ref={ref}
         className={clsx(
-          'flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-none',
+          'flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-hidden',
           variants[variant],
           sizes[size],
-          active && '!bg-gray-light',
+          active && 'bg-gray-light!',
           className,
           disabled && 'bg-gray-30 text-white',
         )}

@@ -95,13 +95,11 @@ const Ocr = () => {
       )}
 
       {status?.type === 'LOADING' ? (
-        <div className="flex-grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
+        <div className="grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
           <Spinner />
         </div>
       ) : (
-        <>
-          <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
-        </>
+        <ImageDropzone onDrop={onDrop} clearImage={() => setDroppedImage(undefined)} droppedImage={droppedImage} />
       )}
     </div>
   );
