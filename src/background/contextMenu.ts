@@ -51,7 +51,8 @@ chrome.action.onClicked.addListener(async function () {
           }),
       );
   } else {
-    chrome.action.setPopup({ popup: 'popup.html' });
+    await chrome.action.setPopup({ popup: 'popup.html' });
+    await chrome.action.openPopup();
   }
   return true;
 });
