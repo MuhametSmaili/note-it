@@ -5,8 +5,7 @@ const { getSettings, setSettings } = vi.hoisted(() => ({
   setSettings: vi.fn<(settings: Partial<LocalSettings>) => Promise<void>>(),
 }));
 
-vi.mock('@utils/storage', () => ({ localStorage: { get: getSettings } }));
-vi.mock('@hooks/useStore', () => ({ setSettings }));
+vi.mock('@utils/storage', () => ({ localStorage: { get: getSettings }, setSettings }));
 
 const onClicked = vi.fn<(listener: () => void) => void>();
 const setPopup = vi.fn<(details: chrome.action.PopupDetails) => Promise<void>>();

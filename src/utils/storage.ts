@@ -59,3 +59,8 @@ export const localStorage = new Storage<LocalStorage>(chrome.storage.local, {
   currentNote: emptyNote,
   notes: [],
 });
+
+export async function setSettings(newSettings: Partial<LocalSettings>): Promise<void> {
+  const currentSettings = await localStorage.get('settings');
+  await localStorage.set('settings', { ...currentSettings, ...newSettings });
+}

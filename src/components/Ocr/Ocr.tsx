@@ -46,7 +46,7 @@ const Ocr = () => {
       for (const item of clipboardContents) {
         if (!item.types.includes('image/png')) {
           setStatus({ type: 'ERROR', message: 'Your clipboard content is not image' });
-          throw new Error('Clipboard contains non-image data.');
+          return;
         }
         const blob = await item.getType('image/png');
         const recognizedText = await imageToText(blob, language);

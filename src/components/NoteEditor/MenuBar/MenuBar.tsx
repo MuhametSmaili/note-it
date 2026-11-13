@@ -1,5 +1,6 @@
 import { Button } from '@components/Elements';
 import type { Editor } from '@tiptap/react';
+import { useEditorState } from '@tiptap/react';
 import { DownloadNote } from './MenuItem/DownloadNote';
 import { Heading } from './MenuItem/Heading';
 import { SaveNote } from './MenuItem/SaveNote';
@@ -22,6 +23,17 @@ type MenuBarProps = {
 };
 
 export const MenuBar = ({ editor }: MenuBarProps) => {
+  const active = useEditorState({
+    editor,
+    selector: ({ editor: current }) => ({
+      bold: current.isActive('bold'),
+      italic: current.isActive('italic'),
+      underline: current.isActive('underline'),
+      bulletList: current.isActive('bulletList'),
+      blockquote: current.isActive('blockquote'),
+      codeBlock: current.isActive('codeBlock'),
+    }),
+  });
   return (
     <>
       <div className="flex flex-row items-center text-primary">
@@ -36,8 +48,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           onClick={() => editor.chain().focus().toggleBold().run()}
           aria-label="Bold"
-          aria-pressed={editor.isActive('bold')}
-          active={editor.isActive('bold')}
+          aria-pressed={active.bold}
+          active={active.bold}
         >
           <Bold />
         </Button>
@@ -46,8 +58,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           onClick={() => editor.chain().focus().toggleItalic().run()}
           aria-label="Italic"
-          aria-pressed={editor.isActive('italic')}
-          active={editor.isActive('italic')}
+          aria-pressed={active.italic}
+          active={active.italic}
         >
           <Italic />
         </Button>
@@ -56,8 +68,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           size="sm"
           onClick={() => editor.commands.toggleUnderline()}
           aria-label="Underline"
-          aria-pressed={editor.isActive('underline')}
-          active={editor.isActive('underline')}
+          aria-pressed={active.underline}
+          active={active.underline}
         >
           <Underline />
         </Button>
@@ -67,8 +79,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           variant="inverse"
           onClick={() => editor.chain().focus().toggleBulletList().run()}
           aria-label="Bullet list"
-          aria-pressed={editor.isActive('bulletList')}
-          active={editor.isActive('bulletList')}
+          aria-pressed={active.bulletList}
+          active={active.bulletList}
         >
           <BulletPoints />
         </Button>
@@ -77,8 +89,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           variant="inverse"
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
           aria-label="Blockquote"
-          aria-pressed={editor.isActive('blockquote')}
-          active={editor.isActive('blockquote')}
+          aria-pressed={active.blockquote}
+          active={active.blockquote}
         >
           <Quote />
         </Button>
@@ -87,8 +99,8 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
           variant="inverse"
           onClick={() => editor.chain().focus().toggleCodeBlock().run()}
           aria-label="Code block"
-          aria-pressed={editor.isActive('codeBlock')}
-          active={editor.isActive('codeBlock')}
+          aria-pressed={active.codeBlock}
+          active={active.codeBlock}
         >
           <CodeArrows />
         </Button>

@@ -1,5 +1,4 @@
-import { setSettings } from '@hooks/useStore';
-import { localStorage } from '@utils/storage';
+import { localStorage, setSettings } from '@utils/storage';
 
 chrome.runtime.onInstalled.addListener(function () {
   chrome.contextMenus.create({

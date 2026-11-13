@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { Editor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
 import { MenuBar } from '../MenuBar';
@@ -28,6 +28,31 @@ it.each([
   fireEvent.click(screen.getByRole('button', { name: button }));
 
   expect(editor.getHTML()).toBe(`<p><${tag}>Formatted note</${tag}></p>`);
+  expect(screen.getByRole('button', { name: button })).toHaveAttribute('aria-pressed', 'true');
+});
+
+it('updates selected marks when only the editor selection changes', () => {
+  editor.commands.setContent('<p><strong>Bold</strong></p><p>Plain</p>');
+  editor.commands.setTextSelection(2);
+  render(<MenuBar editor={editor} />);
+
+  act(() => {
+    editor.commands.setTextSelection(8);
+  });
+
+  expect(screen.getByRole('button', { name: 'Bold' })).toHaveAttribute('aria-pressed', 'false');
+});
+
+it('updates heading state after an editor transaction', () => {
+  editor.commands.setTextSelection(2);
+  render(<MenuBar editor={editor} />);
+
+  act(() => {
+    editor.commands.toggleHeading({ level: 1 });
+  });
+
+  expect(editor.isActive('heading', { level: 1 })).toBe(true);
+  expect(screen.getByRole('button', { name: 'Toggle heading' })).toHaveAttribute('aria-pressed', 'true');
 });
 
 it('undoes the last formatting change', () => {

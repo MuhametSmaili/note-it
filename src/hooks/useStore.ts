@@ -1,4 +1,4 @@
-import type { LocalSettings, LocalStorage } from '@utils/storage';
+import type { LocalStorage } from '@utils/storage';
 import { defaultSettings, localStorage } from '@utils/storage';
 import { useCallback, useSyncExternalStore } from 'react';
 
@@ -58,11 +58,6 @@ export function useStorage<K extends keyof LocalStorage>(
   );
 
   return [value, setValue];
-}
-
-export async function setSettings(newSettings: Partial<LocalSettings>): Promise<void> {
-  const currentSettings = await localStorage.get('settings');
-  await localStorage.set('settings', { ...currentSettings, ...newSettings });
 }
 
 export async function preloadSettings(): Promise<void> {

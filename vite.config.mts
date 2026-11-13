@@ -1,5 +1,6 @@
 import path from 'node:path';
 import tailwindcss from '@tailwindcss/vite';
+import react from '@vitejs/plugin-react';
 import type { UserConfig } from 'vite';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
@@ -11,6 +12,7 @@ const createSharedConfig = () =>
     root,
     base: './',
     plugins: [
+      react({ compiler: { target: '19', reportDiagnostics: true } }),
       tailwindcss(),
       svgr({ include: '**/*.svg', svgrOptions: { jsxRuntime: 'automatic' } }),
       {

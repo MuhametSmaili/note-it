@@ -29,6 +29,9 @@
     "*.{json,md,yml,yaml,css,svg}": "prettier --write"
   },
   "overrides": {
+    "@rolldown/plugin-babel": {
+      "@babel/plugin-transform-runtime": "^7.29.0"
+    },
     "@types/html-to-pdfmake": {
       "@types/pdfmake": "$@types/pdfmake"
     }
@@ -64,10 +67,12 @@
     "@types/pdfmake": "0.3.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
     "@vitest/coverage-v8": "5.1.0",
     "husky": "9.1.7",
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
+    "oxc-transform-react": "0.156.0",
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
     "pdfjs-dist": "6.5.438",
