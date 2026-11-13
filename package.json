@@ -10,7 +10,8 @@
     "build": "npm run typecheck && node scripts/build.mts",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:extension": "npm run build && playwright test",
+    "test:build": "npm run build && vitest run --config vitest.build.config.mts",
+    "test:extension": "npm run test:build && playwright test",
     "coverage": "vitest run --coverage",
     "update:deps": "npx npm-check-updates --interactive --format group",
     "format": "prettier --write .",
@@ -27,6 +28,11 @@
     ],
     "*.{json,md,yml,yaml,css,svg}": "prettier --write"
   },
+  "overrides": {
+    "@types/html-to-pdfmake": {
+      "@types/pdfmake": "$@types/pdfmake"
+    }
+  },
   "dependencies": {
     "@tiptap/core": "3.33.1",
     "@tiptap/extension-image": "3.33.1",
@@ -36,17 +42,18 @@
     "clsx": "2.1.1",
     "html-to-pdfmake": "2.6.0",
     "lodash.debounce": "4.0.8",
-    "pdfmake": "0.2.23",
+    "pdfmake": "0.3.14",
     "react": "19.3.1",
     "react-dom": "19.3.1",
     "react-dropzone": "20.2.0",
-    "tesseract.js": "^4.0.2"
+    "tesseract.js": "7.0.0"
   },
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
     "@playwright/test": "1.65.0",
     "@tailwindcss/vite": "4.3.5",
+    "@tesseract.js-data/eng": "1.0.0",
     "@testing-library/dom": "10.4.2",
     "@testing-library/jest-dom": "7.0.1",
     "@testing-library/react": "16.3.3",
@@ -54,7 +61,7 @@
     "@types/html-to-pdfmake": "2.4.5",
     "@types/lodash.debounce": "4.0.9",
     "@types/node": "24.19.2",
-    "@types/pdfmake": "0.2.13",
+    "@types/pdfmake": "0.3.3",
     "@types/react": "19.3.0",
     "@types/react-dom": "19.3.0",
     "@vitest/coverage-v8": "5.1.0",
@@ -62,8 +69,10 @@
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
     "oxlint": "1.93.0",
+    "pdfjs-dist": "6.5.438",
     "prettier": "3.10.1",
     "tailwindcss": "4.3.5",
+    "tesseract.js-core": "7.0.0",
     "typescript": "7.0.2",
     "vite": "8.3.8",
     "vite-plugin-svgr": "5.2.0",

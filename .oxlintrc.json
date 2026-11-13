@@ -10,14 +10,7 @@
     "webextensions": true,
     "node": false
   },
-  "ignorePatterns": [
-    "node_modules/**",
-    "build/**",
-    "coverage/**",
-    ".vitest/**",
-    ".playwright/**",
-    "src/static/libraries/**"
-  ],
+  "ignorePatterns": ["node_modules/**", "build/**", "coverage/**", ".vitest/**", ".playwright/**"],
   "rules": {
     "eqeqeq": ["error", "always"],
     "no-debugger": "error",

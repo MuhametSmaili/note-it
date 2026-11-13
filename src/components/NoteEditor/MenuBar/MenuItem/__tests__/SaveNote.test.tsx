@@ -4,6 +4,7 @@ import Image from '@tiptap/extension-image';
 import StarterKit from '@tiptap/starter-kit';
 import type { Note } from '@utils/types/Note';
 import { SaveNote } from '../SaveNote';
+import { richNote } from '../../../../../../test/fixtures/rich-note';
 
 const storage = vi.hoisted(() => {
   const notes: Note[] = [];
@@ -45,6 +46,16 @@ afterEach(() => {
 });
 
 describe('saving notes', () => {
+  it('preserves stored rich-text JSON when saving again', () => {
+    editor.commands.setContent(richNote.noteContent);
+    render(<SaveNote editor={editor} />);
+
+    fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
+
+    expect(storage.setNotes).toHaveBeenCalledOnce();
+    expect(storage.setNotes.mock.calls[0][0]).toMatchObject([{ id: 1, noteContent: richNote.noteContent }]);
+  });
+
   it('does not save or clear the editor during render', () => {
     render(<SaveNote editor={editor} />);
 

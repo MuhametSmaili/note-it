@@ -1,4 +1,4 @@
-import type { ImageLike } from 'tesseract.js';
+import type { ImageLike, Worker } from 'tesseract.js';
 import Tesseract from 'tesseract.js';
 
 export type CropArea = { x: number; y: number; width: number; height: number };
@@ -72,20 +72,23 @@ export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
  */
 export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promise<string | undefined> {
   try {
-    const worker = await Tesseract.createWorker({
-      workerBlobURL: false,
-      workerPath: '/libraries/worker.min.js',
-      corePath: '/libraries/tesseract-core.asm.js',
+    const worker = await new Promise<Worker>((resolve, reject) => {
+      Tesseract.createWorker(language, Tesseract.OEM.LSTM_ONLY, {
+        workerBlobURL: false,
+        workerPath: chrome.runtime.getURL('libraries/worker.min.js'),
+        corePath: chrome.runtime.getURL('libraries'),
+        errorHandler: reject,
+      }).then(resolve, reject);
     });
 
-    await worker.loadLanguage(language);
-    await worker.initialize(language);
-    const {
-      data: { text },
-    } = await worker.recognize(imageSrc);
-
-    await worker.terminate();
-    return text;
+    try {
+      const {
+        data: { text },
+      } = await worker.recognize(imageSrc);
+      return text;
+    } finally {
+      await worker.terminate();
+    }
   } catch (error) {
     console.error('Error converting image to text', error);
   }
