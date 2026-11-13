@@ -1,7 +1,6 @@
 import { rootRender } from '@utils/render';
 import { MessageRequest } from '@utils/types/MessageRequest';
 import './styles';
-// ICONS
 import Close from '@icons/X.svg';
 import CameraRetake from '@icons/CameraRetake.svg';
 import { localStorage } from '@utils/storage';
@@ -35,7 +34,6 @@ const FrameScript = () => {
           <Close />
         </button>
       </div>
-      {/* This trusted extension page needs its origin and Chrome APIs, which sandboxing would remove. */}
       {/* oxlint-disable-next-line react/iframe-missing-sandbox */}
       <iframe
         title="Screenshot preview and OCR"

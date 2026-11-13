@@ -4,7 +4,7 @@ import clsx from 'clsx';
 import { SelectFieldSpinner } from '@components/Elements';
 import H from '@icons/H.svg';
 
-type Level = 1 | 2 | 3; //| 4 | 5 | 6
+type Level = 1 | 2 | 3;
 export const Heading = ({ editor }: { editor: Editor }) => {
   const [value, setValue] = useState(1);
   return (

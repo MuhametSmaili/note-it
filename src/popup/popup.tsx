@@ -9,7 +9,6 @@ import { TabContent } from '@components/Elements';
 import { Settings } from '@components/settings/settings';
 import { preloadSettings, useStorage } from '@hooks/useStore';
 import { ActiveTabProvider, useTab } from '../provider/tabContext';
-// Tab contents
 const NoteEditor = React.lazy(() => import('@components/NoteEditor/NoteEditor'));
 const FolderNotes = React.lazy(() => import('@components/NotesFolder/NotesFolder'));
 const Ocr = React.lazy(() => import('@components/Ocr/Ocr'));

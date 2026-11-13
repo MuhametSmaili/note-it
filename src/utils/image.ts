@@ -4,10 +4,8 @@ import Tesseract from 'tesseract.js';
 export type CropArea = { x: number; y: number; width: number; height: number };
 
 /**
- *
- * @param imageURL full image
- * @param cropArea cropped area (x,y,width,height)
- * @returns blob of the cropped image
+ * Crop the image to cropArea. Use CSS pixels for the coordinates.
+ * Apply the device pixel ratio. Return the result as a PNG blob.
  */
 export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob> {
   const left = cropArea.x * window.devicePixelRatio;
@@ -59,11 +57,7 @@ export async function copyBlobToClipboard(imageBlob: Blob) {
   }
 }
 
-/**
- *
- * @param blob blob file
- * @returns base64 image
- */
+/** Read the blob. Return a data URL with base64 encoding. */
 export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
   return new Promise((resolve) => {
     const reader = new FileReader();
@@ -73,10 +67,8 @@ export function blobToBase64(blob: Blob): Promise<string | ArrayBuffer | null> {
 }
 
 /**
- *
- * @param imageSrc image source or base64 or any image -> recommended base54
- * @param language the language of image eng default
- * @returns text recognized from image
+ * Read text from the image. Use a Tesseract language code.
+ * The default language is English. Return undefined if the operation fails.
  */
 export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promise<string | undefined> {
   try {
@@ -86,7 +78,6 @@ export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promis
       corePath: '/libraries/tesseract-core.asm.js',
     });
 
-    // await worker.load(); -- workers come pre-loaded
     await worker.loadLanguage(language);
     await worker.initialize(language);
     const {

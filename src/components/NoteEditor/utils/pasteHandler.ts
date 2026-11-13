@@ -16,7 +16,10 @@ function readImage(file: File): Promise<string> {
   });
 }
 
-// Handle pasted images without intercepting text or other clipboard content.
+/**
+ * Return true if the clipboard contains image files.
+ * Otherwise, return false and let the editor process the data.
+ */
 export function paste(view: EditorView, event: ClipboardEvent): boolean {
   const images = Array.from(event.clipboardData?.files ?? []).filter((file) => file.type.startsWith('image/'));
   if (images.length === 0) return false;

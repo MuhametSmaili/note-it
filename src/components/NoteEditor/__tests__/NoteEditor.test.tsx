@@ -11,7 +11,7 @@ const storage = vi.hoisted(() => ({
 }));
 
 vi.mock('@hooks/useStore', () => ({
-  useStorage: () => [storage.note, storage.setCurrentNote],
+  useStorage: () => [storage.note, (note: Note) => storage.setCurrentNote(note)],
 }));
 vi.mock('@utils/storage', () => ({
   localStorage: { get: vi.fn<() => Promise<Note>>(async () => storage.note) },
@@ -60,6 +60,38 @@ it('cancels pending autosave when the editor unmounts', async () => {
     fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
     unmount();
     await act(async () => vi.advanceTimersByTimeAsync(1100));
+    expect(storage.setCurrentNote).not.toHaveBeenCalled();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('restores stored content without scheduling an autosave', async () => {
+  vi.useFakeTimers();
+  try {
+    render(<NoteEditor />);
+    await act(async () => vi.advanceTimersByTimeAsync(1100));
+
+    expect(localStorage.get).toHaveBeenCalledWith('currentNote');
+    expect(screen.getByText('Saved content')).toBeInTheDocument();
+    expect(storage.setCurrentNote).not.toHaveBeenCalled();
+  } finally {
+    vi.useRealTimers();
+  }
+});
+
+it('ignores stored content that resolves after the editor unmounts', async () => {
+  const pending = Promise.withResolvers<Note>();
+  vi.mocked(localStorage.get).mockImplementationOnce(() => pending.promise);
+  const { unmount } = render(<NoteEditor />);
+  await waitFor(() => expect(localStorage.get).toHaveBeenCalledWith('currentNote'));
+  vi.useFakeTimers();
+  try {
+    unmount();
+    await act(async () => vi.advanceTimersByTimeAsync(10));
+    await act(async () => {
+      pending.resolve(storage.note);
+    });
     expect(storage.setCurrentNote).not.toHaveBeenCalled();
   } finally {
     vi.useRealTimers();

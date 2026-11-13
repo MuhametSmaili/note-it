@@ -6,20 +6,6 @@
 
 @layer base {
   :root {
-    /* colors HEX*/
-    /* --color-acent: #033c59; */
-    /* --color-gray-100: #f6f8f9; */
-    /* --color-gray-200: #edf1f3; */
-    /* --color-gray-300: #dbe9f1; */
-    /* --color-gray-400: #ced9de; */
-    /* --color-gray-500: #678798; */
-    /* --color-gray-600: #485f6b; */
-    /* --color-gray-700: #011823; */
-    /* --color-red: #cd291e; */
-    /* --color-light-blue: #8ecae6; */
-    /* --color-blue: #19a1e5; */
-
-    /* colors hsl*/
     --color-acent: 200 93% 18%;
     --color-white: 100 100% 100%;
     --color-gray-100: 200 20% 97%;
@@ -32,9 +18,7 @@
     --color-gray-900: 200, 95%, 7%, 1;
     --color-red: 4 74% 46%;
     --color-light-blue: 199 64% 73%;
-    /* --color-blue: #19a1e5; */
 
-    /* semantic colors */
     --color-bg-primary: var(--color-gray-100);
     --color-bg-light: var(--color-gray-200);
     --color-bg-acent: var(--color-acent);
@@ -89,7 +73,6 @@
     border-radius: 50%;
     position: absolute;
     top: -5px;
-    /* background: theme('colors.gray.light'); */
   }
 
   .icon-circle:before {

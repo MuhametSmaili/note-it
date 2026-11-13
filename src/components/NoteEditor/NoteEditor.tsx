@@ -1,7 +1,5 @@
 import { useStorage } from '@hooks/useStore';
 import Image from '@tiptap/extension-image';
-import Link from '@tiptap/extension-link';
-import Underline from '@tiptap/extension-underline';
 import type { Editor } from '@tiptap/react';
 import { EditorContent, useEditor } from '@tiptap/react';
 import StarterKit from '@tiptap/starter-kit';
@@ -27,21 +25,25 @@ const NoteEditor = () => {
     [currentNote, setCurrentNote],
   );
 
-  const debouncedEventHandler = useMemo(() => debounce(saveNoteHandler, 1000), [saveNoteHandler]);
+  const debouncedSaveNote = useMemo(
+    () => debounce((updatedEditor: Editor, save: (editor: Editor) => void) => save(updatedEditor), 1000),
+    [],
+  );
 
   const editor = useEditor({
-    extensions: [StarterKit, Image, Link, Underline],
+    extensions: [StarterKit, Image],
+    shouldRerenderOnTransaction: true,
     content: currentNote?.noteContent,
     editorProps: {
       handleDOMEvents: {
         paste,
       },
     },
-    onUpdate: ({ editor: updatedEditor }) => debouncedEventHandler(updatedEditor),
+    onUpdate: ({ editor: updatedEditor }) => debouncedSaveNote(updatedEditor, saveNoteHandler),
     onCreate: ({ editor: createdEditor }) => {
       localStorage.get('currentNote').then((note) => {
-        if (note) {
-          createdEditor.commands.setContent(note.noteContent);
+        if (note && !createdEditor.isDestroyed) {
+          createdEditor.commands.setContent(note.noteContent, { emitUpdate: false });
         }
       });
     },
@@ -49,9 +51,9 @@ const NoteEditor = () => {
 
   useEffect(() => {
     return () => {
-      debouncedEventHandler.cancel(); // 👉 https://docs-lodash.com/v4/debounce/#:~:text=comes%20with%20a%C2%A0cancelmethod%20to%20cancel%20delayed%C2%A0func
+      debouncedSaveNote.cancel();
     };
-  }, [debouncedEventHandler]);
+  }, [debouncedSaveNote]);
 
   return (
     <>

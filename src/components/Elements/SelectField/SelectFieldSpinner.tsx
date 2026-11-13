@@ -14,13 +14,9 @@ type ChangeSelectFieldProps = {
 };
 
 /**
- * This is a component to go between(up and down) values of a select Field,
- * Can be used alone too, accepts options same as select field
- * and can show the current (index+1)
- * Based on the design.
- *
+ * Select the next or previous option. At the end of the list, start again at the other end.
+ * Set showIndex to show the option number, starting at 1.
  */
-
 export const SelectFieldSpinner = ({
   currentValue,
   options,

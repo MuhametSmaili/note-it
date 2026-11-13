@@ -4,7 +4,6 @@ import React, { useSyncExternalStore } from 'react';
 
 const cache: Partial<LocalStorage> = {};
 
-// Function to initialize cache synchronously if not already populated
 const initializeCacheSync = <K extends keyof LocalStorage>(key: K, defaultValue?: LocalStorage[K]) => {
   if (cache[key] === undefined) {
     chrome.storage.local.get([key], (result) => {
@@ -39,7 +38,7 @@ export function useStorage<K extends keyof LocalStorage>(
   key: K,
   defaultValue?: LocalStorage[K],
 ): [LocalStorage[K], (value: LocalStorage[K]) => Promise<void>] {
-  initializeCacheSync(key, defaultValue); // initilize chace with ipotential default value
+  initializeCacheSync(key, defaultValue);
 
   React.useEffect(() => {
     initializeCache(key, defaultValue);
@@ -78,9 +77,9 @@ export async function preloadSettings(): Promise<void> {
       });
     });
 
-    cache.settings = result; // Update the cache with the resolved settings
+    cache.settings = result;
   } catch (error) {
     console.error('Error preloading settings:', error);
-    cache.settings = { theme: 'light', windowType: 'popup' }; // Default fallback
+    cache.settings = { theme: 'light', windowType: 'popup' };
   }
 }

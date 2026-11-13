@@ -6,6 +6,8 @@ import type { Worker } from '@playwright/test';
 const root = path.resolve(import.meta.dirname, '..');
 const extensionPath = path.join(root, 'build');
 
+const paragraph = (text: string) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
+
 const test = base.extend<{ serviceWorker: Worker; extensionId: string }>({
   context: async ({ playwright }, provideContext) => {
     const context = await playwright.chromium.launchPersistentContext('', {
@@ -57,6 +59,29 @@ test('opens the editor, exports a PDF, and saves and reopens a note', async ({
   await expect(page.locator('[data-theme]')).toHaveCSS('display', 'flex');
   await editor.fill('Vite smoke note');
 
+  await editor.press('ControlOrMeta+A');
+  await page.getByRole('button', { name: 'Bold', exact: true }).click();
+  await expect(page.getByRole('button', { name: 'Bold', exact: true })).toHaveAttribute('aria-pressed', 'true');
+  await expect(editor.locator('strong')).toHaveText('Vite smoke note');
+  await page.getByRole('button', { name: 'Undo', exact: true }).click();
+  await expect(editor.locator('strong')).toHaveCount(0);
+  await page.getByRole('button', { name: 'Redo', exact: true }).click();
+  await expect(editor.locator('strong')).toHaveText('Vite smoke note');
+
+  for (const mark of ['Italic', 'Underline']) {
+    await page.getByRole('button', { name: mark, exact: true }).click();
+    await expect(page.getByRole('button', { name: mark, exact: true })).toHaveAttribute('aria-pressed', 'true');
+  }
+  await expect(editor.locator('em')).toHaveText('Vite smoke note');
+  await expect(editor.locator('u')).toHaveText('Vite smoke note');
+  await expect
+    .poll(() =>
+      serviceWorker.evaluate(async () =>
+        JSON.stringify((await chrome.storage.local.get('currentNote')).currentNote.noteContent),
+      ),
+    )
+    .toContain('"type":"underline"');
+
   const downloading = page.waitForEvent('download');
   await page.getByRole('button', { name: 'Download note as PDF' }).click();
   const download = await downloading;
@@ -72,6 +97,103 @@ test('opens the editor, exports a PDF, and saves and reopens a note', async ({
     });
   await page.getByRole('button', { name: 'select-note', exact: true }).click();
   await expect(editor).toHaveText('Vite smoke note');
+  await expect(editor.locator('strong')).toHaveText('Vite smoke note');
+  await expect(editor.locator('em')).toHaveText('Vite smoke note');
+  await expect(editor.locator('u')).toHaveText('Vite smoke note');
+  expect(errors).toEqual([]);
+});
+
+test('preserves existing rich-text JSON through preview, editing, and saving', async ({
+  page,
+  serviceWorker,
+  extensionId,
+}) => {
+  const errors: string[] = [];
+  page.on('pageerror', (error) => errors.push(error.message));
+  const image =
+    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mP8/x8AAwMCAO+jRZkAAAAASUVORK5CYII=';
+  const note = {
+    id: 42,
+    title: 'Legacy heading',
+    isFavorite: true,
+    noteContent: {
+      type: 'doc',
+      content: [
+        { type: 'heading', attrs: { level: 2 }, content: [{ type: 'text', text: 'Legacy heading' }] },
+        {
+          type: 'paragraph',
+          content: [
+            { type: 'text', text: 'Styled text', marks: [{ type: 'bold' }, { type: 'italic' }, { type: 'underline' }] },
+            { type: 'text', text: ' and ' },
+            {
+              type: 'text',
+              text: 'a link',
+              marks: [
+                {
+                  type: 'link',
+                  attrs: {
+                    href: 'https://example.com/',
+                    target: '_blank',
+                    rel: 'noopener noreferrer nofollow',
+                    class: null,
+                  },
+                },
+              ],
+            },
+          ],
+        },
+        paragraph('Plain text'),
+        { type: 'bulletList', content: [{ type: 'listItem', content: [paragraph('Bullet item')] }] },
+        {
+          type: 'orderedList',
+          attrs: { start: 3 },
+          content: [{ type: 'listItem', content: [paragraph('Ordered item')] }],
+        },
+        { type: 'blockquote', content: [paragraph('Quoted text')] },
+        { type: 'codeBlock', attrs: { language: null }, content: [{ type: 'text', text: 'const saved = true;' }] },
+        { type: 'horizontalRule' },
+        { type: 'image', attrs: { src: image, alt: 'Saved image', title: null } },
+        paragraph('End of saved note'),
+      ],
+    },
+  };
+  await serviceWorker.evaluate(
+    (saved) =>
+      chrome.storage.local.set({
+        settings: { theme: 'light', windowType: 'window' },
+        currentNote: saved,
+        notes: [saved],
+      }),
+    note,
+  );
+  await page.goto(`chrome-extension://${extensionId}/popup.html`);
+  const editor = page.locator('[contenteditable="true"]');
+  await expect(editor.locator('h2')).toHaveText('Legacy heading');
+  await editor.getByText('Styled text', { exact: true }).click();
+  for (const mark of ['Bold', 'Italic', 'Underline']) {
+    await expect(page.getByRole('button', { name: mark, exact: true })).toHaveAttribute('aria-pressed', 'true');
+  }
+  await editor.getByText('Plain text', { exact: true }).click();
+  for (const mark of ['Bold', 'Italic', 'Underline']) {
+    await expect(page.getByRole('button', { name: mark, exact: true })).toHaveAttribute('aria-pressed', 'false');
+  }
+  await page.getByRole('button', { name: 'Save note', exact: true }).click();
+  const preview = page.locator('[contenteditable="false"]');
+  await expect(preview.locator('h2')).toHaveText('Legacy heading');
+  await expect(preview.locator('u')).toHaveText('Styled text');
+  await expect(preview.locator('a')).toHaveAttribute('href', 'https://example.com/');
+  await expect(preview.getByRole('img', { name: 'Saved image' })).toHaveAttribute('src', image);
+
+  await page.getByRole('button', { name: 'select-note', exact: true }).click();
+  await expect(editor.locator('ul li')).toHaveText('Bullet item');
+  await expect(editor.locator('ol')).toHaveAttribute('start', '3');
+  await expect(editor.locator('blockquote')).toHaveText('Quoted text');
+  await expect(editor.locator('pre code')).toHaveText('const saved = true;');
+  await expect(editor.locator('hr')).toHaveCount(1);
+  await expect(editor.getByRole('img', { name: 'Saved image' })).toHaveAttribute('src', image);
+  const saved = await serviceWorker.evaluate(() => chrome.storage.local.get('notes'));
+  expect(saved).toMatchObject({ notes: [note] });
+  expect(saved.notes).toHaveLength(1);
   expect(errors).toEqual([]);
 });
 

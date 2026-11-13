@@ -1,7 +1,6 @@
 import type { Note } from '@utils/types/Note';
 import { useState } from 'react';
 import { useTab } from '../../../provider/tabContext';
-// Icons
 import { useStorage } from '@hooks/useStore';
 import DeleteIcon from '@icons/Delete.svg';
 import StarIcon from '@icons/Star2.svg';
@@ -17,7 +16,7 @@ const NoteHeader = ({ note }: NoteHeaderProps) => {
 
   const setCurrentNoteHandler = () => {
     setCurrentNote(note);
-    dispatch({ type: 'TAB_HANDLER', payload: 0 }); // set the first tab as active tab
+    dispatch({ type: 'TAB_HANDLER', payload: 0 });
   };
 
   return (
@@ -33,7 +32,6 @@ const NoteHeader = ({ note }: NoteHeaderProps) => {
     </div>
   );
 };
-// TODO move buttons in own component
 export default NoteHeader;
 
 type SingleNoteFooterProps = {

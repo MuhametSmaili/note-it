@@ -9,7 +9,7 @@ const variants = {
 };
 
 const sizes = {
-  sm: ' text-sm', //py-1 px-1
+  sm: ' text-sm',
   md: 'py-1 px-2 text-md',
 };
 

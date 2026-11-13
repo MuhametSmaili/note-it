@@ -31,18 +31,16 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
         ...currentNote,
         title,
         noteContent: editor.getJSON(),
-        // This timestamp is evaluated only on click, never during render.
         // oxlint-disable-next-line react/purity
         updated: new Date().toLocaleDateString(),
       };
       setNotes(notes.map((note) => (note.id === currentNote.id ? updatedNote : note)));
       setCurrentNote(emptyNote);
-      editor.commands.clearContent();
+      editor.commands.clearContent(false);
     } else {
-      // create new note
       createNewNoteHandler(title, notes);
     }
-    dispatch({ type: 'TAB_HANDLER', payload: 1 }); // go to notes folder
+    dispatch({ type: 'TAB_HANDLER', payload: 1 });
   };
 
   const createNewNoteHandler = (title: string, existingNotes: Note[] = []) => {
@@ -56,7 +54,7 @@ export const SaveNote = ({ editor }: SaveNoteProps) => {
 
     setNotes([...existingNotes, newNote]);
     setCurrentNote(emptyNote);
-    editor.commands.clearContent();
+    editor.commands.clearContent(false);
   };
 
   return (

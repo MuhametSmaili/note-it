@@ -1,4 +1,3 @@
-/* Basic editor styles */
 @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
 
 .ProseMirror {
@@ -28,7 +27,6 @@
 
 .ProseMirror code {
   display: block;
-  /* background: theme('colors.blue.prussian' / 90%); */
   width: 100%;
   padding: 1rem;
   @apply rounded-sm text-light bg-acent;
@@ -44,8 +42,6 @@
 
 .ProseMirror blockquote {
   @apply pl-7 ml-5 border-l-2 border-solid italic border-primary text-light2;
-  /* border-color: theme('colors.blue.prussian' / 20%); */
-  /* color: theme('colors.blue.prussian' / 80%); */
 }
 
 .ProseMirror h1 {
@@ -61,7 +57,6 @@
 }
 
 .ProseMirror a {
-  /* color: theme('colors.blue.prussian'); */
   text-decoration: underline;
   @apply text-light;
 }

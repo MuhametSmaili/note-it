@@ -1,6 +1,5 @@
 import type { ChangeEvent } from 'react';
 import { Input } from '@components/Elements';
-// icons
 import Search from '@icons/Search.svg';
 
 type SearchNotesProps = { onSearchHandler: (e: ChangeEvent<HTMLInputElement>) => void; value?: string };

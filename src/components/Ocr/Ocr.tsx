@@ -64,14 +64,6 @@ const Ocr = () => {
     <div className="relative flex flex-col h-full">
       <div className="flex justify-between items-center">
         <div className="flex gap-2">
-          {/* <Button */}
-          {/*   variant="primary" */}
-          {/*   title="Upload Image" */}
-          {/*   disabled={status?.type === 'LOADING'} */}
-          {/*   className="py-0" */}
-          {/*   onClick={open} */}
-          {/*   icon={<AddCamera />} */}
-          {/* /> */}
           <Button
             variant="primary"
             name="paste-from-clipboard"

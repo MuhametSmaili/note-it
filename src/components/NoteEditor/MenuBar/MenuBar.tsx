@@ -1,12 +1,10 @@
 import { Button } from '@components/Elements';
 import type { Editor } from '@tiptap/react';
-// Menu items
 import { DownloadNote } from './MenuItem/DownloadNote';
 import { Heading } from './MenuItem/Heading';
 import { SaveNote } from './MenuItem/SaveNote';
 import { ScreenshotArea } from './MenuItem/ScreenshotArea';
 
-// ICONS
 import Bold from '@icons/Bold.svg';
 import BulletPoints from '@icons/BulletPointsDots.svg';
 import ClearFormatting from '@icons/ClearFormatting.svg';
@@ -27,7 +25,6 @@ export const MenuBar = ({ editor }: MenuBarProps) => {
   return (
     <>
       <div className="flex flex-row items-center text-primary">
-        {/* <Input name="name" placeholder="Note name" value={title} onChange={(e) => setTitle(e.target.value)} required /> */}
         <Button aria-label="Undo" variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
         </Button>

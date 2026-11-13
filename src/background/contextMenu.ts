@@ -1,7 +1,6 @@
 import { setSettings } from '@hooks/useStore';
 import { localStorage } from '@utils/storage';
 
-// Creating menus
 chrome.runtime.onInstalled.addListener(async function () {
   chrome.contextMenus.create({
     id: 'popup',
@@ -18,11 +17,9 @@ chrome.runtime.onInstalled.addListener(async function () {
     checked: false,
   });
 
-  // Set popup as default on install
   setSettings({ windowType: 'popup' });
 });
 
-// Listening for menu changes
 chrome.contextMenus.onClicked.addListener((e) => {
   setSettings({ windowType: e.menuItemId as 'popup' | 'window' });
 
@@ -33,12 +30,10 @@ chrome.contextMenus.onClicked.addListener((e) => {
   }
 });
 
-// Open chrome extension as window or popup -> this is a click handler when we open the extension
-let chromeWindowId = -1; //used to open just one window for extension
+let chromeWindowId = -1;
 chrome.action.onClicked.addListener(async function () {
   const windowType = await localStorage.get('settings');
   if (windowType.windowType === 'window') {
-    // Open just one window
     chrome.windows
       .get(chromeWindowId)
       .then(() => chrome.windows.update(chromeWindowId, { focused: true }))

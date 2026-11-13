@@ -44,8 +44,7 @@ export default defineConfig({
   },
 });
 
-// Chrome executes injected scripts as classic scripts. Each needs a standalone
-// IIFE, without shared chunks or an extension-page module loader.
+/** Create one IIFE file for a Chrome extension script. */
 export function scriptConfig(name: 'background' | 'cropArea' | 'frameScript'): UserConfig {
   return {
     ...shared,

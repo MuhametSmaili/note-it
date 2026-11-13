@@ -54,6 +54,8 @@ describe('saving notes', () => {
   });
 
   it('updates an existing note without mutating the storage snapshot', () => {
+    const onUpdate = vi.fn<() => void>();
+    editor.on('update', onUpdate);
     render(<SaveNote editor={editor} />);
     fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
 
@@ -62,10 +64,13 @@ describe('saving notes', () => {
       expect.objectContaining({ id: 1, title: 'Updated content', updated: expect.any(String) }),
     ]);
     expect(editor.isEmpty).toBe(true);
+    expect(onUpdate).not.toHaveBeenCalled();
     expect(storage.dispatch).toHaveBeenCalledWith({ type: 'TAB_HANDLER', payload: 1 });
   });
 
   it('appends a new note without mutating the storage snapshot', () => {
+    const onUpdate = vi.fn<() => void>();
+    editor.on('update', onUpdate);
     storage.getCurrentNote.mockReturnValue(undefined);
     render(<SaveNote editor={editor} />);
     fireEvent.click(screen.getByRole('button', { name: 'Save note' }));
@@ -76,6 +81,7 @@ describe('saving notes', () => {
       expect.objectContaining({ title: 'Updated content', id: expect.any(Number), created: expect.any(String) }),
     ]);
     expect(editor.isEmpty).toBe(true);
+    expect(onUpdate).not.toHaveBeenCalled();
   });
 
   it('does not save an empty note', () => {

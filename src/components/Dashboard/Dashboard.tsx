@@ -1,6 +1,5 @@
 import { Tab } from '@components/Elements';
 import clsx from 'clsx';
-// ICONS
 import Feather from '@icons/Feather';
 import FolderIcon from '@icons/Folder';
 import Logo from '@icons/Logo.svg';
