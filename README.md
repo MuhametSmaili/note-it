@@ -35,7 +35,7 @@ You can take notes, convert images to text, download notes to pdf, and more.**
 
 ## Contributors
 
-[![](https://github.com/MSmaili.png?size=100&fit=cover&mask=circle)](https://github.com/MuhametSmaili) [![](https://github.com/bkrmadtya.png?size=100&fit=cover&mask=circle)](https://github.com/bkrmadtya)
+[![](https://github.com/MuhametSmaili.png?size=100&fit=cover&mask=circle)](https://github.com/MuhametSmaili) [![](https://github.com/bkrmadtya.png?size=100&fit=cover&mask=circle)](https://github.com/bkrmadtya)
 
 🎨 Designed by : [Altin Smaili](https://www.figma.com/file/h66qGHcw4DzCZMotoqioTV/Note-It?node-id=2%3A121)
 
