@@ -39,37 +39,6 @@ test('refreshes Collections after external storage reset', async ({ page, servic
   await expect(page.getByRole('button', { name: 'select-note', exact: true })).toHaveCount(0);
 });
 
-test('preserves both views of a conflicting draft through an explicit recovery copy', async ({
-  page,
-  context,
-  serviceWorker,
-  extensionUrl,
-}) => {
-  await seedStorage(serviceWorker);
-  await page.goto(`${extensionUrl}/popup.html`);
-  const other = await context.newPage();
-  await other.goto(`${extensionUrl}/popup.html`);
-  const firstEditor = page.locator('[contenteditable="true"]');
-  const otherEditor = other.locator('[contenteditable="true"]');
-  await firstEditor.waitFor();
-  await otherEditor.waitFor();
-  await firstEditor.fill('First view');
-  await expect(page.getByRole('status')).toHaveText('Draft saved');
-
-  await otherEditor.fill('Second view');
-
-  await expect(other.getByRole('alert')).toContainText('changed in another view');
-  await expect(otherEditor).toHaveText('Second view');
-  await other.getByRole('button', { name: 'Save a copy', exact: true }).click();
-  await expect(other.getByRole('status')).toHaveText('Saved a copy to Collections');
-  await page.getByRole('button', { name: 'Save note', exact: true }).click();
-  await expect(page.getByRole('button', { name: 'select-note', exact: true })).toHaveCount(2);
-  const stored = await serviceWorker.evaluate(
-    async () => (await chrome.storage.local.get<{ 'noteIt.notes': NotesState }>('noteIt.notes'))['noteIt.notes'],
-  );
-  expect(stored.notes.map((note) => note.title).toSorted()).toEqual(['First view', 'Second view']);
-});
-
 test('merges a favorite change from another view with an editor save', async ({
   page,
   context,

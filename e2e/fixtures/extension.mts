@@ -1,17 +1,10 @@
-import path from 'node:path';
 import { test as base, expect } from '@playwright/test';
 import type { Worker } from '@playwright/test';
-
-const extensionPath = path.resolve(import.meta.dirname, '../../build/chrome');
+import { launchChromiumExtension } from './chromium.mts';
 
 export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; pageErrors: void }>({
   context: async ({ playwright }, provideContext) => {
-    const context = await playwright.chromium.launchPersistentContext('', {
-      channel: 'chromium',
-      headless: true,
-      viewport: { width: 800, height: 600 },
-      args: [`--disable-extensions-except=${extensionPath}`, `--load-extension=${extensionPath}`],
-    });
+    const context = await launchChromiumExtension(playwright.chromium);
     try {
       await provideContext(context);
     } finally {

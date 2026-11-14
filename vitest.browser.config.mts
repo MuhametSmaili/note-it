@@ -2,7 +2,7 @@ import { defineConfig } from 'vitest/config';
 
 export default defineConfig({
   test: {
-    include: ['e2e/firefox/*.test.mts'],
+    include: ['e2e/shared/*.test.mts'],
     environment: 'node',
     fileParallelism: false,
     hookTimeout: 60_000,

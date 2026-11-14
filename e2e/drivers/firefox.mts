@@ -3,13 +3,14 @@ import { once } from 'node:events';
 import { mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { tmpdir } from 'node:os';
+import type { ExtensionDriver } from './driver.mts';
 
-export const record = (value: unknown): Record<string, unknown> => {
+const record = (value: unknown): Record<string, unknown> => {
   if (!value || typeof value !== 'object' || Array.isArray(value)) throw new Error('Expected an object.');
   return Object.fromEntries(Object.entries(value));
 };
 
-export async function launchFirefoxExtension() {
+export async function launchFirefoxDriver(): Promise<ExtensionDriver> {
   const profile = await mkdtemp(path.join(tmpdir(), 'note-it-firefox-'));
   const downloads = path.join(profile, 'downloads');
   await mkdir(downloads);
@@ -122,12 +123,13 @@ export async function launchFirefoxExtension() {
     connected.addEventListener('close', () => {
       pending.forEach((entry) => entry.reject(new Error('Firefox connection closed.')));
     });
-    const session = await command('session.new', { capabilities: { alwaysMatch: {} } });
+    await command('session.new', { capabilities: { alwaysMatch: {} } });
     await command('webExtension.install', {
       extensionData: { type: 'path', path: path.resolve('build/firefox') },
     });
-    const navigate = (context: string, url: string) =>
-      command('browsingContext.navigate', { context, url, wait: 'complete' });
+    const navigate = async (context: string, url: string) => {
+      await command('browsingContext.navigate', { context, url, wait: 'complete' });
+    };
     const page = async (url: string) => {
       const result = await command('browsingContext.create', { type: 'tab' });
       if (typeof result.context !== 'string') throw new Error('Missing Firefox browsing context.');
@@ -136,7 +138,10 @@ export async function launchFirefoxExtension() {
     };
     const evaluate = async (context: string, expression: string): Promise<unknown> => {
       const result = await command('script.evaluate', {
-        expression: `(async () => { ${expression} })().then(value => JSON.stringify(value))`,
+        expression: `(async () => {
+          const extension = globalThis.browser;
+          ${expression}
+        })().then(value => JSON.stringify(value))`,
         target: { context },
         awaitPromise: true,
       });
@@ -165,13 +170,36 @@ export async function launchFirefoxExtension() {
     };
     return {
       origin: `moz-extension://${uuid}`,
-      version: record(session.capabilities).browserVersion,
       downloads,
       failures,
-      command,
       page,
       navigate,
       evaluate,
+      activate: async (context) => {
+        if (await evaluate(context, 'return Boolean(extension);')) {
+          await evaluate(
+            context,
+            `
+            const tab = await extension.tabs.getCurrent();
+            await extension.tabs.update(tab.id, { active: true });
+          `,
+          );
+        } else {
+          await command('browsingContext.activate', { context });
+        }
+      },
+      closePage: async (context) => {
+        await command('browsingContext.close', { context });
+      },
+      frame: async (context) => {
+        const tree = await command('browsingContext.getTree', { root: context });
+        if (!Array.isArray(tree.contexts)) throw new Error('Missing context tree.');
+        const children = record(tree.contexts[0]).children;
+        if (!Array.isArray(children)) throw new Error('Missing screenshot iframe.');
+        const frame = record(children[0]).context;
+        if (typeof frame !== 'string') throw new Error('Missing screenshot context.');
+        return frame;
+      },
       interceptLanguage,
       close,
     };

@@ -30,21 +30,6 @@ test('reinjects the styled crop overlay after cancellation', async ({ page, serv
   await expect(page.locator('#note-it-content-styles')).toHaveCount(1);
 });
 
-test('opens a styled screenshot iframe with the cropped image', async ({ page, serviceWorker }) => {
-  const preview = page.frameLocator('#OCRFrame');
-
-  await inject(serviceWorker, 'frame-script.js');
-
-  await expect(preview.getByRole('heading', { name: 'Image cropped' })).toHaveCSS('font-size', '20px');
-  await expect
-    .poll(() =>
-      preview
-        .getByRole('img', { name: 'Selected screenshot area' })
-        .evaluate((image: HTMLImageElement) => image.naturalWidth),
-    )
-    .toBe(100);
-});
-
 test('closes the screenshot iframe', async ({ page, serviceWorker }) => {
   await inject(serviceWorker, 'frame-script.js');
   await page.frameLocator('#OCRFrame').getByRole('heading', { name: 'Image cropped' }).waitFor();
