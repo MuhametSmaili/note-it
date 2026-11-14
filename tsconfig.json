@@ -24,6 +24,10 @@
     "incremental": true,
     "types": ["vitest/globals", "chrome"],
     "paths": {
+      "@app/*": ["./src/app/*"],
+      "@screens/*": ["./src/screens/*"],
+      "@components": ["./src/components/index.ts"],
+      "@modules/*": ["./src/modules/*"],
       "@components/*": ["./src/components/*"],
       "@utils/*": ["./src/utils/*"],
       "@styles/*": ["./src/styles/*"],

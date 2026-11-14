@@ -1,4 +1,4 @@
-import type { Note } from '../../src/utils/types/Note';
+import type { Note } from '../../src/modules/notes';
 
 const paragraph = (text: string) => ({ type: 'paragraph', content: [{ type: 'text', text }] });
 
@@ -53,4 +53,12 @@ export const richNote = {
       paragraph('End of saved note'),
     ],
   },
+};
+
+export const storedRichNote = {
+  ...richNote,
+  id: String(richNote.id),
+  revision: 0,
+  createdAt: null,
+  updatedAt: null,
 } satisfies Note;

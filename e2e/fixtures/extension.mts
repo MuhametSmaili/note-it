@@ -1,7 +1,6 @@
 import path from 'node:path';
 import { test as base, expect } from '@playwright/test';
 import type { Worker } from '@playwright/test';
-import type { LocalStorage } from '../../src/utils/storage';
 
 const extensionPath = path.resolve(import.meta.dirname, '../../build');
 
@@ -37,7 +36,7 @@ export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; p
   ],
 });
 
-export async function seedStorage(serviceWorker: Worker, values: Partial<LocalStorage> = {}) {
+export async function seedStorage(serviceWorker: Worker, values: Record<string, unknown> = {}) {
   await serviceWorker.evaluate((stored) => chrome.storage.local.set(stored), {
     settings: { theme: 'light', windowType: 'window' },
     currentNote: { id: undefined, title: 'Default', isFavorite: false, noteContent: '' },

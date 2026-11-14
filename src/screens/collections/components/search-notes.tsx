@@ -1,0 +1,16 @@
+import type { ChangeEvent } from 'react';
+import { Input } from '@components';
+import Search from '@icons/search.svg';
+
+type SearchNotesProps = { onSearchHandler: (e: ChangeEvent<HTMLInputElement>) => void; value?: string };
+
+export const SearchNotes = ({ onSearchHandler, value }: SearchNotesProps) => {
+  return (
+    <div className="relative">
+      <Input name="name" onChange={onSearchHandler} placeholder="Search" className="text-left! w-44!" value={value} />
+      <div className="absolute right-2 top-1 hover:cursor-pointer">
+        <Search />
+      </div>
+    </div>
+  );
+};

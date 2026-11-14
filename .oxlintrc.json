@@ -17,10 +17,22 @@
     "no-debugger": "error",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "prefer-const": "error",
+    "unicorn/filename-case": ["error", { "case": "kebabCase", "multipleFileExtensions": false }],
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": "off",
     "import/no-named-as-default": "off",
     "import/no-cycle": "error",
+    "no-restricted-imports": [
+      "error",
+      {
+        "patterns": [
+          {
+            "group": ["**/internal/**", "!./internal/**", "!../internal/**"],
+            "message": "Use the module's public entry point. Its internal implementation is private."
+          }
+        ]
+      }
+    ],
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/error-boundaries": "error",
@@ -52,6 +64,40 @@
     "typescript/consistent-type-imports": "error"
   },
   "overrides": [
+    {
+      "files": ["src/modules/notes/internal/**/*.ts", "src/modules/rich-text/**/*.ts"],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": ["**/internal/**", "!./internal/**", "!../internal/**"],
+                "message": "Use the module's public entry point."
+              },
+              {
+                "group": [
+                  "react",
+                  "react-dom",
+                  "@tiptap/react",
+                  "@components/**",
+                  "@components",
+                  "@app/**",
+                  "@screens/**",
+                  "@hooks/**",
+                  "**/components/**",
+                  "**/app/**",
+                  "**/screens/**",
+                  "**/hooks/**",
+                  "**/providers/**"
+                ],
+                "message": "Domain implementations must not depend on React views or UI state."
+              }
+            ]
+          }
+        ]
+      }
+    },
     {
       "files": ["**/*.test.{ts,tsx,mts}"],
       "rules": {

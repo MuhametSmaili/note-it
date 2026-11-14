@@ -21,7 +21,7 @@ await Promise.all([
     .map((file) => copyFile(path.join(coreDirectory, file), new URL(file, libraries))),
 ]);
 
-for (const config of [pages, scriptConfig('background'), scriptConfig('cropArea'), scriptConfig('frameScript')]) {
+for (const config of [pages, scriptConfig('background'), scriptConfig('crop-area'), scriptConfig('frame-script')]) {
   await build({
     ...config,
     configFile: false,

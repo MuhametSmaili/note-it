@@ -16,12 +16,12 @@ test.beforeEach(async ({ page, context, serviceWorker }) => {
 
 test('reinjects the styled crop overlay after cancellation', async ({ page, serviceWorker }) => {
   const overlay = page.getByRole('presentation');
-  await inject(serviceWorker, 'cropArea.js');
+  await inject(serviceWorker, 'crop-area.js');
   await overlay.waitFor();
   await page.keyboard.press('Escape');
   await overlay.waitFor({ state: 'detached' });
 
-  await inject(serviceWorker, 'cropArea.js');
+  await inject(serviceWorker, 'crop-area.js');
 
   await expect(page.getByRole('img', { name: 'frozen screen to take screenshot' })).toBeVisible();
   await expect(overlay).toHaveCSS('position', 'fixed');
@@ -33,7 +33,7 @@ test('reinjects the styled crop overlay after cancellation', async ({ page, serv
 test('opens a styled screenshot iframe with the cropped image', async ({ page, serviceWorker }) => {
   const preview = page.frameLocator('#OCRFrame');
 
-  await inject(serviceWorker, 'frameScript.js');
+  await inject(serviceWorker, 'frame-script.js');
 
   await expect(preview.getByRole('heading', { name: 'Image cropped' })).toHaveCSS('font-size', '20px');
   await expect
@@ -46,7 +46,7 @@ test('opens a styled screenshot iframe with the cropped image', async ({ page, s
 });
 
 test('closes the screenshot iframe', async ({ page, serviceWorker }) => {
-  await inject(serviceWorker, 'frameScript.js');
+  await inject(serviceWorker, 'frame-script.js');
   await page.frameLocator('#OCRFrame').getByRole('heading', { name: 'Image cropped' }).waitFor();
 
   await page.getByRole('button', { name: 'Close screenshot' }).click();

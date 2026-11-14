@@ -8,10 +8,10 @@
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
   },
   "icons": {
-    "16": "./icon/16 x 16.png",
-    "32": "./icon/32 x 32.png",
-    "48": "./icon/48 x 48.png",
-    "128": "./icon/128 x 128.png"
+    "16": "./icon/16x16.png",
+    "32": "./icon/32x32.png",
+    "48": "./icon/48x48.png",
+    "128": "./icon/128x128.png"
   },
   "action": {
     "default_title": "NoteIt"
@@ -23,7 +23,7 @@
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {
-      "resources": ["./libraries/worker.min.js", "frameContent.html"],
+      "resources": ["./libraries/worker.min.js", "frame-content.html"],
       "matches": ["<all_urls>"]
     }
   ]

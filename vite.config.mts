@@ -27,6 +27,9 @@ const createSharedConfig = () =>
     ],
     resolve: {
       alias: {
+        '@app': path.resolve(root, 'src/app'),
+        '@screens': path.resolve(root, 'src/screens'),
+        '@modules': path.resolve(root, 'src/modules'),
         '@components': path.resolve(root, 'src/components'),
         '@utils': path.resolve(root, 'src/utils'),
         '@styles': path.resolve(root, 'src/styles'),
@@ -56,14 +59,14 @@ export default defineConfig({
     rolldownOptions: {
       input: {
         popup: path.resolve(root, 'popup.html'),
-        frameContent: path.resolve(root, 'frameContent.html'),
+        'frame-content': path.resolve(root, 'frame-content.html'),
       },
     },
   },
 });
 
 /** Create one IIFE file for a Chrome extension script. */
-export function scriptConfig(name: 'background' | 'cropArea' | 'frameScript'): UserConfig {
+export function scriptConfig(name: 'background' | 'crop-area' | 'frame-script'): UserConfig {
   return {
     ...createSharedConfig(),
     publicDir: false,
@@ -71,10 +74,10 @@ export function scriptConfig(name: 'background' | 'cropArea' | 'frameScript'): U
       outDir: 'build',
       emptyOutDir: false,
       lib: {
-        name: `NoteIt_${name}`,
+        name: `NoteIt_${name.replaceAll('-', '_')}`,
         entry: path.resolve(
           root,
-          name === 'background' ? 'src/background/background.ts' : `src/contentScript/${name}.tsx`,
+          name === 'background' ? 'src/background/background.ts' : `src/content-script/${name}.tsx`,
         ),
         formats: ['iife'],
         fileName: () => `${name}.js`,

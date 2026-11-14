@@ -1,3 +1,3 @@
-import './messageListener';
-import './contextMenu';
-import './activeWindow';
+import './message-listener';
+import './context-menu';
+import './active-window';

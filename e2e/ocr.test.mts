@@ -54,7 +54,7 @@ for (const view of ['upload', 'screenshot']) {
       await seedStorage(serviceWorker, {
         screenshot: { capturedImage: image, cropArea: { x: 0, y: 0, width: 900, height: 180 } },
       });
-      await page.goto(`${extensionUrl}/frameContent.html`);
+      await page.goto(`${extensionUrl}/frame-content.html`);
       await page.getByRole('img', { name: 'Selected screenshot area' }).waitFor();
     }
     await page.evaluate(() => {

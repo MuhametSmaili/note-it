@@ -1,0 +1,47 @@
+import { useState } from 'react';
+import { EditorContent, useEditor } from '@tiptap/react';
+import type { Note } from '@modules/notes';
+import { createEditorExtensions } from '@modules/rich-text';
+import { ConfirmNoteDeletion } from './confirm-note-deletion';
+import NoteHeader, { SingleNoteFooter } from './note-header';
+
+type NoteContentProps = {
+  note: Note;
+  onDeleteNoteHandler: (id: string) => void;
+  onError: (error: unknown) => void;
+};
+
+const NoteContent = ({ note, onDeleteNoteHandler, onError }: NoteContentProps) => {
+  const [confirmDelete, setConfirmDelete] = useState<boolean>(false);
+
+  const editor = useEditor({
+    extensions: createEditorExtensions(),
+    content: note.noteContent,
+    editable: false,
+    editorProps: {
+      attributes: {
+        class: 'ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden text-ellipsis',
+      },
+    },
+  });
+
+  const onDeleteNote = () => {
+    setConfirmDelete((state) => !state);
+  };
+
+  return (
+    <div className="border m-2 relative border-primary rounded-sm overflow-hidden h-full max-h-[300px] max-w-[200px]">
+      {confirmDelete ? (
+        <ConfirmNoteDeletion
+          onDeclineHandler={onDeleteNote}
+          onConfirmHandler={() => note.id && onDeleteNoteHandler(note.id)}
+        />
+      ) : null}
+      <NoteHeader note={note} onError={onError} />
+      <EditorContent editor={editor} style={{ maxHeight: '200px', overflow: 'hidden' }} />
+      <SingleNoteFooter note={note} onDeleteNote={onDeleteNote} onError={onError} />
+    </div>
+  );
+};
+
+export default NoteContent;
