@@ -3,6 +3,7 @@ import { once } from 'node:events';
 import { readFile, readdir, rm } from 'node:fs/promises';
 import { createRequire } from 'node:module';
 import path from 'node:path';
+import { getDocument, OPS } from 'pdfjs-dist/legacy/build/pdf.mjs';
 import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, onTestFinished } from 'vitest';
 import { richNote } from '../../test/fixtures/rich-note';
 import { launchChromiumDriver } from '../drivers/chromium.mts';
@@ -340,5 +341,25 @@ describe.each([
     await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain('note-it.pdf');
     const document = await readFile(path.join(browser.downloads, 'note-it.pdf'));
     expect(document.subarray(0, 5).toString()).toBe('%PDF-');
+  });
+
+  it('downloads a PDF with a PNG image under the extension CSP', async () => {
+    await openEditor({ currentNote: richNote });
+    await waitFor(page, 'document.querySelector(\'[contenteditable="true"] h2\')');
+
+    await click(page, '[aria-label="Download note as PDF"]');
+
+    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain('note-it.pdf');
+    const document = await readFile(path.join(browser.downloads, 'note-it.pdf'));
+    const loading = getDocument({ data: new Uint8Array(document) });
+    try {
+      const pdf = await loading.promise;
+      const firstPage = await pdf.getPage(1);
+      const operations = await firstPage.getOperatorList();
+      expect(document.subarray(0, 5).toString()).toBe('%PDF-');
+      expect(operations.fnArray).toContain(OPS.paintImageXObject);
+    } finally {
+      await loading.destroy();
+    }
   });
 });

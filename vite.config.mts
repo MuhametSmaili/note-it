@@ -16,6 +16,26 @@ const createSharedConfig = () =>
       tailwindcss(),
       svgr({ include: '**/*.svg', svgrOptions: { jsxRuntime: 'automatic' } }),
       {
+        name: 'pdfmake-sync-png',
+        enforce: 'pre',
+        transform: {
+          filter: { id: /\/pdfmake\/build\/pdfmake\.js$/ },
+          handler(code) {
+            const decoder = 'const png_js_browser_inflate = unzlib ;';
+            if (code.split(decoder).length !== 2 || !code.includes('function unzlibSync(')) {
+              throw new Error('pdfmake PNG decoder changed. Review the CSP workaround for pdfmake#2951.');
+            }
+            return {
+              code: code.replace(
+                decoder,
+                'const png_js_browser_inflate = (data, callback) => callback(null, unzlibSync(data));',
+              ),
+              map: null,
+            };
+          },
+        },
+      },
+      {
         name: 'watch-tailwind-sources',
         transform: {
           filter: { id: /\/src\/styles\/tailwind\.css(?:\?.*)?$/ },
