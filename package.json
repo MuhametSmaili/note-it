@@ -10,6 +10,7 @@
     "build": "npm run typecheck && node scripts/build.mts",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:architecture": "vitest run --config vitest.build.config.mts scripts/__tests__/architecture.test.mts",
     "test:build": "npm run build && vitest run --config vitest.build.config.mts",
     "test:extension": "npm run test:build && playwright test && npm run test:browser",
     "test:browser": "vitest run --config vitest.browser.config.mts",
@@ -55,6 +56,7 @@
   "devDependencies": {
     "@commitlint/cli": "21.2.4",
     "@commitlint/config-conventional": "21.2.4",
+    "@oxlint/plugins": "1.93.0",
     "@playwright/test": "1.65.0",
     "@tailwindcss/vite": "4.3.5",
     "@tesseract.js-data/eng": "1.0.0",
@@ -72,6 +74,7 @@
     "husky": "9.1.7",
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
+    "oxc-resolver": "11.24.2",
     "oxc-transform-react": "0.156.0",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",

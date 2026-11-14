@@ -1,6 +1,7 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "vitest", "import"],
+  "jsPlugins": ["./scripts/architecture-plugin.mts"],
   "options": { "typeAware": true },
   "categories": {
     "correctness": "error",
@@ -22,17 +23,7 @@
     "import/no-unassigned-import": "off",
     "import/no-named-as-default": "off",
     "import/no-cycle": "error",
-    "no-restricted-imports": [
-      "error",
-      {
-        "patterns": [
-          {
-            "group": ["**/internal/**", "!./internal/**", "!../internal/**"],
-            "message": "Use the module's public entry point. Its internal implementation is private."
-          }
-        ]
-      }
-    ],
+    "architecture/dependencies": "error",
     "react/rules-of-hooks": "error",
     "react/exhaustive-deps": "error",
     "react/error-boundaries": "error",
@@ -65,35 +56,74 @@
   },
   "overrides": [
     {
-      "files": ["src/modules/notes/internal/**/*.ts", "src/modules/rich-text/**/*.ts"],
+      "files": ["src/**"],
+      "excludeFiles": ["src/platform/**", "**/__tests__/**", "**/*.test.*"],
       "rules": {
-        "no-restricted-imports": [
+        "no-restricted-globals": [
           "error",
           {
-            "patterns": [
+            "checkGlobalObject": true,
+            "globals": [
               {
-                "group": ["**/internal/**", "!./internal/**", "!../internal/**"],
-                "message": "Use the module's public entry point."
+                "name": "chrome",
+                "message": "Use the browser platform interface."
               },
               {
-                "group": [
-                  "react",
-                  "react-dom",
-                  "@tiptap/react",
-                  "@components/**",
-                  "@components",
-                  "@app/**",
-                  "@screens/**",
-                  "@hooks/**",
-                  "**/components/**",
-                  "**/app/**",
-                  "**/screens/**",
-                  "**/hooks/**",
-                  "**/providers/**"
-                ],
-                "message": "Domain implementations must not depend on React views or UI state."
+                "name": "browser",
+                "message": "Use the browser platform interface."
               }
             ]
+          }
+        ]
+      }
+    },
+    {
+      "files": ["src/modules/**"],
+      "excludeFiles": [
+        "**/__tests__/**",
+        "**/*.test.*",
+        "src/modules/notes/use-notes.hook.ts",
+        "src/modules/notes/internal/web-extension.ts"
+      ],
+      "rules": {
+        "architecture/dependencies": ["error", "domain"],
+        "no-restricted-globals": [
+          "error",
+          {
+            "checkGlobalObject": true,
+            "globals": [
+              "chrome",
+              "browser",
+              "window",
+              "document",
+              "navigator",
+              "globalThis",
+              "self",
+              "fetch",
+              "XMLHttpRequest",
+              "WebSocket",
+              "EventSource",
+              "Worker",
+              "SharedWorker",
+              "localStorage",
+              "sessionStorage",
+              "indexedDB",
+              "caches",
+              "crypto",
+              "Date",
+              "performance",
+              "setTimeout",
+              "setInterval",
+              "requestAnimationFrame"
+            ]
+          }
+        ],
+        "no-restricted-properties": [
+          "error",
+          {
+            "object": "Math",
+            "property": "random",
+            "message": "Receive randomness through an adapter."
           }
         ]
       }
