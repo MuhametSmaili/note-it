@@ -11,41 +11,36 @@ import { paste } from './utils/paste-handler';
 
 const titleOf = (editor: Editor) => editor.getText().trim().split('\n')[0] || 'Image note';
 
-function DraftEditor({ draft }: { draft: Draft }) {
+function DraftEditor({ draft }: { readonly draft: Draft }) {
   const [session] = useState(() => notes.edit(draft));
   const [content] = useState(() => draft.noteContent);
   const latestOperation = useRef(0);
-  const [status, setStatus] = useState<{ pending: boolean; error: string | null; message: string }>({
-    pending: false,
-    error: null,
-    message: '',
-  });
+  const [feedback, setFeedback] = useState<{ kind: 'error' | 'success'; message: string } | null>(null);
   const { dispatch } = useTab();
 
   const observe = (
     operation: Promise<unknown>,
-    message: string,
+    message = '',
     callbacks?: { onSuccess?: () => void; onFailure?: () => void },
   ) => {
     const request = ++latestOperation.current;
-    setStatus({ pending: true, error: null, message: '' });
+    setFeedback(null);
     operation.then(
       () => {
-        if (request === latestOperation.current) setStatus({ pending: false, error: null, message });
+        if (request === latestOperation.current) setFeedback(message ? { kind: 'success', message } : null);
         callbacks?.onSuccess?.();
       },
       (error: unknown) => {
         if (request === latestOperation.current)
-          setStatus({
-            pending: false,
-            error: error instanceof Error ? error.message : 'Cannot save this content.',
-            message: '',
+          setFeedback({
+            kind: 'error',
+            message: error instanceof Error ? error.message : 'Cannot save this content.',
           });
         callbacks?.onFailure?.();
       },
     );
   };
-  const persistDraft = (document: JSONContent) => observe(session.update(document), 'Draft saved');
+  const persistDraft = (document: JSONContent) => observe(session.update(document));
 
   const editor = useEditor({
     extensions: createEditorExtensions(),
@@ -80,15 +75,14 @@ function DraftEditor({ draft }: { draft: Draft }) {
   return (
     <>
       {editor && <MenuBar editor={editor} onSave={save} />}
-      {status.error ? (
+      {feedback?.kind === 'error' ? (
         <div role="alert">
-          {status.error}
+          {feedback.message}
           <Button onClick={() => editor && persistDraft(editor.getJSON())}>Retry draft save</Button>
           <Button onClick={saveCopy}>Save a copy</Button>
         </div>
-      ) : (
-        <output>{status.pending ? 'Saving…' : status.message}</output>
-      )}
+      ) : null}
+      {feedback?.kind === 'success' ? <output>{feedback.message}</output> : null}
       <EditorContent editor={editor} className="text-body" />
     </>
   );
@@ -103,8 +97,8 @@ const NoteEditor = () => {
       (state) => {
         if (active) setDraft(state.draft);
       },
-      (failure: unknown) => {
-        if (active) setError(failure instanceof Error ? failure.message : 'Cannot load the draft.');
+      (error_: unknown) => {
+        if (active) setError(error_ instanceof Error ? error_.message : 'Cannot load the draft.');
       },
     );
     return () => {

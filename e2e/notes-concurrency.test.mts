@@ -1,6 +1,14 @@
+import type { Worker } from '@playwright/test';
 import type { NotesState } from '../src/modules/notes';
 import { richNote } from '../test/fixtures/rich-note';
 import { expect, seedStorage, test } from './fixtures/extension.mts';
+
+const readDraft = (worker: Worker) =>
+  worker.evaluate(
+    async () =>
+      (await chrome.storage.local.get<{ 'noteIt.notes': NotesState }>('noteIt.notes'))['noteIt.notes'].draft
+        .noteContent,
+  );
 
 test('opens a fresh draft when returning from another screen', async ({
   page,
@@ -17,13 +25,17 @@ test('opens a fresh draft when returning from another screen', async ({
   await other.getByRole('button', { name: 'tab-button', exact: true }).nth(2).click();
   await expect(other.locator('[contenteditable="true"]')).toHaveCount(0);
   await page.locator('[contenteditable="true"]').fill('Changed in the first view');
-  await expect(page.getByRole('status')).toHaveText('Draft saved');
+  await expect
+    .poll(() => readDraft(serviceWorker))
+    .toMatchObject({ content: [{ content: [{ text: 'Changed in the first view' }] }] });
 
   await other.getByRole('button', { name: 'tab-button', exact: true }).nth(0).click();
 
   await expect(other.locator('[contenteditable="true"]')).toHaveText('Changed in the first view');
   await other.locator('[contenteditable="true"]').fill('Edited after returning');
-  await expect(other.getByRole('status')).toHaveText('Draft saved');
+  await expect
+    .poll(() => readDraft(serviceWorker))
+    .toMatchObject({ content: [{ content: [{ text: 'Edited after returning' }] }] });
   await expect(other.getByRole('alert')).toHaveCount(0);
 });
 
@@ -85,6 +97,7 @@ test('shares the notes lock between the service worker and extension pages', asy
   await page.goto(`${extensionUrl}/popup.html`);
   const editor = page.locator('[contenteditable="true"]');
   await editor.waitFor();
+  const initialDraft = await readDraft(serviceWorker);
   const locked = serviceWorker.evaluate(() =>
     navigator.locks.request('note-it:notes', async () => {
       const release = new Promise<void>((resolve) => {
@@ -105,12 +118,22 @@ test('shares the notes lock between the service worker and extension pages', asy
     .toEqual({ testLockHeld: true });
 
   await editor.fill('Wait for the shared lock');
-
-  await expect(page.getByRole('status')).toHaveText('Saving…');
+  await expect
+    .poll(() =>
+      serviceWorker.evaluate(
+        async () => (await navigator.locks.query()).pending?.some((lock) => lock.name === 'note-it:notes') ?? false,
+      ),
+    )
+    .toBe(true);
+  const pendingDraft = await readDraft(serviceWorker);
   await serviceWorker.evaluate(() => chrome.storage.local.set({ releaseTestLock: true }));
   await locked;
-  await expect(page.getByRole('status')).toHaveText('Draft saved');
+  await expect
+    .poll(() => readDraft(serviceWorker))
+    .toMatchObject({ content: [{ content: [{ text: 'Wait for the shared lock' }] }] });
   await page.reload();
+
+  expect(pendingDraft).toEqual(initialDraft);
   await expect(page.locator('[contenteditable="true"]')).toHaveText('Wait for the shared lock');
 });
 

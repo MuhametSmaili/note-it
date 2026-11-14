@@ -72,21 +72,23 @@ it('loads content under StrictMode without writing during render', async () => {
   expect(storage.save).not.toHaveBeenCalled();
 });
 
-it('sends an editor snapshot immediately and reports success after acknowledgement', async () => {
+it('autosaves editor changes without showing pending or success messages', async () => {
   const pending = Promise.withResolvers<Awaited<ReturnType<NoteEditorSession['update']>>>();
   storage.update.mockReturnValueOnce(pending.promise);
   render(<NoteEditor />);
   await screen.findByText('Saved content');
+  const state = storage.snapshot.state;
+  if (!state) throw new Error('Missing test state.');
 
   fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
+  const pendingStatus = screen.queryByRole('status');
+  await act(async () => pending.resolve(state));
 
   expect(storage.update).toHaveBeenCalledOnce();
   expect(JSON.stringify(storage.update.mock.calls[0]?.[0])).toContain('Added content');
-  expect(screen.getByRole('status')).toHaveTextContent('Saving…');
-  const state = storage.snapshot.state;
-  if (!state) throw new Error('Missing test state.');
-  await act(async () => pending.resolve(state));
-  expect(screen.getByRole('status')).toHaveTextContent('Draft saved');
+  expect(pendingStatus).toBeNull();
+  expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  expect(screen.queryByRole('alert')).not.toBeInTheDocument();
 });
 
 it('keeps content and stays in the editor when explicit save fails', async () => {
@@ -154,7 +156,9 @@ it('saves image-only content with a readable title', async () => {
 it('keeps local editor content when another view replaces the shared draft', async () => {
   const { rerender } = render(<NoteEditor />);
   await screen.findByText('Saved content');
-  fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
+  await act(async () => {
+    fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
+  });
   const state = storage.snapshot.state;
   if (!state) throw new Error('Missing test state.');
   storage.snapshot = {
@@ -177,7 +181,7 @@ it('shows migration errors without mounting an editable empty document', async (
   expect(document.querySelector('[contenteditable]')).toBeNull();
 });
 
-it('clears an older failure when the latest edit succeeds', async () => {
+it('ignores an older failure while the latest edit is pending and after it succeeds', async () => {
   const older = Promise.withResolvers<Awaited<ReturnType<NoteEditorSession['update']>>>();
   const newer = Promise.withResolvers<Awaited<ReturnType<NoteEditorSession['update']>>>();
   storage.update.mockReturnValueOnce(older.promise).mockReturnValueOnce(newer.promise);
@@ -191,11 +195,11 @@ it('clears an older failure when the latest edit succeeds', async () => {
   await act(async () => {
     older.reject(new Error('Old failure'));
   });
-  expect(screen.getByRole('status')).toHaveTextContent('Saving…');
+  const pendingError = screen.queryByRole('alert')?.textContent;
   await act(async () => newer.resolve(state));
 
+  expect(pendingError).toBeUndefined();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
-  expect(screen.getByRole('status')).toHaveTextContent('Draft saved');
 });
 
 it('keeps the latest failure visible when an older operation succeeds late', async () => {

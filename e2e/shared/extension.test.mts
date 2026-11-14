@@ -58,7 +58,7 @@ describe.each([
     const other = await openExtraPage(`${browser.origin}/popup.html`);
     await waitFor(other, 'document.querySelector(\'[contenteditable="true"]\')');
     await enterText(page, 'First view');
-    await waitFor(page, 'document.querySelector("output")?.textContent === "Draft saved"');
+    await waitForDraft('First view');
     return other;
   };
   const readDraft = () =>
@@ -68,6 +68,9 @@ describe.each([
     return (await extension.storage.local.get("noteIt.notes"))["noteIt.notes"].draft.noteContent;
   `,
     );
+  const waitForDraft = async (text: string) => {
+    await expect.poll(readDraft, { timeout: 20_000 }).toMatchObject({ content: [{ content: [{ text }] }] });
+  };
   const releaseNotesLock = async () => {
     await browser.evaluate(
       control,
@@ -186,18 +189,11 @@ describe.each([
 
     await enterText(page, 'Queued edit');
     await waitFor(control, '(await navigator.locks.query()).pending.some(lock => lock.name === "note-it:notes")');
-    const pending = await browser.evaluate(
-      page,
-      `return {
-      status: document.querySelector("output").textContent,
-      document: (await extension.storage.local.get("noteIt.notes"))["noteIt.notes"].draft.noteContent
-    };`,
-    );
+    const pendingDraft = await readDraft();
     await releaseNotesLock();
 
-    expect(pending).toEqual({ status: 'Saving…', document: initialDraft });
-    await waitFor(page, 'document.querySelector("output")?.textContent === "Draft saved"');
-    expect(await readDraft()).toMatchObject({ content: [{ content: [{ text: 'Queued edit' }] }] });
+    expect(pendingDraft).toEqual(initialDraft);
+    await waitForDraft('Queued edit');
   });
 
   it('rejects a conflicting edit without replacing local text or the saved draft', async () => {
@@ -334,7 +330,6 @@ describe.each([
   it('downloads a text PDF from the shared editor', async () => {
     await openEditor();
     await enterText(page, 'Shared PDF export');
-    await waitFor(page, 'document.querySelector("output")?.textContent === "Draft saved"');
 
     await click(page, '[aria-label="Download note as PDF"]');
 
