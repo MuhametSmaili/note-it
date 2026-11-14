@@ -1,9 +1,10 @@
 import { Button, SelectField, Spinner } from '@components';
 import type { Screenshot } from '@utils/types/screenshot';
-import { blobToBase64, copyBlobToClipboard, imageToBlob, imageToText } from '@utils/image';
+import { blobToBase64, imageToBlob, imageToText } from '@utils/image';
 import { localStorage } from '@utils/storage';
 import { tesseractLanguages } from '@utils/tesseract-language';
 import React, { useEffect, useState } from 'react';
+import { writeClipboardImage, writeClipboardText } from '@platform/clipboard';
 
 type StatusHandler = {
   type: 'LOADING' | 'DONE' | 'ERROR';
@@ -41,8 +42,7 @@ export const ScreenshotScreen: React.FC = () => {
     if (!imageSrc) return;
     setStatus({ type: 'LOADING' });
     const recognizedText = await imageToText(imageSrc, language);
-    navigator.clipboard
-      .writeText(recognizedText || '')
+    writeClipboardText(recognizedText || '')
       .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
       .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
 
@@ -55,7 +55,7 @@ export const ScreenshotScreen: React.FC = () => {
 
     const blobImage = await imageToBlob(screenshot.capturedImage, screenshot.cropArea);
     if (!blobImage) return;
-    await copyBlobToClipboard(blobImage)
+    await writeClipboardImage(blobImage)
       .then(() => setStatus({ type: 'DONE', message: '✅ Image copied' }))
       .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
     processDoneHandler();

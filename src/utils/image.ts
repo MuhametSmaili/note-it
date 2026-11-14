@@ -1,5 +1,6 @@
 import type { ImageLike, Worker } from 'tesseract.js';
 import Tesseract from 'tesseract.js';
+import { platform } from '@platform/extension';
 
 export type CropArea = { x: number; y: number; width: number; height: number };
 
@@ -45,14 +46,6 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
   });
 }
 
-export async function copyBlobToClipboard(imageBlob: Blob) {
-  await navigator.clipboard.write([
-    new window.ClipboardItem({
-      [imageBlob.type]: imageBlob,
-    }),
-  ]);
-}
-
 /** Read the blob. Return a data URL with base64 encoding. */
 export function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
@@ -76,8 +69,8 @@ export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promis
     const worker = await new Promise<Worker>((resolve, reject) => {
       Tesseract.createWorker(language, Tesseract.OEM.LSTM_ONLY, {
         workerBlobURL: false,
-        workerPath: chrome.runtime.getURL('libraries/worker.min.js'),
-        corePath: chrome.runtime.getURL('libraries'),
+        workerPath: platform.runtime.url('libraries/worker.min.js'),
+        corePath: platform.runtime.url('libraries'),
         errorHandler: reject,
       }).then(resolve, reject);
     });

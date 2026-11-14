@@ -1,58 +1,66 @@
 import { localStorage, setSettings } from '@utils/storage';
+import { platform } from '@platform/extension';
 
-chrome.runtime.onInstalled.addListener(function () {
-  chrome.contextMenus.create({
-    id: 'popup',
-    type: 'radio',
-    title: 'Open in popup',
-    contexts: ['action'],
-    checked: true,
-  });
-  chrome.contextMenus.create({
-    id: 'window',
-    type: 'radio',
-    title: 'Open in window',
-    contexts: ['action'],
-    checked: false,
-  });
+const restoreOpeningMode = async () => {
+  const { windowType } = await localStorage.get('settings');
+  await platform.action.setPopup(windowType === 'window' ? '' : 'popup.html');
+};
 
-  setSettings({ windowType: 'popup' }).catch((error: unknown) => console.error('Cannot initialize settings:', error));
+platform.runtime.onInstalled(() => {
+  localStorage
+    .get('settings')
+    .then(async ({ windowType }) => {
+      await Promise.all([
+        platform.menus.create({
+          id: 'popup',
+          type: 'radio',
+          title: 'Open in popup',
+          contexts: ['action'],
+          checked: windowType !== 'window',
+        }),
+        platform.menus.create({
+          id: 'window',
+          type: 'radio',
+          title: 'Open in window',
+          contexts: ['action'],
+          checked: windowType === 'window',
+        }),
+      ]);
+      await restoreOpeningMode();
+    })
+    .catch((error: unknown) => console.error('Cannot initialize opening modes:', error));
 });
 
-chrome.contextMenus.onClicked.addListener((e) => {
-  const windowType = e.menuItemId;
+platform.runtime.onStartup(() => {
+  restoreOpeningMode().catch((error: unknown) => console.error('Cannot restore opening mode:', error));
+});
+restoreOpeningMode().catch((error: unknown) => console.error('Cannot restore opening mode:', error));
+
+platform.menus.onClick((event) => {
+  const windowType = event.menuItemId;
   if (windowType !== 'popup' && windowType !== 'window') return;
   setSettings({ windowType })
-    .then(() => chrome.action.setPopup({ popup: windowType === 'popup' ? 'popup.html' : '' }))
-    .catch((error: unknown) => console.error('Cannot change window type:', error));
+    .then(restoreOpeningMode)
+    .catch((error: unknown) => console.error('Cannot change opening mode:', error));
 });
 
-let chromeWindowId = -1;
+let noteWindowId = -1;
 const openNoteWindow = async () => {
-  const windowType = await localStorage.get('settings');
-  if (windowType.windowType === 'window') {
-    await chrome.windows
-      .get(chromeWindowId)
-      .then(() => chrome.windows.update(chromeWindowId, { focused: true }))
-      .catch(() =>
-        chrome.windows
-          .create({
-            url: chrome.runtime.getURL('popup.html'),
-            focused: true,
-            type: 'popup',
-            height: 600,
-            width: 800,
-          })
-          .then((currentWindow) => {
-            chromeWindowId = currentWindow?.id ?? -1;
-          }),
-      );
-  } else {
-    await chrome.action.setPopup({ popup: 'popup.html' });
-    await chrome.action.openPopup();
+  try {
+    await platform.windows.get(noteWindowId);
+    await platform.windows.focus(noteWindowId);
+  } catch {
+    const created = await platform.windows.create({
+      url: platform.runtime.url('popup.html'),
+      focused: true,
+      type: 'popup',
+      height: 600,
+      width: 800,
+    });
+    noteWindowId = created?.id ?? -1;
   }
 };
 
-chrome.action.onClicked.addListener(() => {
+platform.action.onClick(() => {
   openNoteWindow().catch((error: unknown) => console.error('Cannot open Note It:', error));
 });

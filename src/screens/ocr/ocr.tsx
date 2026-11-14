@@ -5,6 +5,7 @@ import { imageToText } from '@utils/image';
 import { tesseractLanguages } from '@utils/tesseract-language';
 import { useCallback, useState } from 'react';
 import { ImageDropzone } from './components/image-dropzone';
+import { readClipboardImage, writeClipboardText } from '@platform/clipboard';
 
 type StatusHandler = {
   type: 'LOADING' | 'DONE' | 'ERROR';
@@ -29,8 +30,7 @@ const Ocr = () => {
     setStatus({ type: 'LOADING' });
 
     const recognizedText = await imageToText(droppedImage, language);
-    navigator.clipboard
-      .writeText(recognizedText || '')
+    writeClipboardText(recognizedText || '')
       .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
       .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
 
@@ -42,21 +42,13 @@ const Ocr = () => {
   const pasteFromClipBoardHandler = async () => {
     try {
       setStatus({ type: 'LOADING' });
-      const clipboardContents = await navigator.clipboard.read();
-      for (const item of clipboardContents) {
-        if (!item.types.includes('image/png')) {
-          setStatus({ type: 'ERROR', message: 'Your clipboard content is not image' });
-          return;
-        }
-        const blob = await item.getType('image/png');
-        const recognizedText = await imageToText(blob, language);
-        navigator.clipboard
-          .writeText(recognizedText || '')
-          .then(() => setStatus({ type: 'DONE', message: '✅ Text copied' }))
-          .catch(() => setStatus({ type: 'ERROR', message: '❌ There was an error try again' }));
-      }
+      const image = await readClipboardImage();
+      const recognizedText = await imageToText(image, language);
+      await writeClipboardText(recognizedText || '');
+      setStatus({ type: 'DONE', message: '✅ Text copied' });
     } catch (error) {
       console.error(error);
+      setStatus({ type: 'ERROR', message: 'Cannot read or convert the clipboard image' });
     }
   };
 

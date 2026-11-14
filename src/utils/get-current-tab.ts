@@ -1,9 +1,11 @@
 import { localStorage } from './storage';
+import { platform } from '@platform/extension';
+import type { TabQuery } from '@platform/extension';
 
 export async function getCurrentTab() {
   const isPopup = await localStorage.get('settings');
   const activatedTabs = await localStorage.get('activeWindow');
-  const queryOptions: chrome.tabs.QueryInfo = {
+  const queryOptions: TabQuery = {
     active: true,
     windowType: 'normal',
     url: 'https://*/*',
@@ -20,6 +22,6 @@ export async function getCurrentTab() {
     }
   }
 
-  const [tab] = await chrome.tabs.query(queryOptions);
+  const [tab] = await platform.tabs.query(queryOptions);
   return tab;
 }

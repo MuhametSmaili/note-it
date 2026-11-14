@@ -1,6 +1,7 @@
 import type { LocalStorage } from '@utils/storage';
 import { defaultSettings, localStorage } from '@utils/storage';
 import { useCallback, useSyncExternalStore } from 'react';
+import { platform } from '@platform/extension';
 
 const cache: LocalStorage = { settings: defaultSettings };
 const listeners = new Map<keyof LocalStorage, Set<() => void>>();
@@ -26,19 +27,18 @@ const subscribeToStorage = (key: keyof LocalStorage, callback: () => void) => {
   const reload = () => {
     refresh(key, () => active).catch((error: unknown) => console.error('Cannot load stored value:', error));
   };
-  const handleChange = (changes: Record<string, chrome.storage.StorageChange>, area: string) => {
+  const unsubscribe = platform.storage.subscribe((changes, area) => {
     if (area === 'local' && key in changes) {
       revisions.set(key, (revisions.get(key) ?? 0) + 1);
       reload();
     }
-  };
-  chrome.storage.onChanged.addListener(handleChange);
+  });
   reload();
   return () => {
     active = false;
     subscribers.delete(callback);
     if (subscribers.size === 0) listeners.delete(key);
-    chrome.storage.onChanged.removeListener(handleChange);
+    unsubscribe();
   };
 };
 

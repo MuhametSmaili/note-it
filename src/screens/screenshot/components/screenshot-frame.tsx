@@ -3,6 +3,7 @@ import { MessageRequest } from '@utils/types/message-request';
 import Close from '@icons/x.svg';
 import CameraRetake from '@icons/camera-retake.svg';
 import { localStorage } from '@utils/storage';
+import { platform } from '@platform/extension';
 
 const handleClose = async () => {
   document.getElementById('OCRFrame')?.remove();
@@ -13,7 +14,7 @@ const handleClose = async () => {
 const onRetakeImageHandler = async () => {
   await handleClose();
   await new Promise<void>((resolve) => setTimeout(resolve, 0));
-  await chrome.runtime.sendMessage({ message: MessageRequest.CROP_SCREEN });
+  await platform.runtime.send({ message: MessageRequest.CROP_SCREEN });
 };
 
 export const ScreenshotFrame = () => {
@@ -56,7 +57,7 @@ export const ScreenshotFrame = () => {
         }}
         name={'OCRFrame'}
         className="border-2 border-blue-prussian absolute top-[1%] left-[1%]"
-        src={chrome.runtime.getURL('/frame-content.html')}
+        src={platform.runtime.url('/frame-content.html')}
       />
     </div>
   );

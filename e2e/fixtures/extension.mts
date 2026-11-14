@@ -2,7 +2,7 @@ import path from 'node:path';
 import { test as base, expect } from '@playwright/test';
 import type { Worker } from '@playwright/test';
 
-const extensionPath = path.resolve(import.meta.dirname, '../../build');
+const extensionPath = path.resolve(import.meta.dirname, '../../build/chrome');
 
 export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; pageErrors: void }>({
   context: async ({ playwright }, provideContext) => {

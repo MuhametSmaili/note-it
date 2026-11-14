@@ -3,6 +3,7 @@ import { getCurrentTab } from '@utils/get-current-tab';
 import { MessageRequest } from '@utils/types/message-request';
 import Camera from '@icons/camera.svg';
 import { localStorage } from '@utils/storage';
+import { platform } from '@platform/extension';
 
 const screenshotHandler = async () => {
   const isWindow = await localStorage.get('settings');
@@ -14,7 +15,7 @@ const screenshotHandler = async () => {
     }, 200);
   }
 
-  await chrome.runtime.sendMessage({
+  await platform.runtime.send({
     message: MessageRequest.CROP_SCREEN,
     tab: tab,
   });

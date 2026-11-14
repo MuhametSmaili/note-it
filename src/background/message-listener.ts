@@ -1,7 +1,9 @@
 import { localStorage } from '@utils/storage';
 import { MessageRequest } from '@utils/types/message-request';
+import { platform } from '@platform/extension';
+import type { MessageSender } from '@platform/extension';
 
-async function handleMessage(request: object & Record<'message', unknown>, sender: chrome.runtime.MessageSender) {
+async function handleMessage(request: object & Record<'message', unknown>, sender: MessageSender) {
   if (request.message === MessageRequest.CROP_SCREEN) {
     const tab = 'tab' in request ? request.tab : sender.tab;
     if (!tab || typeof tab !== 'object' || !('id' in tab) || !('windowId' in tab)) {
@@ -18,17 +20,17 @@ async function handleMessage(request: object & Record<'message', unknown>, sende
     ) {
       throw new Error('Screenshot target is invalid.');
     }
-    const capturedImage = await chrome.tabs.captureVisibleTab(windowId, {});
+    const capturedImage = await platform.tabs.capture(windowId);
     await localStorage.set('screenshot', { capturedImage, cropArea: { height: 0, width: 0, x: 0, y: 0 } });
-    await chrome.scripting.executeScript({ target: { tabId: id }, files: ['crop-area.js'] });
+    await platform.tabs.inject(id, ['crop-area.js']);
   } else {
     const tabId = sender.tab?.id;
     if (tabId === undefined) throw new Error('Screenshot frame target is missing.');
-    await chrome.scripting.executeScript({ target: { tabId }, files: ['frame-script.js'] });
+    await platform.tabs.inject(tabId, ['frame-script.js']);
   }
 }
 
-chrome.runtime.onMessage.addListener((request: unknown, sender, respond) => {
+platform.runtime.listen((request, sender, respond) => {
   if (
     !request ||
     typeof request !== 'object' ||

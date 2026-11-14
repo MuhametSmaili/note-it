@@ -14,12 +14,19 @@
     "128": "./icon/128x128.png"
   },
   "action": {
-    "default_title": "NoteIt"
+    "default_title": "NoteIt",
+    "default_popup": "popup.html"
   },
-  "background": {
-    "service_worker": "background.js"
-  },
-  "permissions": ["tabs", "activeTab", "scripting", "clipboardWrite", "storage", "unlimitedStorage", "contextMenus"],
+  "permissions": [
+    "tabs",
+    "activeTab",
+    "scripting",
+    "clipboardRead",
+    "clipboardWrite",
+    "storage",
+    "unlimitedStorage",
+    "contextMenus"
+  ],
   "host_permissions": ["<all_urls>"],
   "web_accessible_resources": [
     {

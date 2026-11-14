@@ -2,8 +2,9 @@ import { act, cleanup, renderHook, waitFor } from '@testing-library/react';
 import { StrictMode } from 'react';
 import type { LocalStorage, LocalSettings } from '@utils/storage';
 import type { useStorage as UseStorage } from '../use-storage.hook';
+import type { StorageChanges } from '@platform/extension';
 
-type ChangeListener = (changes: Record<string, chrome.storage.StorageChange>, area: string) => void;
+type ChangeListener = (changes: StorageChanges, area: string) => void;
 const listeners = new Set<ChangeListener>();
 const get = vi.fn<(key: keyof LocalStorage) => Promise<Partial<LocalStorage>>>();
 const set = vi.fn<(values: Partial<LocalStorage>) => Promise<void>>();
@@ -11,21 +12,26 @@ const remove = vi.fn<(key: string) => Promise<void>>();
 let useStorage: typeof UseStorage;
 const settings: LocalSettings = { theme: 'dark', windowType: 'window' };
 
+vi.mock('@platform/extension', () => ({
+  platform: {
+    storage: {
+      read: get,
+      write: set,
+      remove,
+      subscribe: (listener: ChangeListener) => {
+        listeners.add(listener);
+        return () => listeners.delete(listener);
+      },
+    },
+  },
+}));
+
 beforeEach(async () => {
   vi.resetModules();
   get.mockReset().mockResolvedValue({});
   set.mockReset().mockResolvedValue(undefined);
   remove.mockReset().mockResolvedValue(undefined);
   listeners.clear();
-  vi.stubGlobal('chrome', {
-    storage: {
-      local: { get, set, remove },
-      onChanged: {
-        addListener: (listener: ChangeListener) => listeners.add(listener),
-        removeListener: (listener: ChangeListener) => listeners.delete(listener),
-      },
-    },
-  });
   ({ useStorage } = await import('../use-storage.hook'));
 });
 

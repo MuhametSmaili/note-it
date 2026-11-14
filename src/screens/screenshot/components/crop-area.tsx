@@ -4,6 +4,7 @@ import { rootRender } from '@utils/render';
 import { MessageRequest } from '@utils/types/message-request';
 import type { MouseEvent } from 'react';
 import React, { useEffect, useState } from 'react';
+import { platform } from '@platform/extension';
 
 const onKeyUpHandler = (event: KeyboardEvent) => {
   if (event.key === 'Escape') {
@@ -21,7 +22,7 @@ export const CropArea: React.FC = () => {
       try {
         const screenshot = { capturedImage: screenshoted.capturedImage, cropArea: selectedArea };
         await setScreenshot(screenshot);
-        await chrome.runtime.sendMessage({ message: MessageRequest.INSERT_FRAME });
+        await platform.runtime.send({ message: MessageRequest.INSERT_FRAME });
       } catch (e) {
         console.error(e);
       }

@@ -1,77 +1,74 @@
 import type { LocalSettings } from '@utils/storage';
+import type { BrowserWindow, MenuClick, WindowOptions } from '@platform/extension';
 
-const { getSettings, setSettings } = vi.hoisted(() => ({
-  getSettings: vi.fn<(key: 'settings') => Promise<LocalSettings>>(),
+const mocks = vi.hoisted(() => ({
+  getSettings: vi.fn<() => Promise<LocalSettings>>(),
   setSettings: vi.fn<(settings: Partial<LocalSettings>) => Promise<void>>(),
+  onClick: vi.fn<(listener: () => void) => void>(),
+  onMenuClick: vi.fn<(listener: (event: MenuClick) => void) => void>(),
+  onStartup: vi.fn<(listener: () => void) => void>(),
+  setPopup: vi.fn<(popup: string) => Promise<void>>(),
+  getWindow: vi.fn<(id: number) => Promise<Pick<BrowserWindow, 'id'>>>(),
+  createWindow: vi.fn<(options: WindowOptions) => Promise<Pick<BrowserWindow, 'id'>>>(),
+  focusWindow: vi.fn<(id: number) => Promise<void>>(),
 }));
 
-vi.mock('@utils/storage', () => ({ localStorage: { get: getSettings }, setSettings }));
-
-const onClicked = vi.fn<(listener: () => void) => void>();
-const setPopup = vi.fn<(details: chrome.action.PopupDetails) => Promise<void>>();
-const openPopup = vi.fn<() => Promise<void>>();
-const getWindow = vi.fn<(id: number) => Promise<Pick<chrome.windows.Window, 'id'>>>();
-const createWindow = vi.fn<(details: chrome.windows.CreateData) => Promise<Pick<chrome.windows.Window, 'id'>>>();
-const updateWindow = vi.fn<(id: number, details: chrome.windows.UpdateInfo) => Promise<void>>();
+vi.mock('@utils/storage', () => ({
+  localStorage: { get: mocks.getSettings },
+  setSettings: mocks.setSettings,
+}));
+vi.mock('@platform/extension', () => ({
+  platform: {
+    runtime: {
+      onInstalled: () => undefined,
+      onStartup: mocks.onStartup,
+      url: (file: string) => `extension://note-it/${file}`,
+    },
+    menus: { onClick: mocks.onMenuClick },
+    action: { onClick: mocks.onClick, setPopup: mocks.setPopup },
+    windows: { get: mocks.getWindow, create: mocks.createWindow, focus: mocks.focusWindow },
+  },
+}));
 
 beforeEach(async () => {
   vi.resetModules();
   vi.resetAllMocks();
-  getSettings.mockResolvedValue({ theme: 'light', windowType: 'popup' });
-  vi.stubGlobal('chrome', {
-    runtime: {
-      onInstalled: { addListener: vi.fn<() => void>() },
-      getURL: (file: string) => `chrome-extension://note-it/${file}`,
-    },
-    contextMenus: { onClicked: { addListener: vi.fn<() => void>() } },
-    action: { onClicked: { addListener: onClicked }, setPopup, openPopup },
-    windows: { get: getWindow, create: createWindow, update: updateWindow },
-  });
+  mocks.getSettings.mockResolvedValue({ theme: 'light', windowType: 'popup' });
   await import('../context-menu');
+  await vi.waitUntil(() => mocks.setPopup.mock.calls.length > 0);
 });
 
-afterEach(() => {
-  vi.unstubAllGlobals();
+it('configures browser-managed popup opening when the background starts', () => {
+  expect(mocks.setPopup).toHaveBeenCalledExactlyOnceWith('popup.html');
+  expect(mocks.createWindow).not.toHaveBeenCalled();
 });
 
-function clickAction() {
-  const listener = onClicked.mock.calls[0]?.[0];
-  if (!listener) throw new Error('The action click listener was not registered.');
-  listener();
-}
+it('restores window mode on browser startup', async () => {
+  mocks.getSettings.mockResolvedValue({ theme: 'light', windowType: 'window' });
+  const startup = mocks.onStartup.mock.calls[0]?.[0];
+  if (!startup) throw new Error('Missing startup listener.');
 
-it('opens the popup on the first click after its configuration completes', async () => {
-  let configured = false;
-  setPopup.mockImplementation(async () => {
-    await Promise.resolve();
-    configured = true;
-  });
-  openPopup.mockImplementation(async () => {
-    expect(configured).toBe(true);
-  });
+  startup();
 
-  clickAction();
-
-  await vi.waitFor(() => expect(setPopup).toHaveBeenCalledWith({ popup: 'popup.html' }));
-  await vi.waitFor(() => expect(openPopup).toHaveBeenCalledExactlyOnceWith());
+  await vi.waitFor(() => expect(mocks.setPopup).toHaveBeenLastCalledWith(''));
 });
 
-it('creates a separate window without opening the toolbar popup in window mode', async () => {
-  getSettings.mockResolvedValue({ theme: 'light', windowType: 'window' });
-  getWindow.mockRejectedValue(new Error('Window not found'));
-  createWindow.mockResolvedValue({ id: 42 });
+it('creates and then focuses the detached note window', async () => {
+  mocks.getWindow.mockRejectedValueOnce(new Error('Window not found')).mockResolvedValue({ id: 42 });
+  mocks.createWindow.mockResolvedValue({ id: 42 });
+  const click = mocks.onClick.mock.calls[0]?.[0];
+  if (!click) throw new Error('Missing action listener.');
 
-  clickAction();
+  click();
+  await vi.waitFor(() => expect(mocks.createWindow).toHaveBeenCalledOnce());
+  click();
 
-  await vi.waitFor(() => {
-    expect(createWindow).toHaveBeenCalledWith({
-      url: 'chrome-extension://note-it/popup.html',
-      focused: true,
-      type: 'popup',
-      height: 600,
-      width: 800,
-    });
+  await vi.waitFor(() => expect(mocks.focusWindow).toHaveBeenCalledWith(42));
+  expect(mocks.createWindow).toHaveBeenCalledExactlyOnceWith({
+    url: 'extension://note-it/popup.html',
+    focused: true,
+    type: 'popup',
+    height: 600,
+    width: 800,
   });
-  expect(openPopup).not.toHaveBeenCalled();
-  expect(setPopup).not.toHaveBeenCalled();
 });

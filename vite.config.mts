@@ -27,6 +27,7 @@ const createSharedConfig = () =>
     ],
     resolve: {
       alias: {
+        '@platform': path.resolve(root, 'src/platform'),
         '@app': path.resolve(root, 'src/app'),
         '@screens': path.resolve(root, 'src/screens'),
         '@modules': path.resolve(root, 'src/modules'),
@@ -44,17 +45,9 @@ const pages = createSharedConfig();
 export default defineConfig({
   ...pages,
   publicDir: 'src/static',
-  plugins: [
-    ...pages.plugins,
-    {
-      name: 'watch-extension-assets',
-      buildStart() {
-        this.addWatchFile(path.resolve(root, 'src/static'));
-      },
-    },
-  ],
   build: {
-    outDir: 'build',
+    outDir: 'build/.shared',
+    target: ['chrome120', 'firefox140'],
     emptyOutDir: false,
     rolldownOptions: {
       input: {
@@ -65,13 +58,14 @@ export default defineConfig({
   },
 });
 
-/** Create one IIFE file for a Chrome extension script. */
+/** Create one shared IIFE file for an extension script. */
 export function scriptConfig(name: 'background' | 'crop-area' | 'frame-script'): UserConfig {
   return {
     ...createSharedConfig(),
     publicDir: false,
     build: {
-      outDir: 'build',
+      outDir: 'build/.shared',
+      target: ['chrome120', 'firefox140'],
       emptyOutDir: false,
       lib: {
         name: `NoteIt_${name.replaceAll('-', '_')}`,

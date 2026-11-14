@@ -1,29 +1,28 @@
 import { MessageRequest } from '@utils/types/message-request';
 import type { LocalStorage } from '@utils/storage';
+import type { MessageSender } from '@platform/extension';
 
-type Listener = (
-  request: unknown,
-  sender: chrome.runtime.MessageSender,
-  respond: (response: unknown) => void,
-) => boolean;
+type Listener = (request: unknown, sender: MessageSender, respond: (response: unknown) => void) => boolean;
 const addListener = vi.fn<(listener: Listener) => void>();
-const capture = vi.fn<(windowId: number, options: object) => Promise<string>>();
+const capture = vi.fn<(windowId: number) => Promise<string>>();
 const set = vi.fn<(values: Partial<LocalStorage>) => Promise<void>>();
-const executeScript = vi.fn<(options: { target: { tabId: number }; files: string[] }) => Promise<unknown[]>>();
+const executeScript = vi.fn<(tabId: number, files: string[]) => Promise<void>>();
 let listener: Listener;
+
+vi.mock('@platform/extension', () => ({
+  platform: {
+    runtime: { listen: addListener },
+    storage: { write: set },
+    tabs: { capture, inject: executeScript },
+  },
+}));
 
 beforeEach(async () => {
   vi.resetModules();
   addListener.mockReset();
   capture.mockReset().mockResolvedValue('data:image/png;base64,image');
   set.mockReset().mockResolvedValue(undefined);
-  executeScript.mockReset().mockResolvedValue([]);
-  vi.stubGlobal('chrome', {
-    runtime: { onMessage: { addListener } },
-    storage: { local: { set } },
-    tabs: { captureVisibleTab: capture },
-    scripting: { executeScript },
-  });
+  executeScript.mockReset().mockResolvedValue(undefined);
   await import('../message-listener');
   const registered = addListener.mock.calls[0]?.[0];
   if (!registered) throw new Error('Message listener was not registered.');
@@ -47,8 +46,8 @@ it('stores the capture before injecting the crop overlay', async () => {
 
   await vi.waitFor(() => expect(respond).toHaveBeenCalledExactlyOnceWith({ ok: true }));
   expect(pending).toBe(true);
-  expect(capture).toHaveBeenCalledExactlyOnceWith(3, {});
-  expect(executeScript).toHaveBeenCalledExactlyOnceWith({ target: { tabId: 12 }, files: ['crop-area.js'] });
+  expect(capture).toHaveBeenCalledExactlyOnceWith(3);
+  expect(executeScript).toHaveBeenCalledExactlyOnceWith(12, ['crop-area.js']);
 });
 
 it('reports a failed storage write without injecting the overlay', async () => {

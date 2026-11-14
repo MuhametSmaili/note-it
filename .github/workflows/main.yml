@@ -30,5 +30,16 @@ jobs:
       - name: Install Chromium
         run: npx playwright install --with-deps chromium
 
+      - name: Install Firefox dependencies
+        run: npx playwright install-deps firefox
+
+      - name: Install Firefox
+        id: firefox
+        uses: browser-actions/setup-firefox@v1
+        with:
+          firefox-version: latest
+
       - name: Build and smoke-test extension
         run: npm run test:extension
+        env:
+          FIREFOX_BIN: ${{ steps.firefox.outputs.firefox-path }}

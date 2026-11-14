@@ -1,4 +1,5 @@
 import type { Screenshot } from './types/screenshot';
+import { platform } from '@platform/extension';
 
 export type Theme = 'dark' | 'dim' | 'light';
 
@@ -17,7 +18,7 @@ export const defaultSettings: LocalSettings = { theme: 'light', windowType: 'pop
 
 export class Storage<T extends object> {
   constructor(
-    private readonly storageArea: chrome.storage.StorageArea,
+    private readonly storageArea: Pick<typeof platform.storage, 'read' | 'write' | 'remove'>,
     private readonly defaults: T,
   ) {}
 
@@ -25,12 +26,12 @@ export class Storage<T extends object> {
     if (value === undefined) {
       await this.remove(key);
     } else {
-      await this.storageArea.set({ [key]: value });
+      await this.storageArea.write({ [key]: value });
     }
   }
 
   async get<K extends keyof T>(key: K): Promise<T[K]> {
-    const result = await this.storageArea.get<Partial<T>>(key);
+    const result = await this.storageArea.read<Partial<T>>(key);
     return result[key] ?? this.defaults[key];
   }
 
@@ -39,7 +40,7 @@ export class Storage<T extends object> {
   }
 }
 
-export const localStorage = new Storage<LocalStorage>(chrome.storage.local, {
+export const localStorage = new Storage<LocalStorage>(platform.storage, {
   settings: defaultSettings,
 });
 
