@@ -14,8 +14,8 @@
     "test:extension": "npm run test:build && playwright test",
     "coverage": "vitest run --coverage",
     "update:deps": "npx npm-check-updates --interactive --format group",
-    "format": "prettier --write .",
-    "format:check": "prettier --check .",
+    "format": "oxfmt",
+    "format:check": "oxfmt --check",
     "prepare": "husky",
     "lint": "oxlint --deny-warnings --report-unused-disable-directives",
     "lint:fix": "npm run lint -- --fix",
@@ -24,9 +24,9 @@
   "lint-staged": {
     "*.{ts,tsx,mts,js,cjs,mjs}": [
       "oxlint --deny-warnings --report-unused-disable-directives --no-error-on-unmatched-pattern",
-      "prettier --write"
+      "oxfmt --no-error-on-unmatched-pattern"
     ],
-    "*.{json,md,yml,yaml,css,svg}": "prettier --write"
+    "*.{json,md,yml,yaml,css,svg}": "oxfmt --no-error-on-unmatched-pattern"
   },
   "overrides": {
     "@rolldown/plugin-babel": {
@@ -71,10 +71,10 @@
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
     "oxc-transform-react": "0.156.0",
+    "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
     "pdfjs-dist": "6.5.438",
-    "prettier": "3.10.1",
     "tailwindcss": "4.3.5",
     "tesseract.js-core": "7.0.0",
     "typescript": "7.0.2",
