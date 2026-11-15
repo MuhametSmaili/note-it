@@ -4,9 +4,9 @@ import Sidebar from "./components/sidebar";
 import TabContent from "./components/tab-content";
 
 import { Settings } from "@screens/settings/settings";
+import NoteEditor from "@screens/editor/note-editor";
 import { useStorage } from "@hooks/use-storage.hook";
 import { useTab } from "./providers/active-tab.provider";
-const NoteEditor = React.lazy(() => import("@screens/editor/note-editor"));
 const Collections = React.lazy(() => import("@screens/collections/collections"));
 const Ocr = React.lazy(() => import("@screens/ocr/ocr"));
 

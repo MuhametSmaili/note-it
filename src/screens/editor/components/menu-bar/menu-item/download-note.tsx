@@ -1,30 +1,39 @@
 import type { Editor } from "@tiptap/react";
-import htmlToPdfMake from "html-to-pdfmake";
-import pdfMake from "pdfmake/build/pdfmake";
-import pdfFonts from "pdfmake/build/vfs_fonts";
+import { useState } from "react";
 import { Button } from "@components";
 import Download from "@icons/box-download.svg";
 
-pdfMake.addVirtualFileSystem(pdfFonts);
+async function downloadPdf(content: string) {
+  const [{ default: htmlToPdfMake }, { default: pdfMake }, { default: pdfFonts }] = await Promise.all([
+    import("html-to-pdfmake"),
+    import("pdfmake/build/pdfmake"),
+    import("pdfmake/build/vfs_fonts"),
+  ]);
+  pdfMake.addVirtualFileSystem(pdfFonts);
+  await pdfMake
+    .createPdf({
+      content: htmlToPdfMake(content),
+      info: { author: "NoteIt", creationDate: new Date(), title: "note" },
+    })
+    .download("note-it.pdf");
+}
 
 export const DownloadNote = ({ editor }: { editor: Editor }) => {
-  const downloadHandler = async () => {
-    const pdfMakeObject = htmlToPdfMake(editor.getHTML());
-    await pdfMake
-      .createPdf({
-        content: pdfMakeObject,
-        info: { author: "NoteIt", creationDate: new Date(), title: "note" },
-      })
-      .download("note-it.pdf");
-  };
+  const [isDownloading, setIsDownloading] = useState(false);
 
   return (
     <Button
       variant="inverse"
       size="sm"
       aria-label="Download note as PDF"
+      aria-busy={isDownloading}
+      disabled={isDownloading}
+      isLoading={isDownloading}
       onClick={() => {
-        downloadHandler().catch((error: unknown) => console.error("Cannot download PDF:", error));
+        setIsDownloading(true);
+        downloadPdf(editor.getHTML())
+          .catch((error: unknown) => console.error("Cannot download PDF:", error))
+          .finally(() => setIsDownloading(false));
       }}
     >
       <Download />
