@@ -11,7 +11,7 @@ const TabContent = (props: TabContentProps) => {
   return (
     <React.Suspense
       fallback={
-        <div className="flex items-center justify-center h-full w-full">
+        <div className="flex h-full w-full items-center justify-center">
           <Spinner />
         </div>
       }

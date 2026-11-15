@@ -4,6 +4,15 @@ import type { Context, ESTree, Node, Plugin, Visitor } from "@oxlint/plugins";
 import { ResolverFactory } from "oxc-resolver";
 
 const publicEntries = new Set(["modules/notes/storage.ts", "modules/notes/background.ts"]);
+const screenEntries = new Set([
+  "screens/collections/collections.tsx",
+  "screens/editor/note-editor.tsx",
+  "screens/ocr/ocr.tsx",
+  "screens/settings/settings.tsx",
+  "screens/screenshot/screenshot.tsx",
+  "screens/screenshot/crop-area.tsx",
+  "screens/screenshot/screenshot-frame.tsx",
+]);
 const adapters = new Set([
   "modules/notes/internal/web-extension.ts",
   "modules/notes/internal/indexed-db-repository.ts",
@@ -25,6 +34,7 @@ const compositionRoots = new Set([
   "background/background.ts",
 ]);
 const owner = (file: string) => /^modules\/([^/]+)\//.exec(file)?.[1];
+const screenOwner = (file: string) => /^screens\/([^/]+)\//.exec(file)?.[1];
 const isTest = (file: string) => file.includes("/__tests__/") || /\.test\.[cm]?[jt]sx?$/.test(file);
 const isReact = (specifier: string) => /^(react|react-dom|@tiptap\/react)(\/|$)/.test(specifier);
 
@@ -66,6 +76,14 @@ function ownershipViolation(source: string, target: string) {
     !isTest(source)
   ) {
     return "Database implementation files are private to the database adapter.";
+  }
+  return undefined;
+}
+
+function screenViolation(source: string, target: string) {
+  const targetScreen = screenOwner(target);
+  if (targetScreen && screenOwner(source) !== targetScreen && !screenEntries.has(target)) {
+    return `Use the ${targetScreen} screen's public entry point. Its components, hooks, and helpers are private.`;
   }
   return undefined;
 }
@@ -133,6 +151,7 @@ function dependencies(context: Context): Visitor {
     }
     const violation =
       ownershipViolation(source, target) ??
+      screenViolation(source, target) ??
       databaseViolation(source, target) ??
       directionViolation(source, domain, target);
     if (violation) report(node, violation);

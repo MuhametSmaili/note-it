@@ -58,7 +58,7 @@ export const CropArea: React.FC = () => {
   return (
     <div
       role="presentation"
-      className="fixed left-0 top-0 w-full h-full z-[99999] cursor-custom select-none"
+      className="fixed top-0 left-0 z-[99999] h-full w-full cursor-custom select-none"
       onMouseDown={onStartSelectingHandler}
       onMouseMove={onMouseMoveHandler}
       onMouseUp={() => {
@@ -69,12 +69,12 @@ export const CropArea: React.FC = () => {
       <img
         alt="frozen screen to take screenshot"
         src={screenshoted?.capturedImage}
-        className="fixed left-0 top-0 select-none w-screen h-screen"
+        className="fixed top-0 left-0 h-screen w-screen select-none"
         draggable={false}
         loading="lazy"
       />
       <div
-        className="cursor-custom box-border fixed z-[999999] border border-gray-900 border-dotted bg-transparent"
+        className="fixed z-[999999] box-border cursor-custom border border-dotted border-primary bg-transparent"
         style={{
           width: cropArea?.width + "px",
           height: cropArea?.height + "px",

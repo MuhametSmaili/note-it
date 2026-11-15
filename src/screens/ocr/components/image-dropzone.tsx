@@ -30,13 +30,13 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
   });
 
   return (
-    <div className="m-5 ">
+    <div className="m-5">
       {droppedImage ? (
-        <div className="border border-primary p-1 relative mt-16">
+        <div className="relative mt-16 border border-primary p-1">
           <button
             type="button"
             aria-label="Remove uploaded image"
-            className="absolute -top-6 -right-2 bg-primary rounded-md"
+            className="absolute -top-6 -right-2 rounded-md bg-primary"
             onClick={clearImage}
           >
             <Close />
@@ -44,7 +44,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
           <img ref={preview} alt="Uploaded document" loading="lazy" />
         </div>
       ) : (
-        <div className="flex items-center justify-center border border-primary border-dashed min-h-40 h-2/5">
+        <div className="flex h-2/5 min-h-40 items-center justify-center border border-dashed border-primary">
           <div
             {...getRootProps({
               role: "group",
@@ -55,11 +55,11 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
             <input {...getInputProps({ "aria-label": "Choose an image" })} />
             <div className="flex flex-col items-center justify-items-center">
               <Upload />
-              <div className="text-primary text-center text-xl flex items-center w-full">
+              <div className="flex w-full items-center text-center text-xl text-primary">
                 {isDragActive ? (
                   " Drop here..."
                 ) : (
-                  <button type="button" onClick={open} className="flex justify-center items-center">
+                  <button type="button" onClick={open} className="flex items-center justify-center">
                     <AddCamera />
                     Upload an image or drag and drop it here
                   </button>

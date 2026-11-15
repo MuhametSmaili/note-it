@@ -3,19 +3,19 @@ import { forwardRef } from "react";
 import clsx from "clsx";
 import { Spinner } from "../spinner/spinner";
 
-const variants = {
+const variantClasses = {
   primary: "bg-light border border-primary text-secondary",
-  inverse: "bg-white text-blue-prussian active:bg-gray-true",
+  inverse: "bg-primary text-primary active:bg-highlight",
 };
 
-const sizes = {
+const sizeClasses = {
   sm: " text-sm",
   md: "py-1 px-2 text-md",
 };
 
 type ButtonProps = {
-  variant?: keyof typeof variants;
-  size?: keyof typeof sizes;
+  variant?: keyof typeof variantClasses;
+  size?: keyof typeof sizeClasses;
   isLoading?: boolean;
   active?: boolean;
   icon?: JSX.Element;
@@ -31,12 +31,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         ref={ref}
         className={clsx(
-          "flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-hidden",
-          variants[variant],
-          sizes[size],
-          active && "bg-gray-light!",
+          "flex items-center justify-center rounded-sm focus:outline-hidden disabled:cursor-not-allowed disabled:opacity-70",
+          variantClasses[variant],
+          sizeClasses[size],
+          active && "bg-highlight!",
           className,
-          disabled && "bg-gray-30 text-white",
+          disabled && "disabled:bg-light disabled:text-light",
         )}
         disabled={disabled}
         {...props}

@@ -15,8 +15,8 @@ export const Heading = ({ editor }: { editor: Editor }) => {
   return (
     <div
       className={clsx(
-        "flex items-center rounded-sm px-1 hover:cursor-pointer hover:bg-gray-true",
-        active ? "bg-gray-true" : "",
+        "flex items-center rounded-sm px-1 hover:cursor-pointer hover:bg-highlight",
+        active ? "bg-highlight" : "",
       )}
     >
       <button

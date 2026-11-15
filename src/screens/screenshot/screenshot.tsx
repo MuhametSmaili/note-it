@@ -85,10 +85,10 @@ export const ScreenshotScreen: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-primary rounded-sm z-[99999] p-2 shadow-lg border-2 border-primary">
+    <div className="z-[99999] min-h-screen rounded-sm border-2 border-primary bg-primary p-2 shadow-lg">
       <h3 className="text-xl font-bold">Image cropped</h3>
       <div className="flex flex-row content-between pt-1">
-        <div className="h-60 w-2/3 mr-5 flex items-center justify-center overflow-hidden">
+        <div className="mr-5 flex h-60 w-2/3 items-center justify-center overflow-hidden">
           <img src={imageSrc} className="object-cover" alt="Selected screenshot area" />
         </div>
         <div className="flex w-1/3 flex-col pt-7">
@@ -130,7 +130,7 @@ export const ScreenshotScreen: React.FC = () => {
             disabled={status?.type === "LOADING"}
           />
           <div className="flex justify-center">{status?.type === "LOADING" && <Spinner />}</div>
-          {status?.type === "DONE" && <h2 className="text-md font-bold text-blue-prussian">{status.message}</h2>}
+          {status?.type === "DONE" && <h2 className="text-md font-bold text-primary">{status.message}</h2>}
         </div>
       </div>
     </div>

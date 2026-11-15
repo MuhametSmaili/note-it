@@ -9,6 +9,10 @@
   "arrowParens": "always",
   "endOfLine": "lf",
   "sortPackageJson": false,
+  "sortTailwindcss": {
+    "stylesheet": "./src/styles/tailwind.css",
+    "functions": ["clsx"]
+  },
   "associations": [
     {
       "files": ["*.svg"],

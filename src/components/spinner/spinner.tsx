@@ -1,18 +1,18 @@
 import clsx from "clsx";
 
-const sizes = {
+const sizeClasses = {
   sm: "h-4 w-4",
   md: "h-8 w-8",
 };
 
-const variants = {
-  light: "text-white",
-  primary: "text-blue-prussian",
+const variantClasses = {
+  light: "text-light",
+  primary: "text-primary",
 };
 
 export type SpinnerProps = {
-  size?: keyof typeof sizes;
-  variant?: keyof typeof variants;
+  size?: keyof typeof sizeClasses;
+  variant?: keyof typeof variantClasses;
   className?: string;
   hidden?: number;
 };
@@ -21,7 +21,7 @@ export const Spinner = ({ size = "md", variant = "primary", className = "", hidd
   return (
     <div className={(!hidden && "hidden") || " "}>
       <svg
-        className={clsx("animate-spin", sizes[size], variants[variant], className)}
+        className={clsx("animate-spin", sizeClasses[size], variantClasses[variant], className)}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

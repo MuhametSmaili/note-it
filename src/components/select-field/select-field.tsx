@@ -20,15 +20,15 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
   ({ className, options, ...props }, ref) => {
     const [value, setValue] = useState(props.value ?? props.defaultValue ?? options[0]?.value ?? "");
     return (
-      <div className="flex justify-center items-center hover:cursor-pointer">
+      <div className="flex items-center justify-center hover:cursor-pointer">
         <select
           value={value}
           ref={ref}
           className={clsx(
-            "block w-full px-5 py-1 h-full text-md rounded-sm",
-            "border border-primary ",
-            "text-secondary bg-light text-center",
-            "disabled:opacity-70 disabled:cursor-not-allowed",
+            "block h-full w-full rounded-sm px-5 py-1 text-md",
+            "border border-primary",
+            "bg-light text-center text-secondary",
+            "disabled:cursor-not-allowed disabled:opacity-70",
             "appearance-none focus:outline-hidden",
             className,
           )}

@@ -30,7 +30,7 @@ const NoteContent = ({ note, onDeleteNoteHandler, onError }: NoteContentProps) =
   };
 
   return (
-    <div className="border m-2 relative border-primary rounded-sm overflow-hidden h-full max-h-[300px] max-w-[200px]">
+    <div className="relative m-2 h-full max-h-[300px] max-w-[200px] overflow-hidden rounded-sm border border-primary">
       {confirmDelete ? (
         <ConfirmNoteDeletion
           onDeclineHandler={onDeleteNote}

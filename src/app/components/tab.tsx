@@ -11,9 +11,9 @@ const Tab = ({ isActive = false, onClickHandler, children, className }: TabProps
   <button
     type="button"
     className={clsx(
-      "p-1 my-2 hover:cursor-pointer",
-      "w-full flex justify-center transition-[margin]",
-      isActive ? "bg-primary rounded-sm rounded-tr-none rounded-br-none ml-4" : "bg-transparent",
+      "my-2 p-1 hover:cursor-pointer",
+      "flex w-full justify-center transition-[margin]",
+      isActive ? "ml-4 rounded-sm rounded-tr-none rounded-br-none bg-primary" : "bg-transparent",
       className,
     )}
     onClick={onClickHandler}

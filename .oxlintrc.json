@@ -1,7 +1,19 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
   "plugins": ["typescript", "unicorn", "oxc", "react", "jsx-a11y", "vitest", "import"],
-  "jsPlugins": ["./scripts/architecture-plugin.mts"],
+  "jsPlugins": [
+    "./scripts/architecture-plugin.mts",
+    "./scripts/conventions-plugin.mts",
+    "eslint-plugin-better-tailwindcss"
+  ],
+  "settings": {
+    "better-tailwindcss": {
+      "entryPoint": "./src/styles/tailwind.css",
+      "selectors": {
+        "extends": [{ "kind": "variable", "name": "^.*Classes$", "match": [{ "type": "objectValues" }] }]
+      }
+    }
+  },
   "options": { "typeAware": true },
   "categories": {
     "correctness": "error",
@@ -18,6 +30,19 @@
     "no-debugger": "error",
     "no-console": ["error", { "allow": ["warn", "error"] }],
     "prefer-const": "error",
+    "max-depth": ["error", 4],
+    "max-params": ["error", 3],
+    "complexity": ["error", 20],
+    "no-else-return": "error",
+    "react/jsx-pascal-case": "error",
+    "id-match": [
+      "error",
+      "^(_|_?[a-zA-Z][a-zA-Z0-9]*_?|[A-Z][A-Z0-9]*(?:_[A-Z0-9]+)*)$",
+      { "onlyDeclarations": true, "properties": false, "ignoreDestructuring": true }
+    ],
+    "conventions/directories": "error",
+    "conventions/type-names": "error",
+    "conventions/function-names": "error",
     "unicorn/filename-case": ["error", { "case": "kebabCase", "multipleFileExtensions": false }],
     "react/react-in-jsx-scope": "off",
     "import/no-unassigned-import": "off",
@@ -55,6 +80,14 @@
     "typescript/consistent-type-imports": "error"
   },
   "overrides": [
+    {
+      "files": ["src/**/*.{ts,tsx}"],
+      "rules": {
+        "better-tailwindcss/no-unknown-classes": "error",
+        "better-tailwindcss/no-conflicting-classes": "error",
+        "better-tailwindcss/no-concatenated-classes": "error"
+      }
+    },
     {
       "files": ["src/**"],
       "excludeFiles": [
@@ -144,6 +177,7 @@
     {
       "files": ["**/*.test.{ts,tsx,mts}"],
       "rules": {
+        "max-params": "off",
         "typescript/unbound-method": "off",
         "typescript/no-unsafe-assignment": "off",
         "vitest/expect-expect": "error",

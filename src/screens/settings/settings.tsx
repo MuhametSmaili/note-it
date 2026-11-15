@@ -17,11 +17,11 @@ export function Settings() {
 
   return (
     <div>
-      <h2 className="text-xl text-primary flex items-center justify-center w-fit mb-1">
+      <h2 className="mb-1 flex w-fit items-center justify-center text-xl text-primary">
         <ColorPalette />
         Apperance settings
       </h2>
-      <ul className="flex gap-3 items-start">
+      <ul className="flex items-start gap-3">
         {themes.map((t) => (
           <li key={t.name} data-theme={t.name}>
             <ApperanceItem
@@ -46,7 +46,7 @@ type ApperanceItemProps = {
 
 export function ApperanceItem({ onChange, checked, name, displayName }: ApperanceItemProps) {
   return (
-    <label className="h-16 w-24 border border-primary rounded-sm bg-primary text-primary flex justify-center items-center min-w-10">
+    <label className="flex h-16 w-24 min-w-10 items-center justify-center rounded-sm border border-primary bg-primary text-primary">
       <input checked={checked} id={name} name={name} type="checkbox" value={name} onChange={onChange} />
       <span className="ml-1">{displayName}</span>
     </label>

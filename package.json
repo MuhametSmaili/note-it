@@ -11,6 +11,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:architecture": "vitest run --config vitest.build.config.mts scripts/__tests__/architecture.test.mts",
+    "test:lint": "vitest run --config vitest.build.config.mts scripts/__tests__/architecture.test.mts scripts/__tests__/lint-rules.test.mts",
     "test:build": "npm run build && vitest run --config vitest.build.config.mts",
     "test:extension": "npm run test:build && playwright test && npm run test:browser",
     "test:browser": "vitest run --config vitest.browser.config.mts",
@@ -22,6 +23,7 @@
     "prepare": "husky",
     "lint": "oxlint --deny-warnings --report-unused-disable-directives",
     "lint:fix": "npm run lint -- --fix",
+    "check": "npm run lint && npm run format:check && npm run typecheck && npm test && npm run test:lint",
     "typecheck": "tsc --noEmit"
   },
   "lint-staged": {
@@ -71,6 +73,7 @@
     "@types/react-dom": "19.3.0",
     "@vitejs/plugin-react": "6.3.0",
     "@vitest/coverage-v8": "5.1.0",
+    "eslint-plugin-better-tailwindcss": "4.11.0",
     "husky": "9.1.7",
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",

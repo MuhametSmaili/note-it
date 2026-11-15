@@ -13,7 +13,7 @@ export const Input = (props: InputProps): JSX.Element => {
     <input
       defaultValue={value}
       className={clsx(
-        "bg-light border border-primary pl-2 h-[30px] w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1",
+        "mr-1 flex h-[30px] w-[100px] items-center justify-center overflow-x-auto rounded-sm border border-primary bg-light pl-2 text-center",
         "focus:outline-primary",
         "focus:invalid:outline-red",
         "invalid:border-red",

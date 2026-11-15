@@ -53,8 +53,8 @@ const Ocr = () => {
   };
 
   return (
-    <div className="relative flex flex-col h-full">
-      <div className="flex justify-between items-center">
+    <div className="relative flex h-full flex-col">
+      <div className="flex items-center justify-between">
         <div className="flex gap-2">
           <Button
             variant="primary"
@@ -88,16 +88,16 @@ const Ocr = () => {
           }}
         />
       </div>
-      <div className="block relative border-b border-primary w-full my-2" />
-      {status?.type !== "DONE" && <h2 className="text-md font-bold text-red text-center">{status?.message}</h2>}
+      <div className="relative my-2 block w-full border-b border-primary" />
+      {status?.type !== "DONE" && <h2 className="text-center text-md font-bold text-red">{status?.message}</h2>}
       {windowType && windowType === "popup" && (
-        <h2 className="text-md text-light2 text-center">
+        <h2 className="text-center text-md text-light2">
           Please use window type for local images, right-click on extension, and choose window
         </h2>
       )}
 
       {status?.type === "LOADING" ? (
-        <div className="grow flex z-10 justify-center items-center bg-gray-light/80 w-full h-full">
+        <div className="z-10 flex h-full w-full grow items-center justify-center bg-light/80">
           <Spinner />
         </div>
       ) : (

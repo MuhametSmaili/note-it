@@ -19,9 +19,9 @@ const onRetakeImageHandler = async () => {
 
 export const ScreenshotFrame = () => {
   return (
-    <div className={"fixed min-h-[335px] min-w-[600px] bg-white bottom-0 right-0 rounded-sm m-1 p-2 z-[9999]"}>
+    <div className={"fixed right-0 bottom-0 z-[9999] m-1 min-h-[335px] min-w-[600px] rounded-sm bg-primary p-2"}>
       <div
-        className="flex items-center justify-center z-[1]"
+        className="z-[1] flex items-center justify-center"
         style={{ position: "absolute", right: "25px", top: "25px" }}
       >
         <button
@@ -56,7 +56,7 @@ export const ScreenshotFrame = () => {
           width: "98%",
         }}
         name={"OCRFrame"}
-        className="border-2 border-blue-prussian absolute top-[1%] left-[1%]"
+        className="absolute top-[1%] left-[1%] border-2 border-primary"
         src={platform.runtime.url("/frame-content.html")}
       />
     </div>

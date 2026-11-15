@@ -114,11 +114,11 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
         >
           <ClearFormatting />
         </Button>
-        <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
-        <div className="flex justify-center grow items-center h-full select-none">
+        <div className="relative mx-2 h-5 border-r-[1px] border-r-primary" />
+        <div className="flex h-full grow items-center justify-center select-none">
           <NoteIt />
         </div>
-        <div className="relative border-r-primary border-r-[1px] mx-2 h-5" />
+        <div className="relative mx-2 h-5 border-r-[1px] border-r-primary" />
         <Button
           aria-label="Delete note"
           onClick={() => alert("implement")}
@@ -133,7 +133,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
         <SaveNote onSave={onSave} />
         <ScreenshotArea />
       </div>
-      <div className="block icon-circle relative border-b border-primary w-full my-2" />
+      <div className="icon-circle relative my-2 block w-full border-b border-primary" />
     </>
   );
 };

@@ -24,11 +24,11 @@ const NoteHeader = ({ note, onError }: NoteHeaderProps) => {
   };
 
   return (
-    <div className="flex items border-b mx-2 py-2 border-primary">
+    <div className="mx-2 flex items-center border-b border-primary py-2">
       <button
         type="button"
         aria-label="select-note"
-        className="text-md text-primary font-medium hover:cursor-pointer hover:scale-90"
+        className="text-md font-medium text-primary hover:scale-90 hover:cursor-pointer"
         onClick={setCurrentNoteHandler}
       >
         {note.title.substring(0, 10)}
@@ -49,7 +49,7 @@ export function SingleNoteFooter({ note, onDeleteNote, onError }: SingleNoteFoot
   };
 
   return (
-    <div className="flex items-center text-primary border-t border-t-primary items justify-between bg-light p-2">
+    <div className="flex items-center justify-between border-t border-t-primary bg-light p-2 text-primary">
       <div>
         {note.createdAt === null
           ? note.created || note.updated || "no-date"
@@ -59,7 +59,7 @@ export function SingleNoteFooter({ note, onDeleteNote, onError }: SingleNoteFoot
         <button
           type="button"
           aria-label="make-note-favorite"
-          className={clsx("hover:cursor-pointer hover:scale-90 hover:rotate-12")}
+          className={clsx("hover:scale-90 hover:rotate-12 hover:cursor-pointer")}
           onClick={onFavoriteToggleHandler}
         >
           <StarIcon fill={note.isFavorite ? "#19A1E5" : "transparent"} />
@@ -67,7 +67,7 @@ export function SingleNoteFooter({ note, onDeleteNote, onError }: SingleNoteFoot
         <button
           type="button"
           aria-label="delete-note"
-          className="hover:cursor-pointer mr-1 hover:scale-90"
+          className="mr-1 hover:scale-90 hover:cursor-pointer"
           onClick={onDeleteNote}
         >
           <DeleteIcon />

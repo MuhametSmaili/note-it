@@ -20,8 +20,8 @@ const Sidebar = () => {
   return (
     <div
       className={clsx(
-        "pt-2 h-screen min-h-full overflow-hidden",
-        "flex flex-col justify-start items-center",
+        "h-screen min-h-full overflow-hidden pt-2",
+        "flex flex-col items-center justify-start",
         "bg-acent text-primary",
         "w-[70px]",
       )}

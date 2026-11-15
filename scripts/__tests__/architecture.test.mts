@@ -1,15 +1,6 @@
-import { spawnSync } from "node:child_process";
-import { mkdir, mkdtemp, realpath, rm, writeFile } from "node:fs/promises";
-import { createRequire } from "node:module";
-import { tmpdir } from "node:os";
-import path from "node:path";
 import { expect, it } from "vitest";
-import config from "../../.oxlintrc.json" with { type: "json" };
-import tsconfig from "../../tsconfig.json" with { type: "json" };
+import { lint as lintFixture } from "./lint-fixture.mts";
 
-const root = path.resolve(import.meta.dirname, "../..");
-const require = createRequire(import.meta.url);
-const oxlint = path.join(path.dirname(require.resolve("oxlint/package.json")), "bin/oxlint");
 const fixtures = [
   "src/modules/notes/index.ts",
   "src/modules/notes/background.ts",
@@ -37,47 +28,31 @@ const fixtures = [
   "src/icons/arrow-up.tsx",
   "src/app/providers/active-tab.provider.tsx",
   "src/screens/editor/note-editor.tsx",
+  "src/screens/editor/components/toolbar.tsx",
+  "src/screens/editor/utils/format-note.ts",
+  "src/screens/editor/use-editor.hook.ts",
+  "src/screens/collections/collections.tsx",
+  "src/screens/screenshot/crop-area.tsx",
+  "src/screens/screenshot/screenshot-frame.tsx",
+  "src/screens/screenshot/screenshot.tsx",
+  "src/screens/new-screen/components/panel.tsx",
   "src/hooks/use-storage.hook.ts",
   "src/utils/storage.ts",
 ];
 
-async function lint(filename: string, code: string) {
-  const directory = await realpath(await mkdtemp(path.join(tmpdir(), "note-it-architecture-")));
-  try {
-    for (const file of fixtures) {
-      const destination = path.join(directory, file);
-      await mkdir(path.dirname(destination), { recursive: true });
-      await writeFile(destination, "export const value = 1;\nexport type Value = number;\n");
-    }
-    await writeFile(path.join(directory, "tsconfig.json"), JSON.stringify(tsconfig));
-    await writeFile(
-      path.join(directory, ".oxlintrc.json"),
-      JSON.stringify({
-        ...config,
-        options: { ...config.options, typeAware: false },
-        jsPlugins: config.jsPlugins.map((plugin) => path.resolve(root, plugin)),
-      }),
-    );
-    const file = path.join(directory, filename);
-    await mkdir(path.dirname(file), { recursive: true });
-    await writeFile(file, code);
-    const result = spawnSync(process.execPath, [oxlint, "--format", "json", file], {
-      cwd: directory,
-      encoding: "utf8",
-      timeout: 15_000,
-    });
-    if (result.error) throw result.error;
-    if (!result.stdout.trimStart().startsWith("{")) {
-      throw new Error(result.stdout || result.stderr || "Oxlint produced no JSON report.");
-    }
-    const report: unknown = JSON.parse(result.stdout);
-    return { status: result.status, report };
-  } finally {
-    await rm(directory, { recursive: true, force: true });
-  }
+function lint(filename: string, code: string) {
+  return lintFixture(filename, code, fixtures);
 }
 
 it.each([
+  ["screen composition", "src/app/probe.ts", "export { value } from '@screens/editor/note-editor';"],
+  ["screen public entry", "src/screens/ocr/probe.ts", "export { value } from '@screens/collections/collections';"],
+  ["own screen component", "src/screens/editor/probe.ts", "export { value } from './components/toolbar';"],
+  ["own screen hook", "src/screens/editor/probe.ts", "export { value } from './use-editor.hook';"],
+  ["own screen test", "src/screens/editor/__tests__/probe.ts", "export { value } from '../utils/format-note';"],
+  ["crop integration", "src/content-script/probe.ts", "export { value } from '@screens/screenshot/crop-area';"],
+  ["frame integration", "src/content-script/probe.ts", "export { value } from '@screens/screenshot/screenshot-frame';"],
+  ["screenshot integration", "src/content-script/probe.ts", "export { value } from '@screens/screenshot/screenshot';"],
   ["public alias", "src/screens/editor/probe.ts", "export { value } from '@modules/notes';"],
   ["new module public entry", "src/screens/editor/probe.ts", "export { value } from '@modules/tags';"],
   ["public relative path", "src/screens/editor/probe.ts", "export { value } from '../../modules/notes/index';"],
@@ -194,6 +169,35 @@ it.each([
 });
 
 it.each([
+  ["private screen alias", "src/app/probe.ts", "export { value } from '@screens/editor/components/toolbar';"],
+  ["private screen relative path", "src/screens/ocr/probe.ts", "export { value } from '../editor/components/toolbar';"],
+  [
+    "private screen normalized path",
+    "src/screens/ocr/probe.ts",
+    "export { value } from '@screens/ocr/../editor/utils/format-note';",
+  ],
+  ["private screen hook", "src/screens/ocr/probe.ts", "export { value } from '@screens/editor/use-editor.hook';"],
+  [
+    "private screen type",
+    "src/screens/ocr/probe.ts",
+    "export type { Value } from '@screens/editor/utils/format-note';",
+  ],
+  [
+    "private screen dynamic import",
+    "src/screens/ocr/probe.ts",
+    "export const load = () => import('@screens/editor/components/toolbar');",
+  ],
+  [
+    "private screen JavaScript extension",
+    "src/screens/ocr/probe.ts",
+    "export { value } from '@screens/editor/utils/format-note.js';",
+  ],
+  [
+    "other screen test",
+    "src/screens/ocr/__tests__/probe.ts",
+    "export { value } from '@screens/editor/components/toolbar';",
+  ],
+  ["new screen private component", "src/app/probe.ts", "export { value } from '@screens/new-screen/components/panel';"],
   ["private alias", "src/screens/editor/probe.ts", "export { value } from '@modules/notes/internal/store';"],
   ["new module internals", "src/screens/editor/probe.ts", "export type { Value } from '@modules/tags/internal/model';"],
   [

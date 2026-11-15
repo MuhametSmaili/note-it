@@ -27,7 +27,7 @@
   display: block;
   width: 100%;
   padding: 1rem;
-  @apply rounded-sm text-light bg-acent;
+  @apply rounded-sm bg-acent text-light;
 }
 
 .ProseMirror img {
@@ -35,11 +35,11 @@
 }
 
 .ProseMirror ul {
-  @apply pl-7 list-disc;
+  @apply list-disc pl-7;
 }
 
 .ProseMirror blockquote {
-  @apply pl-7 ml-5 border-l-2 border-solid italic border-primary text-light2;
+  @apply ml-5 border-l-2 border-solid border-primary pl-7 text-light2 italic;
 }
 
 .ProseMirror h1 {

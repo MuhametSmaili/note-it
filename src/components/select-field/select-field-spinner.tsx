@@ -41,10 +41,10 @@ export const SelectFieldSpinner = ({
   return (
     <div
       className={clsx(
-        "flex flex-col justify-between bg-light ml-1 h-full rounded-sm relative text-sm",
+        "relative ml-1 flex h-full flex-col justify-between rounded-sm text-sm",
         "border border-primary",
-        active && "bg-gray-true",
-        disabled && "disabled:opacity-70 disabled:cursor-not-allowed",
+        active ? "bg-highlight" : "bg-light",
+        disabled && "disabled:cursor-not-allowed disabled:opacity-70",
       )}
     >
       <button
@@ -56,7 +56,7 @@ export const SelectFieldSpinner = ({
         <ArrowUp height={16} width={16} />
       </button>
       {showIndex && (
-        <div className="absolute text-sm left-1/2 top-1/2 select-none" style={{ transform: "translate(-50%, -50%)" }}>
+        <div className="absolute top-1/2 left-1/2 text-sm select-none" style={{ transform: "translate(-50%, -50%)" }}>
           {currentPosition + 1}
         </div>
       )}
