@@ -1,6 +1,6 @@
 import { Button } from '@components';
-import { notes as noteStore } from '@modules/notes';
-import { useNotes } from '@modules/notes/use-notes.hook';
+import { notes as noteStore } from '@app/notes';
+import { useNotes } from '@app/use-notes.hook';
 import StarIcon from '@icons/star.svg';
 import type { ChangeEvent } from 'react';
 import { useMemo, useState } from 'react';

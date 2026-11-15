@@ -3,9 +3,27 @@ import path from 'node:path';
 import type { Context, ESTree, Node, Plugin, Visitor } from '@oxlint/plugins';
 import { ResolverFactory } from 'oxc-resolver';
 
-const publicEntries = new Set(['modules/notes/use-notes.hook.ts']);
-const adapters = new Set(['modules/notes/internal/web-extension.ts']);
-const compositionRoots = new Set(['modules/notes/index.ts']);
+const publicEntries = new Set(['modules/notes/storage.ts', 'modules/notes/background.ts']);
+const adapters = new Set([
+  'modules/notes/internal/web-extension.ts',
+  'modules/notes/internal/indexed-db-repository.ts',
+  'modules/database/internal/indexed-db.ts',
+]);
+const databaseFiles = new Set([
+  'modules/notes/internal/indexed-db-repository.ts',
+  'modules/notes/internal/database-schema.ts',
+  'modules/notes/internal/database-storage.ts',
+  'modules/notes/internal/database-migration.ts',
+]);
+const compositionRoots = new Set([
+  'modules/notes/index.ts',
+  'modules/notes/background.ts',
+  'modules/notes/storage.ts',
+  'modules/database/index.ts',
+  'app/notes.ts',
+  'app/storage/databases.ts',
+  'background/background.ts',
+]);
 const owner = (file: string) => /^modules\/([^/]+)\//.exec(file)?.[1];
 const isTest = (file: string) => file.includes('/__tests__/') || /\.test\.[cm]?[jt]sx?$/.test(file);
 const isReact = (specifier: string) => /^(react|react-dom|@tiptap\/react)(\/|$)/.test(specifier);
@@ -17,7 +35,7 @@ function importSpecifier(node: ESTree.Node) {
 }
 
 function packageViolation(source: string, domain: boolean, specifier: string) {
-  if ((domain || source.startsWith('platform/')) && isReact(specifier)) {
+  if ((domain || source.startsWith('platform/') || owner(source) === 'database') && isReact(specifier)) {
     return 'Domain and platform implementations must not depend on React.';
   }
   if (domain && isBuiltin(specifier)) {
@@ -40,10 +58,34 @@ function ownershipViolation(source: string, target: string) {
   if (adapters.has(target) && !compositionRoots.has(source) && !isTest(source)) {
     return 'Bind runtime adapters in the module composition entry point.';
   }
+  if (
+    databaseFiles.has(target) &&
+    !adapters.has(target) &&
+    !databaseFiles.has(source) &&
+    source !== 'modules/notes/storage.ts' &&
+    !isTest(source)
+  ) {
+    return 'Database implementation files are private to the database adapter.';
+  }
   return undefined;
 }
 
+function databaseViolation(source: string, target: string) {
+  if (owner(source) === 'database' && owner(target) !== 'database') {
+    return 'The database module must not depend on feature modules or application code.';
+  }
+  const usesStorage =
+    owner(target) === 'database' || target === 'modules/notes/storage.ts' || target === 'app/storage/databases.ts';
+  if (!usesStorage) return undefined;
+  if (owner(source) === 'database' || databaseFiles.has(source) || compositionRoots.has(source) || isTest(source))
+    return undefined;
+  return 'Use persistence interfaces in domain code and views. Database access belongs in adapters and composition.';
+}
+
 function directionViolation(source: string, domain: boolean, target: string) {
+  if (owner(source) && target.startsWith('app/')) {
+    return 'Modules must not depend on application composition.';
+  }
   if (domain && (!target.startsWith('modules/') || publicEntries.has(target) || compositionRoots.has(target))) {
     return 'Domain code may depend on domain modules, not views, hooks, or runtime adapters.';
   }
@@ -89,7 +131,10 @@ function dependencies(context: Context): Visitor {
       if (resolvedPackageError) report(node, resolvedPackageError);
       return;
     }
-    const violation = ownershipViolation(source, target) ?? directionViolation(source, domain, target);
+    const violation =
+      ownershipViolation(source, target) ??
+      databaseViolation(source, target) ??
+      directionViolation(source, domain, target);
     if (violation) report(node, violation);
   };
 

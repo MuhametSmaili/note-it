@@ -3,7 +3,7 @@ import { ActiveTabProvider } from '@app/providers/active-tab.provider';
 import { storedRichNote } from '../../../../../../test/fixtures/rich-note';
 import NoteContent from '../note-content';
 
-vi.mock('@modules/notes/use-notes.hook', () => ({ useNotes: () => ({ state: null, error: null }) }));
+vi.mock('@app/use-notes.hook', () => ({ useNotes: () => ({ state: null, error: null }) }));
 
 it('renders stored rich-text JSON in a read-only preview', async () => {
   const onDelete = vi.fn<(id: string) => void>();

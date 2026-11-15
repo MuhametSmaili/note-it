@@ -1,6 +1,6 @@
-import { notes } from '@modules/notes';
+import { notes } from '@app/notes';
 import type { Note } from '@modules/notes';
-import { useNotes } from '@modules/notes/use-notes.hook';
+import { useNotes } from '@app/use-notes.hook';
 import { useTab } from '@app/providers/active-tab.provider';
 import DeleteIcon from '@icons/delete.svg';
 import StarIcon from '@icons/star2.svg';

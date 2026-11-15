@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import type { Editor } from '@tiptap/react';
-import type { NoteEditorSession, NotesSnapshot, notes } from '@modules/notes';
+import type { NoteEditorSession, NotesSnapshot } from '@modules/notes';
+import type { notes } from '@app/notes';
 import { StrictMode } from 'react';
 import { richNote } from '../../../../test/fixtures/rich-note';
 import NoteEditor from '../note-editor';
@@ -20,7 +21,7 @@ const storage = vi.hoisted(() => ({
   dispatch: vi.fn<(action: { type: string; payload: number }) => void>(),
 }));
 
-vi.mock('@modules/notes', () => ({
+vi.mock('@app/notes', () => ({
   notes: {
     read: async () => {
       if (storage.snapshot.error) throw storage.snapshot.error;
@@ -56,7 +57,7 @@ beforeEach(() => {
   };
   const saved = { schemaVersion: 1 as const, ...storage.snapshot.state };
   if (!saved.draft || !saved.notes || saved.revision === undefined) throw new Error('Missing test state.');
-  storage.update.mockResolvedValue({ ...saved, draft: saved.draft, notes: saved.notes, revision: saved.revision });
+  storage.update.mockResolvedValue(saved.draft);
   storage.save.mockResolvedValue({ ...saved, draft: saved.draft, notes: saved.notes, revision: saved.revision });
 });
 
@@ -82,7 +83,7 @@ it('autosaves editor changes without showing pending or success messages', async
 
   fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
   const pendingStatus = screen.queryByRole('status');
-  await act(async () => pending.resolve(state));
+  await act(async () => pending.resolve(state.draft));
 
   expect(storage.update).toHaveBeenCalledOnce();
   expect(JSON.stringify(storage.update.mock.calls[0]?.[0])).toContain('Added content');
@@ -196,7 +197,7 @@ it('ignores an older failure while the latest edit is pending and after it succe
     older.reject(new Error('Old failure'));
   });
   const pendingError = screen.queryByRole('alert')?.textContent;
-  await act(async () => newer.resolve(state));
+  await act(async () => newer.resolve(state.draft));
 
   expect(pendingError).toBeUndefined();
   expect(screen.queryByRole('alert')).not.toBeInTheDocument();
@@ -214,7 +215,7 @@ it('keeps the latest failure visible when an older operation succeeds late', asy
   fireEvent.click(screen.getByRole('button', { name: 'Insert content' }));
   await screen.findByRole('alert');
   await act(async () => {
-    older.resolve(state);
+    older.resolve(state.draft);
   });
 
   expect(screen.getByRole('alert')).toHaveTextContent('Latest failure');

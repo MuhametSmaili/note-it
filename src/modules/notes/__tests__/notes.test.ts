@@ -39,6 +39,41 @@ it('migrates only once across independent clients and restart', async () => {
   expect(memory.write).toHaveBeenCalledOnce();
 });
 
+it('reads an existing version-one envelope and adds only a draft checkpoint on first edit', async () => {
+  const original = memoryNotes({ notes: [richNote], currentNote: richNote });
+  await original.connect().read();
+  const envelope = structuredClone(original.values['noteIt.notes']);
+  const memory = memoryNotes({ 'noteIt.notes': envelope });
+  const notes = memory.connect();
+  const initial = await notes.read();
+
+  await notes.edit(initial.draft).update(document('Working changes'));
+  const restarted = await memory.connect().read();
+
+  expect(memory.write).not.toHaveBeenCalled();
+  expect(memory.values['noteIt.notes']).toEqual(envelope);
+  expect(restarted.notes).toEqual(initial.notes);
+  expect(restarted.draft).toMatchObject({ revision: 1, noteContent: document('Working changes') });
+});
+
+it.each([{ schemaVersion: 99 }, { schemaVersion: 1, revision: -1 }, { schemaVersion: 1, revision: 1, draft: null }])(
+  'preserves an invalid draft checkpoint instead of restoring old content: %j',
+  async (checkpoint) => {
+    const memory = memoryNotes();
+    const notes = memory.connect();
+    const initial = await notes.read();
+    memory.values['noteIt.draft'] = checkpoint;
+    memory.write.mockClear();
+
+    await expect(notes.read()).rejects.toThrow(/.+/);
+    await expect(notes.edit(initial.draft).update(document('Replacement'))).rejects.toThrow(/.+/);
+
+    expect(memory.values['noteIt.draft']).toEqual(checkpoint);
+    expect(memory.write).not.toHaveBeenCalled();
+    expect(memory.writeDraft).not.toHaveBeenCalled();
+  },
+);
+
 it.each([
   { 'noteIt.notes': { schemaVersion: 2 } },
   { 'noteIt.notes': null },
@@ -70,6 +105,21 @@ it.each([
   const memory = memoryNotes(source);
 
   await expect(memory.connect().read()).rejects.toThrow(/.+/);
+
+  expect(memory.values).toEqual(source);
+  expect(memory.write).not.toHaveBeenCalled();
+});
+
+it('keeps the independent draft when its collection checkpoint is missing', async () => {
+  const memory = memoryNotes();
+  const notes = memory.connect();
+  const initial = await notes.read();
+  await notes.edit(initial.draft).update(document('Keep this draft'));
+  delete memory.values['noteIt.notes'];
+  const source = structuredClone(memory.values);
+  memory.write.mockClear();
+
+  await expect(notes.read()).rejects.toThrow('notes checkpoint is missing');
 
   expect(memory.values).toEqual(source);
   expect(memory.write).not.toHaveBeenCalled();
@@ -128,12 +178,62 @@ it('keeps draft edits separate from the saved collection until explicit save', a
   const memory = memoryNotes({ notes: [richNote], currentNote: richNote });
   const notes = memory.connect();
   const initial = await notes.read();
+  const storedCollection = structuredClone(memory.values['noteIt.notes']);
+  const read = vi.spyOn(memory.adapter, 'read');
+  memory.write.mockClear();
 
   await notes.edit(initial.draft).update(document('Working changes'));
 
+  expect(read).not.toHaveBeenCalled();
+  expect(memory.write).not.toHaveBeenCalled();
+  expect(memory.values['noteIt.notes']).toEqual(storedCollection);
+  expect(memory.writeDraft).toHaveBeenCalledOnce();
   const state = await notes.read();
   expect(state.notes[0]?.noteContent).toEqual(richNote.noteContent);
   expect(state.draft.noteContent).toEqual(document('Working changes'));
+});
+
+it('refreshes a subscribed draft without rereading or replacing the collection', async () => {
+  const memory = memoryNotes({ notes: [richNote] });
+  const writer = memory.connect();
+  const initial = await writer.read();
+  const observer = memory.connect();
+  const unsubscribe = observer.subscribe(() => undefined);
+  await observer.read();
+  const collection = observer.getSnapshot().state?.notes;
+  const read = vi.spyOn(memory.adapter, 'read');
+
+  const acknowledged = await writer.edit(initial.draft).update(document('Working text'));
+  await vi.waitFor(() => expect(observer.getSnapshot().state?.draft.noteContent).toEqual(document('Working text')));
+
+  expect(read).not.toHaveBeenCalled();
+  expect(observer.getSnapshot().state?.notes).toBe(collection);
+  expect(acknowledged).toEqual({ id: initial.draft.id, revision: 1 });
+  unsubscribe();
+});
+
+it('refreshes the collection when a draft notification follows a missed collection change', async () => {
+  const memory = memoryNotes({ notes: [richNote] });
+  const writer = memory.connect();
+  const initial = await writer.read();
+  const observer = memory.connect();
+  const unsubscribe = observer.subscribe(() => undefined);
+  await observer.read();
+  const listeners = [...memory.listeners];
+  memory.listeners.clear();
+  await writer.setFavorite('42', false);
+  listeners.forEach((listener) => memory.listeners.add(listener));
+  const read = vi.spyOn(memory.adapter, 'read');
+
+  await writer.edit(initial.draft).update(document('After metadata change'));
+  await vi.waitFor(() =>
+    expect(observer.getSnapshot().state?.draft.noteContent).toEqual(document('After metadata change')),
+  );
+
+  expect(read).toHaveBeenCalledOnce();
+  expect(observer.getSnapshot().state?.notes[0]?.isFavorite).toBe(false);
+  expect(observer.getSnapshot().error).toBeNull();
+  unsubscribe();
 });
 
 it('rejects stale edits from another context and permits a recovery copy', async () => {
@@ -320,7 +420,7 @@ it('keeps a failed draft write unacknowledged and accepts a later retry', async 
   const notes = memory.connect();
   const initial = await notes.read();
   const session = notes.edit(initial.draft);
-  memory.write.mockRejectedValueOnce(new Error('Temporary storage failure'));
+  memory.writeDraft.mockRejectedValueOnce(new Error('Temporary storage failure'));
 
   await expect(session.update(document('Failed edit'))).rejects.toThrow('Temporary storage failure');
   expect(notes.getSnapshot().state).toEqual(initial);
@@ -350,7 +450,7 @@ it('coalesces waiting updates and acknowledges only the latest durable document'
   const session = notes.edit(initial.draft);
   const release = Promise.withResolvers<void>();
   const blocked = memory.adapter.exclusive(() => release.promise);
-  memory.write.mockClear();
+  memory.writeDraft.mockClear();
   const acknowledged = vi.fn<() => void>();
 
   const first = session.update(document('First')).then(acknowledged);
@@ -360,8 +460,8 @@ it('coalesces waiting updates and acknowledges only the latest durable document'
   release.resolve();
   await Promise.all([blocked, first, last]);
 
-  expect(memory.write).toHaveBeenCalledOnce();
-  expect(notes.getSnapshot().state?.draft).toMatchObject({ revision: 1, noteContent: document('Last') });
+  expect(memory.writeDraft).toHaveBeenCalledOnce();
+  expect((await notes.read()).draft).toMatchObject({ revision: 1, noteContent: document('Last') });
   expect(acknowledged).toHaveBeenCalledTimes(2);
 });
 
@@ -372,9 +472,10 @@ it('keeps one latest pending update behind an active write and saves in order', 
   const session = notes.edit(initial.draft);
   const entered = Promise.withResolvers<void>();
   const release = Promise.withResolvers<void>();
-  const write = memory.write.getMockImplementation();
+  const write = memory.writeDraft.getMockImplementation();
   if (!write) throw new Error('Missing write adapter.');
-  memory.write.mockClear().mockImplementationOnce(async (value) => {
+  memory.write.mockClear();
+  memory.writeDraft.mockClear().mockImplementationOnce(async (value) => {
     entered.resolve();
     await release.promise;
     await write(value);
@@ -388,8 +489,9 @@ it('keeps one latest pending update behind an active write and saves in order', 
   release.resolve();
   await Promise.all([first, second, third, saved]);
 
-  expect(memory.write).toHaveBeenCalledTimes(3);
-  expect(memory.write.mock.calls[1]?.[0].draft.noteContent).toEqual(document('Latest draft'));
+  expect(memory.writeDraft).toHaveBeenCalledTimes(2);
+  expect(memory.write).toHaveBeenCalledOnce();
+  expect(memory.writeDraft.mock.calls[1]?.[0].draft.noteContent).toEqual(document('Latest draft'));
   expect(notes.getSnapshot().state?.notes[0]?.noteContent).toEqual(document('Explicit save'));
 });
 
@@ -398,7 +500,7 @@ it('rejects every coalesced acknowledgement on failure and permits a fresh retry
   const notes = memory.connect();
   const initial = await notes.read();
   const session = notes.edit(initial.draft);
-  memory.write.mockRejectedValueOnce(new Error('Storage unavailable'));
+  memory.writeDraft.mockRejectedValueOnce(new Error('Storage unavailable'));
 
   const results = await Promise.allSettled([session.update(document('First')), session.update(document('Latest'))]);
 
@@ -408,7 +510,7 @@ it('rejects every coalesced acknowledgement on failure and permits a fresh retry
   ]);
   expect(notes.getSnapshot().state).toEqual(initial);
   await session.update(document('Retry'));
-  expect(notes.getSnapshot().state?.draft).toMatchObject({ revision: 1, noteContent: document('Retry') });
+  expect((await notes.read()).draft).toMatchObject({ revision: 1, noteContent: document('Retry') });
 });
 
 it('persists the latest queued edit after an active write fails', async () => {
@@ -418,7 +520,7 @@ it('persists the latest queued edit after an active write fails', async () => {
   const session = notes.edit(initial.draft);
   const entered = Promise.withResolvers<void>();
   const release = Promise.withResolvers<void>();
-  memory.write.mockClear().mockImplementationOnce(async () => {
+  memory.writeDraft.mockClear().mockImplementationOnce(async () => {
     entered.resolve();
     await release.promise;
     throw new Error('First write failed');
@@ -434,8 +536,8 @@ it('persists the latest queued edit after an active write fails', async () => {
 
   expect(results[0]).toEqual({ status: 'rejected', reason: new Error('First write failed') });
   expect(results.slice(1).map((result) => result.status)).toEqual(['fulfilled', 'fulfilled']);
-  expect(memory.write).toHaveBeenCalledTimes(2);
-  expect(notes.getSnapshot().state?.draft).toMatchObject({ revision: 1, noteContent: document('Latest') });
+  expect(memory.writeDraft).toHaveBeenCalledTimes(2);
+  expect((await notes.read()).draft).toMatchObject({ revision: 1, noteContent: document('Latest') });
 });
 
 it('publishes a fresh lower-revision snapshot after external storage reset', async () => {
@@ -446,6 +548,7 @@ it('publishes a fresh lower-revision snapshot after external storage reset', asy
   await notes.read();
 
   delete memory.values['noteIt.notes'];
+  delete memory.values['noteIt.draft'];
   memory.listeners.forEach((listener) => listener());
   await notes.read();
 

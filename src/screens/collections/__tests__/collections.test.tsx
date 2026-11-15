@@ -1,5 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import type { Note, notes } from '@modules/notes';
+import type { Note } from '@modules/notes';
+import type { notes } from '@app/notes';
 import { ActiveTabProvider } from '@app/providers/active-tab.provider';
 import NotesFolder from '../collections';
 
@@ -11,8 +12,8 @@ const storage = vi.hoisted(() => ({
   deleteNote: vi.fn<typeof notes.deleteNote>(),
 }));
 
-vi.mock('@modules/notes', () => ({ notes: { deleteNote: storage.deleteNote } }));
-vi.mock('@modules/notes/use-notes.hook', () => ({
+vi.mock('@app/notes', () => ({ notes: { deleteNote: storage.deleteNote } }));
+vi.mock('@app/use-notes.hook', () => ({
   useNotes: () => ({ state: { notes: storage.notes }, error: null }),
 }));
 vi.mock('../components/note/note-content', () => ({

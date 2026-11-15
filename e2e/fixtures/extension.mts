@@ -1,6 +1,7 @@
 import { test as base, expect } from '@playwright/test';
 import type { Worker } from '@playwright/test';
 import { launchChromiumExtension } from './chromium.mts';
+import { installNotesStorage } from './notes.mts';
 
 export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; pageErrors: void }>({
   context: async ({ playwright }, provideContext) => {
@@ -30,6 +31,8 @@ export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; p
 });
 
 export async function seedStorage(serviceWorker: Worker, values: Record<string, unknown> = {}) {
+  await serviceWorker.evaluate(installNotesStorage);
+  await serviceWorker.evaluate(() => noteItTestStorage.reset());
   await serviceWorker.evaluate((stored) => chrome.storage.local.set(stored), {
     settings: { theme: 'light', windowType: 'window' },
     currentNote: { id: undefined, title: 'Default', isFavorite: false, noteContent: '' },

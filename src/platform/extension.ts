@@ -3,6 +3,7 @@ export type TabQuery = chrome.tabs.QueryInfo;
 export type BrowserWindow = chrome.windows.Window;
 export type WindowOptions = chrome.windows.CreateData;
 export type MessageSender = chrome.runtime.MessageSender;
+export type RuntimePort = chrome.runtime.Port;
 export type StorageChanges = Record<string, chrome.storage.StorageChange>;
 export type MenuOptions = chrome.contextMenus.CreateProperties;
 export type MenuClick = chrome.contextMenus.OnClickData;
@@ -41,6 +42,9 @@ export function createExtensionPlatform(api: () => typeof chrome = () => chrome)
         subscribe(api().storage.onChanged, listener),
     },
     runtime: {
+      connect: (name: string) => api().runtime.connect({ name }),
+      onConnect: (listener: (port: RuntimePort) => void) => subscribe(api().runtime.onConnect, listener),
+      lastError: () => api().runtime.lastError?.message,
       url: (path: string) => api().runtime.getURL(path),
       send: (message: unknown) => request<unknown>((done) => api().runtime.sendMessage(message, done)),
       listen: (listener: MessageListener) => subscribe(api().runtime.onMessage, listener),

@@ -1,5 +1,5 @@
 import { Button } from '@components';
-import { notes } from '@modules/notes';
+import { notes } from '@app/notes';
 import type { Draft } from '@modules/notes';
 import { createEditorExtensions, hasNoteContent } from '@modules/rich-text';
 import type { Editor, JSONContent } from '@tiptap/react';

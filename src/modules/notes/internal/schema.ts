@@ -1,7 +1,8 @@
 import { readNoteContent } from '../../rich-text';
-import type { Draft, Envelope, Note } from './model';
+import type { Draft, DraftRecord, DraftTarget, Envelope, Note } from './model';
 
 export const storageKey = 'noteIt.notes';
+export const draftStorageKey = 'noteIt.draft';
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -60,6 +61,7 @@ const readNote = (value: unknown): Note => {
 
 const readDraft = (value: unknown): Draft => {
   const draft = record(value);
+  if ((draft.noteId === null) !== (draft.baseRevision === null)) throw new Error('Invalid draft reference.');
   return {
     id: id(draft.id),
     revision: revision(draft.revision),
@@ -68,6 +70,38 @@ const readDraft = (value: unknown): Draft => {
     noteContent: readNoteContent(draft.noteContent),
   };
 };
+
+export const readDraftTarget = (value: unknown): DraftTarget => {
+  const target = record(value);
+  return { id: id(target.id), revision: revision(target.revision) };
+};
+
+export function readDraftRecord(value: unknown): DraftRecord {
+  const stored = record(value);
+  if (stored.schemaVersion !== 1) throw new Error('This draft data version is not supported. Stored data was kept.');
+  return {
+    schemaVersion: 1,
+    revision: revision(stored.revision),
+    draft: readDraft(stored.draft),
+    ...(stored.collectionRevision === undefined ? {} : { collectionRevision: revision(stored.collectionRevision) }),
+  };
+}
+
+export const draftRecord = (state: Envelope): DraftRecord => ({
+  schemaVersion: 1,
+  revision: state.revision,
+  draft: state.draft,
+  collectionRevision: state.revision,
+});
+
+export function mergeDraft(state: Envelope, current: DraftRecord): Envelope {
+  if (current.revision < state.revision) throw new Error('The draft checkpoint is out of date.');
+  if (current.collectionRevision !== undefined && current.collectionRevision !== state.revision)
+    throw new Error('The collection checkpoint is out of date.');
+  if (current.draft.noteId !== null && !state.notes.some((note) => note.id === current.draft.noteId))
+    throw new Error('The draft refers to a missing note.');
+  return { ...state, revision: current.revision, draft: current.draft };
+}
 
 export function readEnvelope(value: unknown): Envelope {
   const stored = record(value);
@@ -81,7 +115,12 @@ export function readEnvelope(value: unknown): Envelope {
     (draft.noteId !== null && !notes.some((note) => note.id === draft.noteId))
   )
     throw new Error('The draft refers to a missing note.');
-  return { schemaVersion: 1, revision: revision(stored.revision), notes, draft };
+  return {
+    schemaVersion: 1,
+    revision: revision(stored.revision),
+    notes,
+    draft,
+  };
 }
 
 export const emptyDraft = (createId: () => string): Draft => ({

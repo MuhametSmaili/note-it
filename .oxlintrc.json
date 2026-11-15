@@ -57,7 +57,12 @@
   "overrides": [
     {
       "files": ["src/**"],
-      "excludeFiles": ["src/platform/**", "**/__tests__/**", "**/*.test.*"],
+      "excludeFiles": [
+        "src/platform/**",
+        "src/modules/database/internal/indexed-db.ts",
+        "**/__tests__/**",
+        "**/*.test.*"
+      ],
       "rules": {
         "no-restricted-globals": [
           "error",
@@ -71,6 +76,10 @@
               {
                 "name": "browser",
                 "message": "Use the browser platform interface."
+              },
+              {
+                "name": "indexedDB",
+                "message": "Use the database module's public interface."
               }
             ]
           }
@@ -82,8 +91,12 @@
       "excludeFiles": [
         "**/__tests__/**",
         "**/*.test.*",
-        "src/modules/notes/use-notes.hook.ts",
-        "src/modules/notes/internal/web-extension.ts"
+        "src/modules/notes/internal/web-extension.ts",
+        "src/modules/database/internal/indexed-db.ts",
+        "src/modules/notes/internal/indexed-db-repository.ts",
+        "src/modules/notes/internal/database-schema.ts",
+        "src/modules/notes/internal/database-storage.ts",
+        "src/modules/notes/internal/database-migration.ts"
       ],
       "rules": {
         "architecture/dependencies": ["error", "domain"],

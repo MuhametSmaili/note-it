@@ -9,6 +9,12 @@ import { richNote } from '../../test/fixtures/rich-note';
 import { launchChromiumDriver } from '../drivers/chromium.mts';
 import { launchFirefoxDriver } from '../drivers/firefox.mts';
 import type { ExtensionDriver } from '../drivers/driver.mts';
+import { installNotesStorage } from '../fixtures/notes.mts';
+
+const content = (text: string) => ({
+  type: 'doc',
+  content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+});
 
 describe.each([
   { name: 'Chrome', launch: launchChromiumDriver },
@@ -65,18 +71,19 @@ describe.each([
     browser.evaluate(
       control,
       `
-    return (await extension.storage.local.get("noteIt.notes"))["noteIt.notes"].draft.noteContent;
+    return noteItTestStorage.draft();
   `,
     );
   const waitForDraft = async (text: string) => {
-    await expect.poll(readDraft, { timeout: 20_000 }).toMatchObject({ content: [{ content: [{ text }] }] });
+    await expect.poll(readDraft, { timeout: 20_000 }).toMatchObject({
+      content: expect.arrayContaining([expect.objectContaining({ content: [expect.objectContaining({ text })] })]),
+    });
   };
-  const releaseNotesLock = async () => {
+  const releaseStateTransaction = async () => {
     await browser.evaluate(
       control,
       `
-    globalThis.releaseTestLock?.();
-    await globalThis.testLock;
+    await noteItTestStorage.release();
   `,
     );
   };
@@ -125,6 +132,7 @@ describe.each([
       await readFile(require.resolve('@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz')),
     );
     control = await browser.page(`${browser.origin}/frame-content.html`);
+    await browser.evaluate(control, `(${installNotesStorage.toString()})();`);
     page = await browser.page('about:blank');
   });
 
@@ -140,6 +148,7 @@ describe.each([
       control,
       `
       await extension.storage.local.clear();
+      await noteItTestStorage.reset();
       await extension.storage.local.set({ settings: { theme: 'light', windowType: 'window' } });
     `,
     );
@@ -161,39 +170,106 @@ describe.each([
     expect(
       await browser.evaluate(page, 'return document.querySelector(\'[contenteditable="true"] u\').textContent;'),
     ).toBe('Styled text');
-    const saved = await browser.evaluate(
-      control,
-      'return (await extension.storage.local.get("noteIt.notes"))["noteIt.notes"];',
-    );
+    const saved = await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");');
     expect(saved).toMatchObject({
       schemaVersion: 1,
       notes: [{ id: String(richNote.id), noteContent: richNote.noteContent }],
     });
   });
 
-  it('persists a queued draft only after another view releases the notes lock', async () => {
+  it('migrates a version-one collection and its newer draft without changing the source keys', async () => {
+    const note = { ...richNote, id: String(richNote.id), revision: 0, createdAt: null, updatedAt: null };
+    const draft = {
+      id: 'migrated-draft',
+      revision: 0,
+      noteId: note.id,
+      baseRevision: 0,
+      noteContent: note.noteContent,
+    };
+    const collection = { schemaVersion: 1, revision: 0, notes: [note], draft };
+    const checkpoint = { schemaVersion: 1, revision: 3, draft: { ...draft, revision: 3 } };
+    const source = { 'noteIt.notes': collection, 'noteIt.draft': checkpoint };
+
+    await openEditor(source);
+
+    expect(await readDraft()).toEqual(richNote.noteContent);
+    expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");')).toMatchObject({
+      revision: 3,
+      notes: [note],
+      draft: checkpoint.draft,
+    });
+    expect(
+      await browser.evaluate(control, 'return extension.storage.local.get(["noteIt.notes", "noteIt.draft"]);'),
+    ).toEqual(source);
+  });
+
+  it('applies only the unacknowledged tail of a recovered coalesced edit', async () => {
     await openEditor();
-    const initialDraft = await readDraft();
-    onTestFinished(releaseNotesLock);
+    const draftId = await browser.evaluate(control, 'return (await noteItTestStorage.read("noteIt.draft")).draft.id;');
+    if (typeof draftId !== 'string') throw new Error('Missing draft ID.');
+    await browser.navigate(page, 'about:blank');
+    const edit = {
+      sequence: 1,
+      session: 'recovered-session',
+      ids: [1],
+      request: {
+        id: 1,
+        target: { id: draftId, revision: 0 },
+        operation: 'update',
+        title: '',
+        content: content('First snapshot'),
+      },
+    };
+    await browser.evaluate(control, `await noteItTestStorage.restorePending(${JSON.stringify([edit])});`);
+    await openEditor();
+    await waitForDraft('First snapshot');
+    await browser.navigate(page, 'about:blank');
+    const newer = { ...edit, ids: [1, 2], request: { ...edit.request, id: 2, content: content('Latest snapshot') } };
+
+    await browser.evaluate(control, `await noteItTestStorage.restorePending(${JSON.stringify([newer])});`);
+    await openEditor();
+    await waitForDraft('Latest snapshot');
+
+    expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.draft");')).toMatchObject({
+      revision: 2,
+      draft: { id: draftId, revision: 2 },
+    });
+    expect(await browser.evaluate(control, 'return noteItTestStorage.pending();')).toEqual([]);
+    expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");')).toMatchObject({
+      notes: [],
+    });
+  });
+
+  it.each([
+    { kind: 'first draft', values: {} },
+    { kind: 'saved-note draft', values: { currentNote: richNote, notes: [richNote] } },
+  ])('persists the latest queued $kind after its editor closes', async ({ values }) => {
+    await openEditor(values);
+    const initialCollection = await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");');
+    onTestFinished(releaseStateTransaction);
     await browser.evaluate(
       control,
       `
-      globalThis.testLockHeld = false;
-      globalThis.testLock = navigator.locks.request('note-it:notes', async () => {
-        globalThis.testLockHeld = true;
-        await new Promise(resolve => { globalThis.releaseTestLock = resolve; });
-      });
+      await noteItTestStorage.hold();
     `,
     );
-    await waitFor(control, 'globalThis.testLockHeld');
 
+    await enterText(page, 'Intermediate edit');
     await enterText(page, 'Queued edit');
-    await waitFor(control, '(await navigator.locks.query()).pending.some(lock => lock.name === "note-it:notes")');
-    const pendingDraft = await readDraft();
-    await releaseNotesLock();
+    await waitFor(control, 'JSON.stringify(await noteItTestStorage.pending()).includes("Queued edit")');
+    await browser.closePage(page);
+    page = await browser.page('about:blank');
+    await releaseStateTransaction();
+    await browser.navigate(page, `${browser.origin}/popup.html`);
+    await waitFor(page, 'document.querySelector(\'[contenteditable="true"]\')');
 
-    expect(pendingDraft).toEqual(initialDraft);
     await waitForDraft('Queued edit');
+    expect(
+      await browser.evaluate(page, 'return document.querySelector(\'[contenteditable="true"]\').textContent;'),
+    ).toBe('Queued edit');
+    expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");')).toEqual(
+      initialCollection,
+    );
   });
 
   it('rejects a conflicting edit without replacing local text or the saved draft', async () => {
@@ -226,7 +302,7 @@ describe.each([
     const saved = await browser.evaluate(
       control,
       `
-      return (await extension.storage.local.get("noteIt.notes"))["noteIt.notes"];
+      return noteItTestStorage.read("noteIt.notes");
     `,
     );
     expect(saved).toMatchObject({
@@ -246,6 +322,7 @@ describe.each([
         return extension.runtime.sendMessage({ message: 0, tab });
       `,
     );
+    expect(response).toEqual({ ok: true });
     await waitFor(site, 'document.querySelector(\'img[alt="frozen screen to take screenshot"]\')');
     for (const [type, x, y] of [
       ['mousedown', 10, 10],
@@ -263,7 +340,6 @@ describe.each([
     await waitFor(site, 'document.querySelector("#OCRFrame")');
     const frame = await browser.frame(site);
 
-    expect(response).toEqual({ ok: true });
     await waitFor(frame, 'document.querySelector("img")?.naturalWidth > 0');
     expect(
       await browser.evaluate(
