@@ -1,7 +1,7 @@
-import React from 'react';
+import React from "react";
 
 enum Actions {
-  TAB_HANDLER = 'TAB_HANDLER',
+  TAB_HANDLER = "TAB_HANDLER",
 }
 
 type Dispatch = (action: Action) => void;
@@ -16,11 +16,11 @@ const ActiveTabStateContext = React.createContext<{ state: State; dispatch: Disp
 
 function activeTabProvider(_state: State, action: Action) {
   switch (action.type) {
-    case 'TAB_HANDLER': {
+    case "TAB_HANDLER": {
       return { activeTab: action.payload };
     }
     default: {
-      throw new Error('Unhandled tab action.');
+      throw new Error("Unhandled tab action.");
     }
   }
 }
@@ -34,7 +34,7 @@ const ActiveTabProvider = ({ children }: ActiveTabProviderProps) => {
 function useTab() {
   const context = React.useContext(ActiveTabStateContext);
   if (context === undefined) {
-    throw new Error('useTab must be used within the TabProvider');
+    throw new Error("useTab must be used within the TabProvider");
   }
   return context;
 }

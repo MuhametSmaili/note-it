@@ -1,6 +1,6 @@
-import type { ChangeEvent } from 'react';
-import { Input } from '@components';
-import Search from '@icons/search.svg';
+import type { ChangeEvent } from "react";
+import { Input } from "@components";
+import Search from "@icons/search.svg";
 
 type SearchNotesProps = { onSearchHandler: (e: ChangeEvent<HTMLInputElement>) => void; value?: string };
 

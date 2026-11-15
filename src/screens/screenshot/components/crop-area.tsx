@@ -1,13 +1,13 @@
-import { useStorage } from '@hooks/use-storage.hook';
-import type { CropArea as CropAreaType } from '@utils/image';
-import { rootRender } from '@utils/render';
-import { MessageRequest } from '@utils/types/message-request';
-import type { MouseEvent } from 'react';
-import React, { useEffect, useState } from 'react';
-import { platform } from '@platform/extension';
+import { useStorage } from "@hooks/use-storage.hook";
+import type { CropArea as CropAreaType } from "@utils/image";
+import { rootRender } from "@utils/render";
+import { MessageRequest } from "@utils/types/message-request";
+import type { MouseEvent } from "react";
+import React, { useEffect, useState } from "react";
+import { platform } from "@platform/extension";
 
 const onKeyUpHandler = (event: KeyboardEvent) => {
-  if (event.key === 'Escape') {
+  if (event.key === "Escape") {
     rootRender.unmount();
   }
 };
@@ -15,7 +15,7 @@ const onKeyUpHandler = (event: KeyboardEvent) => {
 export const CropArea: React.FC = () => {
   const [firstPoint, setFirstPoint] = useState<{ x: number; y: number }>();
   const [cropArea, setCropArea] = useState<CropAreaType>();
-  const [screenshoted, setScreenshot] = useStorage('screenshot');
+  const [screenshoted, setScreenshot] = useStorage("screenshot");
 
   const onMouseUpHandler = async (selectedArea: CropAreaType) => {
     if (selectedArea && screenshoted?.capturedImage) {
@@ -31,9 +31,9 @@ export const CropArea: React.FC = () => {
   };
 
   useEffect(() => {
-    document.addEventListener('keyup', onKeyUpHandler);
+    document.addEventListener("keyup", onKeyUpHandler);
     return () => {
-      document.removeEventListener('keyup', onKeyUpHandler);
+      document.removeEventListener("keyup", onKeyUpHandler);
     };
   }, []);
 
@@ -63,7 +63,7 @@ export const CropArea: React.FC = () => {
       onMouseMove={onMouseMoveHandler}
       onMouseUp={() => {
         if (cropArea)
-          onMouseUpHandler(cropArea).catch((error: unknown) => console.error('Cannot crop screenshot:', error));
+          onMouseUpHandler(cropArea).catch((error: unknown) => console.error("Cannot crop screenshot:", error));
       }}
     >
       <img
@@ -76,11 +76,11 @@ export const CropArea: React.FC = () => {
       <div
         className="cursor-custom box-border fixed z-[999999] border border-gray-900 border-dotted bg-transparent"
         style={{
-          width: cropArea?.width + 'px',
-          height: cropArea?.height + 'px',
-          left: cropArea?.x + 'px',
-          top: cropArea?.y + 'px',
-          boxShadow: '0 0 0 50000px rgba(0,0,0,0.5)',
+          width: cropArea?.width + "px",
+          height: cropArea?.height + "px",
+          left: cropArea?.x + "px",
+          top: cropArea?.y + "px",
+          boxShadow: "0 0 0 50000px rgba(0,0,0,0.5)",
         }}
       />
     </div>

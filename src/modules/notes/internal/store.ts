@@ -1,5 +1,5 @@
-import { hasNoteContent, readEditorDocument } from '../../rich-text';
-import type { JSONContent } from '@tiptap/core';
+import { hasNoteContent, readEditorDocument } from "../../rich-text";
+import type { JSONContent } from "@tiptap/core";
 import type {
   Draft,
   DraftRecord,
@@ -10,8 +10,8 @@ import type {
   NotesModule,
   NotesSnapshot,
   NotesState,
-} from './model';
-import { NotesConflictError } from './model';
+} from "./model";
+import { NotesConflictError } from "./model";
 import {
   draftRecord,
   draftStorageKey,
@@ -21,37 +21,37 @@ import {
   readDraftRecord,
   readEnvelope,
   storageKey,
-} from './schema';
+} from "./schema";
 
-const errorFrom = (error: unknown) => (error instanceof Error ? error : new Error('Cannot access notes.'));
+const errorFrom = (error: unknown) => (error instanceof Error ? error : new Error("Cannot access notes."));
 
 const freeze = <T>(value: T): T => {
-  if (typeof value === 'object' && value !== null && !Object.isFrozen(value)) {
+  if (typeof value === "object" && value !== null && !Object.isFrozen(value)) {
     Object.freeze(value);
     Object.values(value).forEach((child: unknown) => freeze(child));
   }
   return value;
 };
 
-const assertDraft = (state: { draft: Draft }, expected: Pick<Draft, 'id' | 'revision'>) => {
+const assertDraft = (state: { draft: Draft }, expected: Pick<Draft, "id" | "revision">) => {
   if (state.draft.id !== expected.id || state.draft.revision !== expected.revision) throw new NotesConflictError();
 };
 
 const nextRevision = (revision: number) => {
   const next = revision + 1;
-  if (!Number.isSafeInteger(next)) throw new Error('The note revision limit was reached.');
+  if (!Number.isSafeInteger(next)) throw new Error("The note revision limit was reached.");
   return next;
 };
 
 const savedContent = (content: unknown, title: string) => {
-  if (!title.trim()) throw new Error('A note title is required.');
+  if (!title.trim()) throw new Error("A note title is required.");
   const noteContent = readEditorDocument(content);
-  if (!hasNoteContent(noteContent)) throw new Error('An empty note cannot be saved to Collections.');
+  if (!hasNoteContent(noteContent)) throw new Error("An empty note cannot be saved to Collections.");
   return { title, noteContent };
 };
 
 /** Use the adapter for all operations unless an editing transport is supplied for the same storage. */
-export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['edit']): NotesModule {
+export function createNotes(adapter: NotesAdapter, editSession?: NotesModule["edit"]): NotesModule {
   let snapshot: NotesSnapshot = freeze({ state: null, error: null });
   const listeners = new Set<() => void>();
   let unsubscribe: (() => void) | undefined;
@@ -73,7 +73,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
       const current = readDraftRecord(raw[draftStorageKey]);
       return { state: mergeDraft(state, current), checkpoint: state.revision };
     }
-    if (Object.hasOwn(raw, draftStorageKey)) throw new Error('The notes checkpoint is missing. Stored draft was kept.');
+    if (Object.hasOwn(raw, draftStorageKey)) throw new Error("The notes checkpoint is missing. Stored draft was kept.");
     const migrated = migrateLegacy(raw, adapter.createId);
     await adapter.write(migrated);
     return { state: migrated, checkpoint: migrated.revision };
@@ -88,9 +88,9 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
 
   const read = () => adapter.exclusive(load).then(({ state, checkpoint }) => publish(state, checkpoint));
 
-  const refresh = (change?: 'draft' | 'all') => {
+  const refresh = (change?: "draft" | "all") => {
     const updated =
-      change === 'draft'
+      change === "draft"
         ? adapter
             .exclusive(async () => {
               const current = await loadDraft();
@@ -145,7 +145,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
           }
         : makeNote(content);
 
-      if (!original && state.notes.some((existing) => existing.id === note.id)) throw new Error('Duplicate note ID.');
+      if (!original && state.notes.some((existing) => existing.id === note.id)) throw new Error("Duplicate note ID.");
 
       return {
         ...state,
@@ -175,17 +175,17 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
       };
     },
     /** Start a new shared draft if the caller still sees the current draft revision. */
-    startDraft: (expected: Pick<Draft, 'id' | 'revision'>) =>
+    startDraft: (expected: Pick<Draft, "id" | "revision">) =>
       mutate((state) => {
         assertDraft(state, expected);
         return { ...state, draft: emptyDraft(adapter.createId) };
       }),
     /** Open a saved note using its latest content. A stale draft selection cannot discard newer edits. */
-    openNote: (noteId: string, expected: Pick<Draft, 'id' | 'revision'>) =>
+    openNote: (noteId: string, expected: Pick<Draft, "id" | "revision">) =>
       mutate((state) => {
         assertDraft(state, expected);
         const note = state.notes.find((item) => item.id === noteId);
-        if (!note) throw new Error('This note no longer exists.');
+        if (!note) throw new Error("This note no longer exists.");
         return {
           ...state,
           draft: {
@@ -200,8 +200,8 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
     /** Change only favorite metadata. Concurrent content edits remain intact. */
     setFavorite: (noteId: string, value: boolean) =>
       mutate((state) => {
-        if (typeof value !== 'boolean') throw new Error('Invalid favorite value.');
-        if (!state.notes.some((note) => note.id === noteId)) throw new Error('This note no longer exists.');
+        if (typeof value !== "boolean") throw new Error("Invalid favorite value.");
+        if (!state.notes.some((note) => note.id === noteId)) throw new Error("This note no longer exists.");
         return {
           ...state,
           notes: state.notes.map((note) => (note.id === noteId ? { ...note, isFavorite: value } : note)),
@@ -225,7 +225,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
     createNote: async (content: unknown, title: string) => {
       const note = makeNote(savedContent(content, title));
       return mutate((state) => {
-        if (state.notes.some((existing) => existing.id === note.id)) throw new Error('Duplicate note ID.');
+        if (state.notes.some((existing) => existing.id === note.id)) throw new Error("Duplicate note ID.");
         return { ...state, notes: [...state.notes, note] };
       });
     },
@@ -244,7 +244,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
       let queuedUpdate: { request: { document: JSONContent }; result: Promise<DraftTarget> } | undefined;
       let closed = false;
 
-      const run = <T extends { draft: Draft }>(operation: (target: Pick<Draft, 'id' | 'revision'>) => Promise<T>) => {
+      const run = <T extends { draft: Draft }>(operation: (target: Pick<Draft, "id" | "revision">) => Promise<T>) => {
         const result = pending.catch(() => undefined).then(() => operation(expected));
         const acknowledged = result.then((state) => {
           expected = { id: state.draft.id, revision: state.draft.revision };
@@ -272,7 +272,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
 
       return {
         update: async (content: unknown) => {
-          if (closed) throw new Error('This editing session is closed.');
+          if (closed) throw new Error("This editing session is closed.");
 
           const document = readEditorDocument(content);
           if (queuedUpdate) {
@@ -292,7 +292,7 @@ export function createNotes(adapter: NotesAdapter, editSession?: NotesModule['ed
         },
 
         save: async (content: unknown, title: string) => {
-          if (closed) throw new Error('This editing session is closed.');
+          if (closed) throw new Error("This editing session is closed.");
 
           const document = savedContent(content, title);
           const saved = run((target) => saveToCollection(target, document));

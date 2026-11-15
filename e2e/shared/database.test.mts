@@ -1,8 +1,8 @@
-import { build } from 'vite';
-import { afterAll, beforeAll, describe, expect, it } from 'vitest';
-import { launchChromiumDriver } from '../drivers/chromium.mts';
-import { launchFirefoxDriver } from '../drivers/firefox.mts';
-import type { ExtensionDriver } from '../drivers/driver.mts';
+import { build } from "vite";
+import { afterAll, beforeAll, describe, expect, it } from "vitest";
+import { launchChromiumDriver } from "../drivers/chromium.mts";
+import { launchFirefoxDriver } from "../drivers/firefox.mts";
+import type { ExtensionDriver } from "../drivers/driver.mts";
 
 let databaseScript: string;
 let notesStorageScript: string;
@@ -11,11 +11,11 @@ let notesScript: string;
 async function bundle(entry: string, name: string) {
   const result = await build({
     configFile: false,
-    logLevel: 'silent',
+    logLevel: "silent",
     resolve: {
       alias: {
-        '@modules': new URL('../../src/modules', import.meta.url).pathname,
-        '@platform': new URL('../../src/platform', import.meta.url).pathname,
+        "@modules": new URL("../../src/modules", import.meta.url).pathname,
+        "@platform": new URL("../../src/platform", import.meta.url).pathname,
       },
     },
     build: {
@@ -23,29 +23,29 @@ async function bundle(entry: string, name: string) {
       lib: {
         entry: new URL(entry, import.meta.url).pathname,
         name,
-        formats: ['iife'],
+        formats: ["iife"],
       },
     },
   });
   const output = Array.isArray(result) ? result[0] : result;
-  if (!output || !('output' in output)) throw new Error('Missing database test bundle.');
-  const script = output.output.find((item) => item.type === 'chunk');
-  if (!script) throw new Error('Missing database test script.');
+  if (!output || !("output" in output)) throw new Error("Missing database test bundle.");
+  const script = output.output.find((item) => item.type === "chunk");
+  if (!script) throw new Error("Missing database test script.");
   return script.code;
 }
 
 beforeAll(async () => {
   [databaseScript, notesStorageScript, notesScript] = await Promise.all([
-    bundle('../../src/modules/database/index.ts', 'DatabaseModule'),
-    bundle('../../src/modules/notes/storage.ts', 'NotesStorage'),
-    bundle('../../src/modules/notes/index.ts', 'NotesModule'),
+    bundle("../../src/modules/database/index.ts", "DatabaseModule"),
+    bundle("../../src/modules/notes/storage.ts", "NotesStorage"),
+    bundle("../../src/modules/notes/index.ts", "NotesModule"),
   ]);
 });
 
 describe.each([
-  { name: 'Chrome', launch: launchChromiumDriver },
-  { name: 'Firefox', launch: launchFirefoxDriver },
-])('$name database module', ({ launch }) => {
+  { name: "Chrome", launch: launchChromiumDriver },
+  { name: "Firefox", launch: launchFirefoxDriver },
+])("$name database module", ({ launch }) => {
   let browser: ExtensionDriver;
   let page: string;
 
@@ -61,8 +61,8 @@ describe.each([
     await browser?.close();
   });
 
-  it('upgrades a supplied schema while preserving its existing records', async () => {
-    const name = 'schema-upgrade';
+  it("upgrades a supplied schema while preserving its existing records", async () => {
+    const name = "schema-upgrade";
     await browser.evaluate(
       page,
       `
@@ -95,13 +95,13 @@ describe.each([
     `,
     );
 
-    expect(result).toEqual({ item: { id: 'one', label: 'Keep me' }, status: 'ready', versions: [1] });
+    expect(result).toEqual({ item: { id: "one", label: "Keep me" }, status: "ready", versions: [1] });
     expect(browser.failures).toEqual([]);
   });
 
-  it.each(['synchronous', 'asynchronous'])('rolls back a failed %s operation', async (failure) => {
+  it.each(["synchronous", "asynchronous"])("rolls back a failed %s operation", async (failure) => {
     const operation =
-      failure === 'synchronous'
+      failure === "synchronous"
         ? `tx => { tx.objectStore('items').put('partial', 'key'); throw new Error('Rejected write'); }`
         : `async tx => { await request(tx.objectStore('items').put('partial', 'key')); throw new Error('Rejected write'); }`;
 
@@ -123,11 +123,11 @@ describe.each([
     `,
     );
 
-    expect(result).toEqual({ error: 'Rejected write', count: 0, value: 'retry' });
+    expect(result).toEqual({ error: "Rejected write", count: 0, value: "retry" });
     expect(browser.failures).toEqual([]);
   });
 
-  it('edits through the public factory using injected databases and preserves another schema contribution', async () => {
+  it("edits through the public factory using injected databases and preserves another schema contribution", async () => {
     await browser.evaluate(
       page,
       `
@@ -179,11 +179,11 @@ describe.each([
 
     expect(result).toEqual({
       localAcknowledgement: { id: expect.any(String), revision: 1 },
-      localContent: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Local edit' }] }] },
+      localContent: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Local edit" }] }] },
       acknowledgement: { id: 1, value: { id: expect.any(String), revision: 2 } },
-      content: { type: 'doc', content: [{ type: 'paragraph', content: [{ type: 'text', text: 'Injected storage' }] }] },
+      content: { type: "doc", content: [{ type: "paragraph", content: [{ type: "text", text: "Injected storage" }] }] },
       revision: 2,
-      collection: { title: 'Keep this collection' },
+      collection: { title: "Keep this collection" },
     });
     expect(browser.failures).toEqual([]);
   });

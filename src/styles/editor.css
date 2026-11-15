@@ -1,5 +1,5 @@
 .ProseMirror {
-  font-family: 'Poppins', sans-serif;
+  font-family: "Poppins", sans-serif;
   min-width: 658px;
   min-height: 480px;
   max-height: calc(100vh - 70px);

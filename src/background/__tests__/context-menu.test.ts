@@ -1,5 +1,5 @@
-import type { LocalSettings } from '@utils/storage';
-import type { BrowserWindow, MenuClick, WindowOptions } from '@platform/extension';
+import type { LocalSettings } from "@utils/storage";
+import type { BrowserWindow, MenuClick, WindowOptions } from "@platform/extension";
 
 const mocks = vi.hoisted(() => ({
   getSettings: vi.fn<() => Promise<LocalSettings>>(),
@@ -8,16 +8,16 @@ const mocks = vi.hoisted(() => ({
   onMenuClick: vi.fn<(listener: (event: MenuClick) => void) => void>(),
   onStartup: vi.fn<(listener: () => void) => void>(),
   setPopup: vi.fn<(popup: string) => Promise<void>>(),
-  getWindow: vi.fn<(id: number) => Promise<Pick<BrowserWindow, 'id'>>>(),
-  createWindow: vi.fn<(options: WindowOptions) => Promise<Pick<BrowserWindow, 'id'>>>(),
+  getWindow: vi.fn<(id: number) => Promise<Pick<BrowserWindow, "id">>>(),
+  createWindow: vi.fn<(options: WindowOptions) => Promise<Pick<BrowserWindow, "id">>>(),
   focusWindow: vi.fn<(id: number) => Promise<void>>(),
 }));
 
-vi.mock('@utils/storage', () => ({
+vi.mock("@utils/storage", () => ({
   localStorage: { get: mocks.getSettings },
   setSettings: mocks.setSettings,
 }));
-vi.mock('@platform/extension', () => ({
+vi.mock("@platform/extension", () => ({
   platform: {
     runtime: {
       onInstalled: () => undefined,
@@ -33,31 +33,31 @@ vi.mock('@platform/extension', () => ({
 beforeEach(async () => {
   vi.resetModules();
   vi.resetAllMocks();
-  mocks.getSettings.mockResolvedValue({ theme: 'light', windowType: 'popup' });
-  await import('../context-menu');
+  mocks.getSettings.mockResolvedValue({ theme: "light", windowType: "popup" });
+  await import("../context-menu");
   await vi.waitUntil(() => mocks.setPopup.mock.calls.length > 0);
 });
 
-it('configures browser-managed popup opening when the background starts', () => {
-  expect(mocks.setPopup).toHaveBeenCalledExactlyOnceWith('popup.html');
+it("configures browser-managed popup opening when the background starts", () => {
+  expect(mocks.setPopup).toHaveBeenCalledExactlyOnceWith("popup.html");
   expect(mocks.createWindow).not.toHaveBeenCalled();
 });
 
-it('restores window mode on browser startup', async () => {
-  mocks.getSettings.mockResolvedValue({ theme: 'light', windowType: 'window' });
+it("restores window mode on browser startup", async () => {
+  mocks.getSettings.mockResolvedValue({ theme: "light", windowType: "window" });
   const startup = mocks.onStartup.mock.calls[0]?.[0];
-  if (!startup) throw new Error('Missing startup listener.');
+  if (!startup) throw new Error("Missing startup listener.");
 
   startup();
 
-  await vi.waitFor(() => expect(mocks.setPopup).toHaveBeenLastCalledWith(''));
+  await vi.waitFor(() => expect(mocks.setPopup).toHaveBeenLastCalledWith(""));
 });
 
-it('creates and then focuses the detached note window', async () => {
-  mocks.getWindow.mockRejectedValueOnce(new Error('Window not found')).mockResolvedValue({ id: 42 });
+it("creates and then focuses the detached note window", async () => {
+  mocks.getWindow.mockRejectedValueOnce(new Error("Window not found")).mockResolvedValue({ id: 42 });
   mocks.createWindow.mockResolvedValue({ id: 42 });
   const click = mocks.onClick.mock.calls[0]?.[0];
-  if (!click) throw new Error('Missing action listener.');
+  if (!click) throw new Error("Missing action listener.");
 
   click();
   await vi.waitFor(() => expect(mocks.createWindow).toHaveBeenCalledOnce());
@@ -65,9 +65,9 @@ it('creates and then focuses the detached note window', async () => {
 
   await vi.waitFor(() => expect(mocks.focusWindow).toHaveBeenCalledWith(42));
   expect(mocks.createWindow).toHaveBeenCalledExactlyOnceWith({
-    url: 'extension://note-it/popup.html',
+    url: "extension://note-it/popup.html",
     focused: true,
-    type: 'popup',
+    type: "popup",
     height: 600,
     width: 800,
   });

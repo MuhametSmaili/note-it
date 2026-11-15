@@ -1,4 +1,4 @@
-import { createExtensionPlatform } from '../extension';
+import { createExtensionPlatform } from "../extension";
 
 const storage = new Map<string, unknown>();
 let lastError: { message: string } | undefined;
@@ -16,7 +16,7 @@ beforeEach(() => {
     done();
   });
   send.mockReset();
-  vi.stubGlobal('chrome', {
+  vi.stubGlobal("chrome", {
     runtime: {
       get lastError() {
         return lastError;
@@ -39,32 +39,32 @@ beforeEach(() => {
 
 afterEach(() => vi.unstubAllGlobals());
 
-it('reads and writes through the shared callback interface', async () => {
-  await api.storage.write({ settings: { theme: 'dark' } });
+it("reads and writes through the shared callback interface", async () => {
+  await api.storage.write({ settings: { theme: "dark" } });
 
-  expect(await api.storage.read('settings')).toEqual({ settings: { theme: 'dark' } });
-  expect(await api.storage.read('missing')).toEqual({});
+  expect(await api.storage.read("settings")).toEqual({ settings: { theme: "dark" } });
+  expect(await api.storage.read("missing")).toEqual({});
 });
 
-it('rejects lastError before the browser clears it and permits a retry', async () => {
+it("rejects lastError before the browser clears it and permits a retry", async () => {
   write.mockImplementationOnce((_values, done) => {
-    lastError = { message: 'Storage full' };
+    lastError = { message: "Storage full" };
     done();
     lastError = undefined;
   });
 
-  await expect(api.storage.write({ draft: 'Failed' })).rejects.toThrow('Storage full');
-  await api.storage.write({ draft: 'Retried' });
+  await expect(api.storage.write({ draft: "Failed" })).rejects.toThrow("Storage full");
+  await api.storage.write({ draft: "Retried" });
 
-  expect(await api.storage.read('draft')).toEqual({ draft: 'Retried' });
+  expect(await api.storage.read("draft")).toEqual({ draft: "Retried" });
 });
 
-it('waits for the acknowledgement instead of resolving when the browser call returns', async () => {
+it("waits for the acknowledgement instead of resolving when the browser call returns", async () => {
   const callback = Promise.withResolvers<(reply: unknown) => void>();
   send.mockImplementation((_message, done) => callback.resolve(done));
   const acknowledged = vi.fn<(value: unknown) => void>();
 
-  const sending = api.runtime.send({ message: 'capture' }).then(acknowledged);
+  const sending = api.runtime.send({ message: "capture" }).then(acknowledged);
   const respond = await callback.promise;
   expect(acknowledged).not.toHaveBeenCalled();
   respond({ ok: true });
@@ -73,14 +73,14 @@ it('waits for the acknowledgement instead of resolving when the browser call ret
   expect(acknowledged).toHaveBeenCalledExactlyOnceWith({ ok: true });
 });
 
-it('releases storage listeners when the caller unsubscribes', () => {
+it("releases storage listeners when the caller unsubscribes", () => {
   const changed = vi.fn<(changes: object, area: string) => void>();
   const unsubscribe = api.storage.subscribe(changed);
 
-  changeListeners.forEach((listener) => listener({ draft: { newValue: 'Saved' } }, 'local'));
+  changeListeners.forEach((listener) => listener({ draft: { newValue: "Saved" } }, "local"));
   unsubscribe();
-  changeListeners.forEach((listener) => listener({}, 'local'));
+  changeListeners.forEach((listener) => listener({}, "local"));
 
-  expect(changed).toHaveBeenCalledExactlyOnceWith({ draft: { newValue: 'Saved' } }, 'local');
+  expect(changed).toHaveBeenCalledExactlyOnceWith({ draft: { newValue: "Saved" } }, "local");
   expect(changeListeners.size).toBe(0);
 });

@@ -1,5 +1,5 @@
-import type { JSX } from 'react';
-import clsx from 'clsx';
+import type { JSX } from "react";
+import clsx from "clsx";
 
 type TabProps = {
   isActive?: boolean;
@@ -11,9 +11,9 @@ const Tab = ({ isActive = false, onClickHandler, children, className }: TabProps
   <button
     type="button"
     className={clsx(
-      'p-1 my-2 hover:cursor-pointer',
-      'w-full flex justify-center transition-[margin]',
-      isActive ? 'bg-primary rounded-sm rounded-tr-none rounded-br-none ml-4' : 'bg-transparent',
+      "p-1 my-2 hover:cursor-pointer",
+      "w-full flex justify-center transition-[margin]",
+      isActive ? "bg-primary rounded-sm rounded-tr-none rounded-br-none ml-4" : "bg-transparent",
       className,
     )}
     onClick={onClickHandler}

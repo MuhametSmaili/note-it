@@ -12,8 +12,8 @@ export type Database = {
 /** Read a native request result. This does not wait for the transaction to commit. */
 export const request = <T>(operation: EventTarget & { readonly result: T; readonly error: DOMException | null }) =>
   new Promise<T>((resolve, reject) => {
-    operation.addEventListener('success', () => resolve(operation.result), { once: true });
-    operation.addEventListener('error', () => reject(operation.error ?? new Error('Cannot access the database.')), {
+    operation.addEventListener("success", () => resolve(operation.result), { once: true });
+    operation.addEventListener("error", () => reject(operation.error ?? new Error("Cannot access the database.")), {
       once: true,
     });
   });
@@ -21,10 +21,10 @@ export const request = <T>(operation: EventTarget & { readonly result: T; readon
 async function openDatabase(definition: DatabaseDefinition) {
   const opening = indexedDB.open(definition.name, definition.version);
   opening.addEventListener(
-    'upgradeneeded',
+    "upgradeneeded",
     (event) => {
       const upgrade = opening.transaction;
-      if (!upgrade) throw new Error('The database upgrade transaction is missing.');
+      if (!upgrade) throw new Error("The database upgrade transaction is missing.");
       definition.upgrade(opening.result, event.oldVersion, upgrade);
     },
     { once: true },
@@ -39,7 +39,7 @@ async function runOperation<T>(tx: IDBTransaction, operation: (tx: IDBTransactio
     try {
       tx.abort();
     } catch {
-      throw error instanceof Error ? error : new Error('Cannot complete the database transaction.');
+      throw error instanceof Error ? error : new Error("Cannot complete the database transaction.");
     }
     throw error;
   }
@@ -52,10 +52,10 @@ async function transact<T>(
 ) {
   const db = await openDatabase(definition);
   try {
-    const tx = db.transaction(names, 'readwrite', { durability: 'strict' });
+    const tx = db.transaction(names, "readwrite", { durability: "strict" });
     const committed = new Promise<void>((resolve, reject) => {
-      tx.addEventListener('complete', () => resolve(), { once: true });
-      tx.addEventListener('abort', () => reject(tx.error ?? new Error('The database transaction was interrupted.')), {
+      tx.addEventListener("complete", () => resolve(), { once: true });
+      tx.addEventListener("abort", () => reject(tx.error ?? new Error("The database transaction was interrupted.")), {
         once: true,
       });
     });

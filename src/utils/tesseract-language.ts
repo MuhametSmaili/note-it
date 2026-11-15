@@ -1,23 +1,23 @@
-import type { SelectOptionType } from '@components';
+import type { SelectOptionType } from "@components";
 
 export const tesseractLanguages: SelectOptionType[] = [
-  { value: 'eng', label: 'English' },
+  { value: "eng", label: "English" },
 
-  { value: 'deu', label: 'German' },
+  { value: "deu", label: "German" },
 
-  { value: 'fin', label: 'Finnish' },
+  { value: "fin", label: "Finnish" },
 
-  { value: 'sqi', label: 'Albanian' },
+  { value: "sqi", label: "Albanian" },
 
-  { value: 'nep', label: 'Nepali' },
+  { value: "nep", label: "Nepali" },
 
-  { value: 'swe', label: 'Swedish' },
+  { value: "swe", label: "Swedish" },
 
-  { value: 'tur', label: 'Turkish' },
+  { value: "tur", label: "Turkish" },
 
-  { value: 'fra', label: 'French' },
+  { value: "fra", label: "French" },
 
-  { value: 'ita', label: 'Italian' },
+  { value: "ita", label: "Italian" },
 
-  { value: 'ara', label: 'Arabic' },
+  { value: "ara", label: "Arabic" },
 ];

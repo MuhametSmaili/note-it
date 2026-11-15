@@ -1,15 +1,15 @@
-import { request } from '@modules/database';
-import type { NotesAdapter } from './model';
-import { draftRecord, draftStorageKey, storageKey } from './schema';
+import { request } from "@modules/database";
+import type { NotesAdapter } from "./model";
+import { draftRecord, draftStorageKey, storageKey } from "./schema";
 
-export type DatabaseChange = 'draft' | 'all';
+export type DatabaseChange = "draft" | "all";
 
 export function transactionAdapter(
   tx: IDBTransaction,
   changed: (change: DatabaseChange) => void,
   legacy: Record<string, unknown> = {},
 ): NotesAdapter {
-  const state = tx.objectStore('state');
+  const state = tx.objectStore("state");
   return {
     read: async () => {
       const [notes, draft] = await Promise.all([
@@ -28,11 +28,11 @@ export function transactionAdapter(
         request(state.put(value, storageKey)),
         request(state.put(draftRecord(value), draftStorageKey)),
       ]);
-      changed('all');
+      changed("all");
     },
     writeDraft: async (value) => {
       await request(state.put(value, draftStorageKey));
-      changed('draft');
+      changed("draft");
     },
     exclusive: (operation) => operation(),
     subscribe: () => () => undefined,

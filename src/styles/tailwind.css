@@ -1,6 +1,6 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap');
-@import 'tailwindcss' source(none);
-@import './editor.css';
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap");
+@import "tailwindcss" source(none);
+@import "./editor.css";
 
 @source '../**/*.{js,jsx,ts,tsx,svg}';
 
@@ -56,7 +56,7 @@
   }
 
   button:not(:disabled),
-  [role='button']:not(:disabled) {
+  [role="button"]:not(:disabled) {
     cursor: pointer;
   }
 
@@ -87,7 +87,7 @@
 
     --color-border-primary: var(--color-gray-400);
 
-    [data-theme='dim'] {
+    [data-theme="dim"] {
       --color-bg-primary: 200 94% 13%;
       --color-bg-light: var(--color-acent);
       --color-bg-acent: var(--color-acent);
@@ -102,7 +102,7 @@
       --color-border-primary: 201 40% 30%;
     }
 
-    [data-theme='dark'] {
+    [data-theme="dark"] {
       --color-bg-primary: 200 92% 5%;
       --color-bg-light: 200 100% 10%;
       --color-text-secondary: var(--color-gray-100);
@@ -122,7 +122,7 @@
 @utility icon-circle {
   &::before,
   &::after {
-    content: '';
+    content: "";
     width: 10px;
     height: 10px;
     border-radius: 50%;

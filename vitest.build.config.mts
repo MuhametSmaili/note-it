@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config';
+import { defineConfig } from "vitest/config";
 
 export default defineConfig({
   test: {
-    include: ['scripts/__tests__/*.test.mts'],
-    environment: 'node',
+    include: ["scripts/__tests__/*.test.mts"],
+    environment: "node",
   },
 });

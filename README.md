@@ -1,4 +1,4 @@
-![LOGO](./src/styles/images/noteIt_cover.png 'Logo')
+![LOGO](./src/styles/images/noteIt_cover.png "Logo")
 
 # Note It
 
@@ -31,7 +31,7 @@ You can take notes, convert images to text, download notes to pdf, and more.**
 - 📁 Download note in PDF format
 - 🗄 Convert your images to text (this feature works only when the extension is in window mode)
 
-### [Check video](https://www.youtube.com/watch?v=jxBAMwxbk78 'https://www.youtube.com/watch?v=jxBAMwxbk78')
+### [Check video](https://www.youtube.com/watch?v=jxBAMwxbk78 "https://www.youtube.com/watch?v=jxBAMwxbk78")
 
 ## Contributors
 

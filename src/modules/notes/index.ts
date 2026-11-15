@@ -1,5 +1,5 @@
-export { createNotes } from './internal/store';
-export { NotesConflictError } from './internal/model';
+export { createNotes } from "./internal/store";
+export { NotesConflictError } from "./internal/model";
 export type {
   Draft,
   Note,
@@ -8,4 +8,4 @@ export type {
   NotesModule,
   NotesSnapshot,
   NotesState,
-} from './internal/model';
+} from "./internal/model";

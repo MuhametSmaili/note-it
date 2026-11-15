@@ -1,13 +1,13 @@
-import { platform } from '@platform/extension';
-import type { RuntimePort } from '@platform/extension';
-import type { Draft, NoteEditorSession } from './model';
-import { NotesConflictError } from './model';
-import { readDraftTarget, readEnvelope } from './schema';
-import { editorChannel, readEditorRequest } from './editor-protocol';
-import type { EditorPersistence } from './editor-protocol';
+import { platform } from "@platform/extension";
+import type { RuntimePort } from "@platform/extension";
+import type { Draft, NoteEditorSession } from "./model";
+import { NotesConflictError } from "./model";
+import { readDraftTarget, readEnvelope } from "./schema";
+import { editorChannel, readEditorRequest } from "./editor-protocol";
+import type { EditorPersistence } from "./editor-protocol";
 
 /** Send each edit before yielding. The background owns ordering and persistence until completion. */
-export function editInBackground(initial: Pick<Draft, 'id' | 'revision'>): NoteEditorSession {
+export function editInBackground(initial: Pick<Draft, "id" | "revision">): NoteEditorSession {
   let target = { id: initial.id, revision: initial.revision };
   let port: RuntimePort | undefined;
   let sequence = 0;
@@ -23,7 +23,7 @@ export function editInBackground(initial: Pick<Draft, 'id' | 'revision'>): NoteE
     const connection = platform.runtime.connect(editorChannel);
 
     connection.onDisconnect.addListener(() => {
-      const error = new Error(platform.runtime.lastError() ?? 'The draft connection closed. Please retry.');
+      const error = new Error(platform.runtime.lastError() ?? "The draft connection closed. Please retry.");
       if (port !== connection) return;
 
       port = undefined;
@@ -32,21 +32,21 @@ export function editInBackground(initial: Pick<Draft, 'id' | 'revision'>): NoteE
     });
 
     connection.onMessage.addListener((reply: unknown) => {
-      if (!reply || typeof reply !== 'object' || !('id' in reply) || typeof reply.id !== 'number') return;
+      if (!reply || typeof reply !== "object" || !("id" in reply) || typeof reply.id !== "number") return;
 
       const request = pending.get(reply.id);
       if (!request) return;
 
       pending.delete(reply.id);
 
-      if ('error' in reply && typeof reply.error === 'string') {
+      if ("error" in reply && typeof reply.error === "string") {
         request.reject(
-          'conflict' in reply && reply.conflict === true ? new NotesConflictError() : new Error(reply.error),
+          "conflict" in reply && reply.conflict === true ? new NotesConflictError() : new Error(reply.error),
         );
-      } else if ('value' in reply) {
+      } else if ("value" in reply) {
         request.resolve(reply.value);
       } else {
-        request.reject(new Error('Invalid draft acknowledgement.'));
+        request.reject(new Error("Invalid draft acknowledgement."));
       }
 
       if (pending.size === 0) disconnect();
@@ -55,10 +55,10 @@ export function editInBackground(initial: Pick<Draft, 'id' | 'revision'>): NoteE
     return connection;
   };
 
-  const send = (operation: 'update' | 'save', content: unknown, title = '') =>
+  const send = (operation: "update" | "save", content: unknown, title = "") =>
     new Promise<unknown>((resolve, reject) => {
       if (closed) {
-        reject(new Error('This editing session is closed.'));
+        reject(new Error("This editing session is closed."));
         return;
       }
 
@@ -71,22 +71,22 @@ export function editInBackground(initial: Pick<Draft, 'id' | 'revision'>): NoteE
       } catch (error) {
         pending.delete(id);
         if (pending.size === 0) disconnect();
-        reject(error instanceof Error ? error : new Error('Cannot send this draft.'));
+        reject(error instanceof Error ? error : new Error("Cannot send this draft."));
       }
     });
 
   return {
     update: (content) =>
-      send('update', content).then((value) => {
+      send("update", content).then((value) => {
         const draft = readDraftTarget(value);
         target = { id: draft.id, revision: draft.revision };
         return draft;
       }),
 
     save: (content, title) => {
-      if (closed) return Promise.reject(new Error('This editing session is closed.'));
+      if (closed) return Promise.reject(new Error("This editing session is closed."));
 
-      const result = send('save', content, title);
+      const result = send("save", content, title);
       closed = true;
 
       return result.then(
@@ -110,7 +110,7 @@ export function serveEditors(persistence: EditorPersistence) {
   return platform.runtime.onConnect((port) => {
     if (port.name !== editorChannel) return;
 
-    if (!port.sender?.url?.startsWith(platform.runtime.url(''))) {
+    if (!port.sender?.url?.startsWith(platform.runtime.url(""))) {
       port.disconnect();
       return;
     }
@@ -164,7 +164,7 @@ export function serveEditors(persistence: EditorPersistence) {
         .then(respond, (error: unknown) =>
           respond({
             id: request.id,
-            error: error instanceof Error ? error.message : 'Cannot save this content.',
+            error: error instanceof Error ? error.message : "Cannot save this content.",
             conflict: error instanceof NotesConflictError,
           }),
         )

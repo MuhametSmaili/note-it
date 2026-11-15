@@ -27,7 +27,7 @@ export function createExtensionPlatform(api: () => typeof chrome = () => chrome)
     new Promise((resolve, reject) => {
       start((value) => {
         const error = api().runtime.lastError;
-        if (error) reject(new Error(error.message ?? 'The browser operation failed.'));
+        if (error) reject(new Error(error.message ?? "The browser operation failed."));
         else resolve(value);
       });
     });
@@ -54,13 +54,13 @@ export function createExtensionPlatform(api: () => typeof chrome = () => chrome)
     tabs: {
       query: (options: TabQuery) => request<BrowserTab[]>((done) => api().tabs.query(options, done)),
       capture: (windowId: number) =>
-        request<string>((done) => api().tabs.captureVisibleTab(windowId, { format: 'png' }, done)),
+        request<string>((done) => api().tabs.captureVisibleTab(windowId, { format: "png" }, done)),
       inject: async (tabId: number, files: string[]) => {
         const results = await request<chrome.scripting.InjectionResult[]>((done) =>
           api().scripting.executeScript({ target: { tabId }, files }, done),
         );
         for (const result of results) {
-          if ('error' in result && result.error) throw new Error('The injected script failed.');
+          if ("error" in result && result.error) throw new Error("The injected script failed.");
         }
       },
     },

@@ -1,11 +1,11 @@
-import type { Screenshot } from './types/screenshot';
-import { platform } from '@platform/extension';
+import type { Screenshot } from "./types/screenshot";
+import { platform } from "@platform/extension";
 
-export type Theme = 'dark' | 'dim' | 'light';
+export type Theme = "dark" | "dim" | "light";
 
 export type LocalSettings = {
   theme: Theme;
-  windowType?: 'popup' | 'window';
+  windowType?: "popup" | "window";
 };
 
 export interface LocalStorage {
@@ -14,11 +14,11 @@ export interface LocalStorage {
   activeWindow?: Array<{ windowId: number }>;
 }
 
-export const defaultSettings: LocalSettings = { theme: 'light', windowType: 'popup' };
+export const defaultSettings: LocalSettings = { theme: "light", windowType: "popup" };
 
 export class Storage<T extends object> {
   constructor(
-    private readonly storageArea: Pick<typeof platform.storage, 'read' | 'write' | 'remove'>,
+    private readonly storageArea: Pick<typeof platform.storage, "read" | "write" | "remove">,
     private readonly defaults: T,
   ) {}
 
@@ -45,6 +45,6 @@ export const localStorage = new Storage<LocalStorage>(platform.storage, {
 });
 
 export async function setSettings(newSettings: Partial<LocalSettings>): Promise<void> {
-  const currentSettings = await localStorage.get('settings');
-  await localStorage.set('settings', { ...currentSettings, ...newSettings });
+  const currentSettings = await localStorage.get("settings");
+  await localStorage.set("settings", { ...currentSettings, ...newSettings });
 }

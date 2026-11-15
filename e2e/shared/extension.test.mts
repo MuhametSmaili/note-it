@@ -1,32 +1,32 @@
-import { createServer } from 'node:http';
-import { once } from 'node:events';
-import { readFile, readdir, rm } from 'node:fs/promises';
-import { createRequire } from 'node:module';
-import path from 'node:path';
-import { getDocument, OPS } from 'pdfjs-dist/legacy/build/pdf.mjs';
-import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, onTestFinished } from 'vitest';
-import { richNote } from '../../test/fixtures/rich-note';
-import { launchChromiumDriver } from '../drivers/chromium.mts';
-import { launchFirefoxDriver } from '../drivers/firefox.mts';
-import type { ExtensionDriver } from '../drivers/driver.mts';
-import { installNotesStorage } from '../fixtures/notes.mts';
+import { createServer } from "node:http";
+import { once } from "node:events";
+import { readFile, readdir, rm } from "node:fs/promises";
+import { createRequire } from "node:module";
+import path from "node:path";
+import { getDocument, OPS } from "pdfjs-dist/legacy/build/pdf.mjs";
+import { afterAll, afterEach, beforeAll, beforeEach, describe, expect, it, onTestFinished } from "vitest";
+import { richNote } from "../../test/fixtures/rich-note";
+import { launchChromiumDriver } from "../drivers/chromium.mts";
+import { launchFirefoxDriver } from "../drivers/firefox.mts";
+import type { ExtensionDriver } from "../drivers/driver.mts";
+import { installNotesStorage } from "../fixtures/notes.mts";
 
 const content = (text: string) => ({
-  type: 'doc',
-  content: [{ type: 'paragraph', content: [{ type: 'text', text }] }],
+  type: "doc",
+  content: [{ type: "paragraph", content: [{ type: "text", text }] }],
 });
 
 describe.each([
-  { name: 'Chrome', launch: launchChromiumDriver },
-  { name: 'Firefox', launch: launchFirefoxDriver },
-])('$name', ({ launch }) => {
+  { name: "Chrome", launch: launchChromiumDriver },
+  { name: "Firefox", launch: launchFirefoxDriver },
+])("$name", ({ launch }) => {
   let browser: ExtensionDriver;
   let control: string;
   let page: string;
   let siteUrl: string;
   const server = createServer((_request, response) => {
-    response.writeHead(200, { 'Content-Type': 'text/html' });
-    response.end('<!doctype html><html><body><h1>NOTE IT CAPTURE TEST</h1></body></html>');
+    response.writeHead(200, { "Content-Type": "text/html" });
+    response.end("<!doctype html><html><body><h1>NOTE IT CAPTURE TEST</h1></body></html>");
   });
 
   const waitFor = async (context: string, expression: string) => {
@@ -52,7 +52,7 @@ describe.each([
     await browser.evaluate(control, `await extension.storage.local.set(${JSON.stringify(values)});`);
     await browser.navigate(page, `${browser.origin}/popup.html`);
     await browser.activate(page);
-    await waitFor(page, 'document.querySelector(\'[contenteditable="true"]\')');
+    await waitFor(page, "document.querySelector('[contenteditable=\"true\"]')");
   };
   const openExtraPage = async (url: string) => {
     const other = await browser.page(url);
@@ -62,9 +62,9 @@ describe.each([
   const openStaleEditor = async () => {
     await openEditor();
     const other = await openExtraPage(`${browser.origin}/popup.html`);
-    await waitFor(other, 'document.querySelector(\'[contenteditable="true"]\')');
-    await enterText(page, 'First view');
-    await waitForDraft('First view');
+    await waitFor(other, "document.querySelector('[contenteditable=\"true\"]')");
+    await enterText(page, "First view");
+    await waitForDraft("First view");
     return other;
   };
   const readDraft = () =>
@@ -100,7 +100,7 @@ describe.each([
       return canvas.toDataURL('image/png');
     `,
     );
-    if (typeof image !== 'string') throw new Error('Could not create the image fixture.');
+    if (typeof image !== "string") throw new Error("Could not create the image fixture.");
     return image;
   };
   const openScreenshot = async () => {
@@ -121,19 +121,19 @@ describe.each([
   };
 
   beforeAll(async () => {
-    server.listen(0, '127.0.0.1');
-    await once(server, 'listening');
+    server.listen(0, "127.0.0.1");
+    await once(server, "listening");
     const address = server.address();
-    if (!address || typeof address === 'string') throw new Error('Missing test server address.');
+    if (!address || typeof address === "string") throw new Error("Missing test server address.");
     siteUrl = `http://127.0.0.1:${address.port}/`;
     browser = await launch();
     const require = createRequire(import.meta.url);
     await browser.interceptLanguage(
-      await readFile(require.resolve('@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz')),
+      await readFile(require.resolve("@tesseract.js-data/eng/4.0.0_best_int/eng.traineddata.gz")),
     );
     control = await browser.page(`${browser.origin}/frame-content.html`);
     await browser.evaluate(control, `(${installNotesStorage.toString()})();`);
-    page = await browser.page('about:blank');
+    page = await browser.page("about:blank");
   });
 
   afterAll(async () => {
@@ -142,7 +142,7 @@ describe.each([
   });
 
   beforeEach(async () => {
-    await browser.navigate(page, 'about:blank');
+    await browser.navigate(page, "about:blank");
     await Promise.all((await readdir(browser.downloads)).map((file) => rm(path.join(browser.downloads, file))));
     await browser.evaluate(
       control,
@@ -155,21 +155,21 @@ describe.each([
   });
 
   afterEach(() => {
-    if (browser.failures.length) throw new AggregateError(browser.failures, 'Browser harness failed.');
+    if (browser.failures.length) throw new AggregateError(browser.failures, "Browser harness failed.");
   });
 
-  it('saves and reopens a rich-text note', async () => {
+  it("saves and reopens a rich-text note", async () => {
     await openEditor({ currentNote: richNote, notes: [richNote] });
     await waitFor(page, 'document.querySelector(\'[contenteditable="true"] h2\')?.textContent === "Legacy heading"');
 
     await click(page, '[aria-label="Save note"]');
-    await waitFor(page, 'document.querySelector(\'[aria-label="select-note"]\')');
+    await waitFor(page, "document.querySelector('[aria-label=\"select-note\"]')");
     await click(page, '[aria-label="select-note"]');
 
     await waitFor(page, 'document.querySelector(\'[contenteditable="true"] h2\')?.textContent === "Legacy heading"');
     expect(
-      await browser.evaluate(page, 'return document.querySelector(\'[contenteditable="true"] u\').textContent;'),
-    ).toBe('Styled text');
+      await browser.evaluate(page, "return document.querySelector('[contenteditable=\"true\"] u').textContent;"),
+    ).toBe("Styled text");
     const saved = await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");');
     expect(saved).toMatchObject({
       schemaVersion: 1,
@@ -177,10 +177,10 @@ describe.each([
     });
   });
 
-  it('migrates a version-one collection and its newer draft without changing the source keys', async () => {
+  it("migrates a version-one collection and its newer draft without changing the source keys", async () => {
     const note = { ...richNote, id: String(richNote.id), revision: 0, createdAt: null, updatedAt: null };
     const draft = {
-      id: 'migrated-draft',
+      id: "migrated-draft",
       revision: 0,
       noteId: note.id,
       baseRevision: 0,
@@ -188,7 +188,7 @@ describe.each([
     };
     const collection = { schemaVersion: 1, revision: 0, notes: [note], draft };
     const checkpoint = { schemaVersion: 1, revision: 3, draft: { ...draft, revision: 3 } };
-    const source = { 'noteIt.notes': collection, 'noteIt.draft': checkpoint };
+    const source = { "noteIt.notes": collection, "noteIt.draft": checkpoint };
 
     await openEditor(source);
 
@@ -203,47 +203,47 @@ describe.each([
     ).toEqual(source);
   });
 
-  it('applies only the unacknowledged tail of a recovered coalesced edit', async () => {
+  it("applies only the unacknowledged tail of a recovered coalesced edit", async () => {
     await openEditor();
     const draftId = await browser.evaluate(control, 'return (await noteItTestStorage.read("noteIt.draft")).draft.id;');
-    if (typeof draftId !== 'string') throw new Error('Missing draft ID.');
-    await browser.navigate(page, 'about:blank');
+    if (typeof draftId !== "string") throw new Error("Missing draft ID.");
+    await browser.navigate(page, "about:blank");
     const edit = {
       sequence: 1,
-      session: 'recovered-session',
+      session: "recovered-session",
       ids: [1],
       request: {
         id: 1,
         target: { id: draftId, revision: 0 },
-        operation: 'update',
-        title: '',
-        content: content('First snapshot'),
+        operation: "update",
+        title: "",
+        content: content("First snapshot"),
       },
     };
     await browser.evaluate(control, `await noteItTestStorage.restorePending(${JSON.stringify([edit])});`);
     await openEditor();
-    await waitForDraft('First snapshot');
-    await browser.navigate(page, 'about:blank');
-    const newer = { ...edit, ids: [1, 2], request: { ...edit.request, id: 2, content: content('Latest snapshot') } };
+    await waitForDraft("First snapshot");
+    await browser.navigate(page, "about:blank");
+    const newer = { ...edit, ids: [1, 2], request: { ...edit.request, id: 2, content: content("Latest snapshot") } };
 
     await browser.evaluate(control, `await noteItTestStorage.restorePending(${JSON.stringify([newer])});`);
     await openEditor();
-    await waitForDraft('Latest snapshot');
+    await waitForDraft("Latest snapshot");
 
     expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.draft");')).toMatchObject({
       revision: 2,
       draft: { id: draftId, revision: 2 },
     });
-    expect(await browser.evaluate(control, 'return noteItTestStorage.pending();')).toEqual([]);
+    expect(await browser.evaluate(control, "return noteItTestStorage.pending();")).toEqual([]);
     expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");')).toMatchObject({
       notes: [],
     });
   });
 
   it.each([
-    { kind: 'first draft', values: {} },
-    { kind: 'saved-note draft', values: { currentNote: richNote, notes: [richNote] } },
-  ])('persists the latest queued $kind after its editor closes', async ({ values }) => {
+    { kind: "first draft", values: {} },
+    { kind: "saved-note draft", values: { currentNote: richNote, notes: [richNote] } },
+  ])("persists the latest queued $kind after its editor closes", async ({ values }) => {
     await openEditor(values);
     const initialCollection = await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");');
     onTestFinished(releaseStateTransaction);
@@ -254,41 +254,41 @@ describe.each([
     `,
     );
 
-    await enterText(page, 'Intermediate edit');
-    await enterText(page, 'Queued edit');
+    await enterText(page, "Intermediate edit");
+    await enterText(page, "Queued edit");
     await waitFor(control, 'JSON.stringify(await noteItTestStorage.pending()).includes("Queued edit")');
     await browser.closePage(page);
-    page = await browser.page('about:blank');
+    page = await browser.page("about:blank");
     await releaseStateTransaction();
     await browser.navigate(page, `${browser.origin}/popup.html`);
-    await waitFor(page, 'document.querySelector(\'[contenteditable="true"]\')');
+    await waitFor(page, "document.querySelector('[contenteditable=\"true\"]')");
 
-    await waitForDraft('Queued edit');
+    await waitForDraft("Queued edit");
     expect(
-      await browser.evaluate(page, 'return document.querySelector(\'[contenteditable="true"]\').textContent;'),
-    ).toBe('Queued edit');
+      await browser.evaluate(page, "return document.querySelector('[contenteditable=\"true\"]').textContent;"),
+    ).toBe("Queued edit");
     expect(await browser.evaluate(control, 'return noteItTestStorage.read("noteIt.notes");')).toEqual(
       initialCollection,
     );
   });
 
-  it('rejects a conflicting edit without replacing local text or the saved draft', async () => {
+  it("rejects a conflicting edit without replacing local text or the saved draft", async () => {
     const other = await openStaleEditor();
     const savedDraft = await readDraft();
 
-    await enterText(other, 'Second view');
+    await enterText(other, "Second view");
 
     await waitFor(other, 'document.querySelector(\'[role="alert"]\')?.textContent.includes("changed in another view")');
     expect(
-      await browser.evaluate(other, 'return document.querySelector(\'[contenteditable="true"]\').textContent;'),
-    ).toBe('Second view');
+      await browser.evaluate(other, "return document.querySelector('[contenteditable=\"true\"]').textContent;"),
+    ).toBe("Second view");
     expect(await readDraft()).toEqual(savedDraft);
   });
 
-  it('saves a recovery copy without replacing the other view’s draft', async () => {
+  it("saves a recovery copy without replacing the other view’s draft", async () => {
     const other = await openStaleEditor();
     const savedDraft = await readDraft();
-    await enterText(other, 'Second view');
+    await enterText(other, "Second view");
     await waitFor(other, 'document.querySelector(\'[role="alert"]\')?.textContent.includes("changed in another view")');
 
     await browser.evaluate(
@@ -307,11 +307,11 @@ describe.each([
     );
     expect(saved).toMatchObject({
       draft: { noteContent: savedDraft },
-      notes: [{ title: 'Second view', noteContent: { content: [{ content: [{ text: 'Second view' }] }] } }],
+      notes: [{ title: "Second view", noteContent: { content: [{ content: [{ text: "Second view" }] }] } }],
     });
   });
 
-  it('captures a page through the background and opens the styled crop preview iframe', async () => {
+  it("captures a page through the background and opens the styled crop preview iframe", async () => {
     const site = await openExtraPage(siteUrl);
     await browser.activate(site);
 
@@ -323,11 +323,11 @@ describe.each([
       `,
     );
     expect(response).toEqual({ ok: true });
-    await waitFor(site, 'document.querySelector(\'img[alt="frozen screen to take screenshot"]\')');
+    await waitFor(site, "document.querySelector('img[alt=\"frozen screen to take screenshot\"]')");
     for (const [type, x, y] of [
-      ['mousedown', 10, 10],
-      ['mousemove', 350, 150],
-      ['mouseup', 350, 150],
+      ["mousedown", 10, 10],
+      ["mousemove", 350, 150],
+      ["mouseup", 350, 150],
     ]) {
       await browser.evaluate(
         site,
@@ -350,44 +350,44 @@ describe.each([
         width: document.querySelector('img').naturalWidth / devicePixelRatio
       };`,
       ),
-    ).toEqual({ storage: 'function', headingSize: '20px', width: 340 });
+    ).toEqual({ storage: "function", headingSize: "20px", width: 340 });
   });
 
-  it('recognizes screenshot text and writes it to the clipboard', async () => {
+  it("recognizes screenshot text and writes it to the clipboard", async () => {
     await openScreenshot();
 
     await click(page, '[title="Convert to text "]');
 
     await waitFor(page, 'document.body.textContent.includes("Text copied")');
-    expect(await browser.evaluate(page, 'return navigator.clipboard.readText();')).toMatch(/NOTE IT OCR TEST/);
+    expect(await browser.evaluate(page, "return navigator.clipboard.readText();")).toMatch(/NOTE IT OCR TEST/);
   });
 
-  it('copies the screenshot as PNG clipboard data', async () => {
+  it("copies the screenshot as PNG clipboard data", async () => {
     await openScreenshot();
 
     await click(page, '[title="Copy Image "]');
 
     await waitFor(page, 'document.body.textContent.includes("Image copied")');
     expect(
-      await browser.evaluate(page, 'return (await navigator.clipboard.read()).flatMap(item => item.types);'),
-    ).toContain('image/png');
+      await browser.evaluate(page, "return (await navigator.clipboard.read()).flatMap(item => item.types);"),
+    ).toContain("image/png");
   });
 
-  it('downloads the screenshot as a PNG file', async () => {
+  it("downloads the screenshot as a PNG file", async () => {
     await openScreenshot();
 
     await click(page, '[title="Download image"]');
 
-    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain('cropped-image.png');
-    const png = await readFile(path.join(browser.downloads, 'cropped-image.png'));
-    expect(png.subarray(1, 4).toString()).toBe('PNG');
+    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain("cropped-image.png");
+    const png = await readFile(path.join(browser.downloads, "cropped-image.png"));
+    expect(png.subarray(1, 4).toString()).toBe("PNG");
   });
 
-  it('recognizes a clipboard image and replaces it with the extracted text', async () => {
+  it("recognizes a clipboard image and replaces it with the extracted text", async () => {
     const image = await createImage();
     await openEditor();
-    await browser.evaluate(page, 'document.querySelectorAll(\'[aria-label="tab-button"]\')[2].click();');
-    await waitFor(page, 'document.querySelector(\'[name="paste-from-clipboard"]\')?.disabled === false');
+    await browser.evaluate(page, "document.querySelectorAll('[aria-label=\"tab-button\"]')[2].click();");
+    await waitFor(page, "document.querySelector('[name=\"paste-from-clipboard\"]')?.disabled === false");
     await browser.evaluate(
       page,
       `
@@ -399,35 +399,35 @@ describe.each([
     await click(page, '[name="paste-from-clipboard"]');
 
     await expect
-      .poll(() => browser.evaluate(page, 'return navigator.clipboard.readText();'), { timeout: 20_000 })
+      .poll(() => browser.evaluate(page, "return navigator.clipboard.readText();"), { timeout: 20_000 })
       .toMatch(/NOTE IT OCR TEST/);
   });
 
-  it('downloads a text PDF from the shared editor', async () => {
+  it("downloads a text PDF from the shared editor", async () => {
     await openEditor();
-    await enterText(page, 'Shared PDF export');
+    await enterText(page, "Shared PDF export");
 
     await click(page, '[aria-label="Download note as PDF"]');
 
-    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain('note-it.pdf');
-    const document = await readFile(path.join(browser.downloads, 'note-it.pdf'));
-    expect(document.subarray(0, 5).toString()).toBe('%PDF-');
+    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain("note-it.pdf");
+    const document = await readFile(path.join(browser.downloads, "note-it.pdf"));
+    expect(document.subarray(0, 5).toString()).toBe("%PDF-");
   });
 
-  it('downloads a PDF with a PNG image under the extension CSP', async () => {
+  it("downloads a PDF with a PNG image under the extension CSP", async () => {
     await openEditor({ currentNote: richNote });
-    await waitFor(page, 'document.querySelector(\'[contenteditable="true"] h2\')');
+    await waitFor(page, "document.querySelector('[contenteditable=\"true\"] h2')");
 
     await click(page, '[aria-label="Download note as PDF"]');
 
-    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain('note-it.pdf');
-    const document = await readFile(path.join(browser.downloads, 'note-it.pdf'));
+    await expect.poll(() => readdir(browser.downloads), { timeout: 20_000 }).toContain("note-it.pdf");
+    const document = await readFile(path.join(browser.downloads, "note-it.pdf"));
     const loading = getDocument({ data: new Uint8Array(document) });
     try {
       const pdf = await loading.promise;
       const firstPage = await pdf.getPage(1);
       const operations = await firstPage.getOperatorList();
-      expect(document.subarray(0, 5).toString()).toBe('%PDF-');
+      expect(document.subarray(0, 5).toString()).toBe("%PDF-");
       expect(operations.fnArray).toContain(OPS.paintImageXObject);
     } finally {
       await loading.destroy();

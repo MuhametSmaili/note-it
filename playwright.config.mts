@@ -1,12 +1,12 @@
-import { defineConfig } from '@playwright/test';
+import { defineConfig } from "@playwright/test";
 
 export default defineConfig({
-  testDir: './e2e',
-  testMatch: '**/*.test.mts',
-  testIgnore: '**/shared/**',
-  outputDir: '.playwright',
+  testDir: "./e2e",
+  testMatch: "**/*.test.mts",
+  testIgnore: "**/shared/**",
+  outputDir: ".playwright",
   workers: 1,
   use: {
-    trace: 'retain-on-failure',
+    trace: "retain-on-failure",
   },
 });

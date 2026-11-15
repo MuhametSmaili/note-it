@@ -1,10 +1,10 @@
-import { notes } from '@app/notes';
-import type { Note } from '@modules/notes';
-import { useNotes } from '@app/use-notes.hook';
-import { useTab } from '@app/providers/active-tab.provider';
-import DeleteIcon from '@icons/delete.svg';
-import StarIcon from '@icons/star2.svg';
-import clsx from 'clsx';
+import { notes } from "@app/notes";
+import type { Note } from "@modules/notes";
+import { useNotes } from "@app/use-notes.hook";
+import { useTab } from "@app/providers/active-tab.provider";
+import DeleteIcon from "@icons/delete.svg";
+import StarIcon from "@icons/star2.svg";
+import clsx from "clsx";
 
 type NoteHeaderProps = {
   note: Note;
@@ -19,7 +19,7 @@ const NoteHeader = ({ note, onError }: NoteHeaderProps) => {
     if (!state) return;
     notes
       .openNote(note.id, state.draft)
-      .then(() => dispatch({ type: 'TAB_HANDLER', payload: 0 }))
+      .then(() => dispatch({ type: "TAB_HANDLER", payload: 0 }))
       .catch(onError);
   };
 
@@ -52,17 +52,17 @@ export function SingleNoteFooter({ note, onDeleteNote, onError }: SingleNoteFoot
     <div className="flex items-center text-primary border-t border-t-primary items justify-between bg-light p-2">
       <div>
         {note.createdAt === null
-          ? note.created || note.updated || 'no-date'
+          ? note.created || note.updated || "no-date"
           : new Date(note.createdAt).toLocaleDateString()}
       </div>
       <div className="flex">
         <button
           type="button"
           aria-label="make-note-favorite"
-          className={clsx('hover:cursor-pointer hover:scale-90 hover:rotate-12')}
+          className={clsx("hover:cursor-pointer hover:scale-90 hover:rotate-12")}
           onClick={onFavoriteToggleHandler}
         >
-          <StarIcon fill={note.isFavorite ? '#19A1E5' : 'transparent'} />
+          <StarIcon fill={note.isFavorite ? "#19A1E5" : "transparent"} />
         </button>
         <button
           type="button"
