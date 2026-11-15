@@ -1,11 +1,11 @@
-import Tab from './tab';
-import clsx from 'clsx';
-import Feather from '@icons/feather';
-import FolderIcon from '@icons/folder';
-import Logo from '@icons/logo.svg';
-import OcrIcon from '@icons/ocr-icon';
-import SettingsIcon from '@icons/settings-icon';
-import { useTab } from '../providers/active-tab.provider';
+import Tab from "./tab";
+import clsx from "clsx";
+import Feather from "@icons/feather";
+import FolderIcon from "@icons/folder";
+import Logo from "@icons/logo.svg";
+import OcrIcon from "@icons/ocr-icon";
+import SettingsIcon from "@icons/settings-icon";
+import { useTab } from "../providers/active-tab.provider";
 
 const Sidebar = () => {
   const {
@@ -14,16 +14,16 @@ const Sidebar = () => {
   } = useTab();
 
   const onTabClick = (tab: number) => {
-    dispatch({ type: 'TAB_HANDLER', payload: tab });
+    dispatch({ type: "TAB_HANDLER", payload: tab });
   };
 
   return (
     <div
       className={clsx(
-        'pt-2 h-screen min-h-full overflow-hidden',
-        'flex flex-col justify-start items-center',
-        'bg-acent text-primary',
-        'w-[70px]',
+        "pt-2 h-screen min-h-full overflow-hidden",
+        "flex flex-col justify-start items-center",
+        "bg-acent text-primary",
+        "w-[70px]",
       )}
     >
       <div className="mb-2">

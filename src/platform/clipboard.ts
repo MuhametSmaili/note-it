@@ -2,9 +2,9 @@
 export async function readClipboardImage(): Promise<Blob> {
   const items = await navigator.clipboard.read();
   for (const item of items) {
-    if (item.types.includes('image/png')) return item.getType('image/png');
+    if (item.types.includes("image/png")) return item.getType("image/png");
   }
-  throw new Error('The clipboard does not contain a PNG image.');
+  throw new Error("The clipboard does not contain a PNG image.");
 }
 
 /** Copy PNG image data from an extension document. */

@@ -1,41 +1,42 @@
-import { readNoteContent } from '../../rich-text';
-import type { Draft, Envelope, Note } from './model';
+import { readNoteContent } from "../../rich-text";
+import type { Draft, DraftRecord, DraftTarget, Envelope, Note } from "./model";
 
-export const storageKey = 'noteIt.notes';
+export const storageKey = "noteIt.notes";
+export const draftStorageKey = "noteIt.draft";
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === 'object' && value !== null && !Array.isArray(value);
+  typeof value === "object" && value !== null && !Array.isArray(value);
 
 const record = (value: unknown): Record<string, unknown> => {
-  if (!isRecord(value)) throw new Error('Invalid note data.');
+  if (!isRecord(value)) throw new Error("Invalid note data.");
   return value;
 };
 
 const string = (value: unknown): string => {
-  if (typeof value !== 'string') throw new Error('Invalid text in note data.');
+  if (typeof value !== "string") throw new Error("Invalid text in note data.");
   return value;
 };
 
 const id = (value: unknown): string => {
   const result = string(value);
-  if (result.length === 0) throw new Error('A note ID is missing.');
+  if (result.length === 0) throw new Error("A note ID is missing.");
   return result;
 };
 
 const revision = (value: unknown): number => {
-  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0) throw new Error('Invalid note revision.');
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0) throw new Error("Invalid note revision.");
   return value;
 };
 
 const timestamp = (value: unknown): number | null => {
   if (value === null) return null;
-  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0 || value > 8.64e15)
-    throw new Error('Invalid note timestamp.');
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0 || value > 8.64e15)
+    throw new Error("Invalid note timestamp.");
   return value;
 };
 
 const favorite = (value: unknown): boolean => {
-  if (typeof value !== 'boolean') throw new Error('Invalid favorite value.');
+  if (typeof value !== "boolean") throw new Error("Invalid favorite value.");
   return value;
 };
 
@@ -60,6 +61,7 @@ const readNote = (value: unknown): Note => {
 
 const readDraft = (value: unknown): Draft => {
   const draft = record(value);
+  if ((draft.noteId === null) !== (draft.baseRevision === null)) throw new Error("Invalid draft reference.");
   return {
     id: id(draft.id),
     revision: revision(draft.revision),
@@ -69,19 +71,56 @@ const readDraft = (value: unknown): Draft => {
   };
 };
 
+export const readDraftTarget = (value: unknown): DraftTarget => {
+  const target = record(value);
+  return { id: id(target.id), revision: revision(target.revision) };
+};
+
+export function readDraftRecord(value: unknown): DraftRecord {
+  const stored = record(value);
+  if (stored.schemaVersion !== 1) throw new Error("This draft data version is not supported. Stored data was kept.");
+  return {
+    schemaVersion: 1,
+    revision: revision(stored.revision),
+    draft: readDraft(stored.draft),
+    ...(stored.collectionRevision === undefined ? {} : { collectionRevision: revision(stored.collectionRevision) }),
+  };
+}
+
+export const draftRecord = (state: Envelope): DraftRecord => ({
+  schemaVersion: 1,
+  revision: state.revision,
+  draft: state.draft,
+  collectionRevision: state.revision,
+});
+
+export function mergeDraft(state: Envelope, current: DraftRecord): Envelope {
+  if (current.revision < state.revision) throw new Error("The draft checkpoint is out of date.");
+  if (current.collectionRevision !== undefined && current.collectionRevision !== state.revision)
+    throw new Error("The collection checkpoint is out of date.");
+  if (current.draft.noteId !== null && !state.notes.some((note) => note.id === current.draft.noteId))
+    throw new Error("The draft refers to a missing note.");
+  return { ...state, revision: current.revision, draft: current.draft };
+}
+
 export function readEnvelope(value: unknown): Envelope {
   const stored = record(value);
-  if (stored.schemaVersion !== 1) throw new Error('This note data version is not supported. Stored data was kept.');
-  if (!Array.isArray(stored.notes)) throw new Error('Invalid notes collection.');
+  if (stored.schemaVersion !== 1) throw new Error("This note data version is not supported. Stored data was kept.");
+  if (!Array.isArray(stored.notes)) throw new Error("Invalid notes collection.");
   const notes = stored.notes.map(readNote);
-  if (new Set(notes.map((note) => note.id)).size !== notes.length) throw new Error('Duplicate note IDs.');
+  if (new Set(notes.map((note) => note.id)).size !== notes.length) throw new Error("Duplicate note IDs.");
   const draft = readDraft(stored.draft);
   if (
     (draft.noteId === null) !== (draft.baseRevision === null) ||
     (draft.noteId !== null && !notes.some((note) => note.id === draft.noteId))
   )
-    throw new Error('The draft refers to a missing note.');
-  return { schemaVersion: 1, revision: revision(stored.revision), notes, draft };
+    throw new Error("The draft refers to a missing note.");
+  return {
+    schemaVersion: 1,
+    revision: revision(stored.revision),
+    notes,
+    draft,
+  };
 }
 
 export const emptyDraft = (createId: () => string): Draft => ({
@@ -89,19 +128,19 @@ export const emptyDraft = (createId: () => string): Draft => ({
   revision: 0,
   noteId: null,
   baseRevision: null,
-  noteContent: { type: 'doc', content: [{ type: 'paragraph' }] },
+  noteContent: { type: "doc", content: [{ type: "paragraph" }] },
 });
 
 const legacyId = (value: unknown, createId: () => string): string => {
   if (value === undefined || value === null) return createId();
-  if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < 0)
-    throw new Error('Invalid legacy note ID.');
+  if (typeof value !== "number" || !Number.isSafeInteger(value) || value < 0)
+    throw new Error("Invalid legacy note ID.");
   return String(value);
 };
 
 export function migrateLegacy(stored: Record<string, unknown>, createId: () => string): Envelope {
   const values = stored.notes ?? [];
-  if (!Array.isArray(values)) throw new Error('Invalid legacy notes collection. Stored data was kept.');
+  if (!Array.isArray(values)) throw new Error("Invalid legacy notes collection. Stored data was kept.");
   const notes = values.map((value: unknown): Note => {
     const note = record(value);
     return {

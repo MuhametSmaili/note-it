@@ -1,11 +1,11 @@
-import { render, screen } from '@testing-library/react';
-import { Spinner } from '../spinner';
+import { render, screen } from "@testing-library/react";
+import { Spinner } from "../spinner";
 
-describe('spinner component', () => {
-  it('should render with loading text', async () => {
+describe("spinner component", () => {
+  it("should render with loading text", async () => {
     render(<Spinner />);
 
-    const result = screen.queryByText('Loading');
+    const result = screen.queryByText("Loading");
 
     expect(result).toBeInTheDocument();
   });

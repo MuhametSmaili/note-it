@@ -1,22 +1,22 @@
-import { useState } from 'react';
-import type { Editor } from '@tiptap/react';
-import { useEditorState } from '@tiptap/react';
-import clsx from 'clsx';
-import { SelectFieldSpinner } from '@components';
-import H from '@icons/h.svg';
+import { useState } from "react";
+import type { Editor } from "@tiptap/react";
+import { useEditorState } from "@tiptap/react";
+import clsx from "clsx";
+import { SelectFieldSpinner } from "@components";
+import H from "@icons/h.svg";
 
 type Level = 1 | 2 | 3;
 export const Heading = ({ editor }: { editor: Editor }) => {
   const [value, setValue] = useState<Level>(1);
   const active = useEditorState({
     editor,
-    selector: ({ editor: current }) => current.isActive('heading', { level: value }),
+    selector: ({ editor: current }) => current.isActive("heading", { level: value }),
   });
   return (
     <div
       className={clsx(
-        'flex items-center rounded-sm px-1 hover:cursor-pointer hover:bg-gray-true',
-        active ? 'bg-gray-true' : '',
+        "flex items-center rounded-sm px-1 hover:cursor-pointer hover:bg-gray-true",
+        active ? "bg-gray-true" : "",
       )}
     >
       <button
@@ -45,14 +45,14 @@ export const Heading = ({ editor }: { editor: Editor }) => {
 const headingStyle = [
   {
     value: 1,
-    label: '',
+    label: "",
   },
   {
     value: 2,
-    label: '',
+    label: "",
   },
   {
     value: 3,
-    label: '',
+    label: "",
   },
 ];

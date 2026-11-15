@@ -1,6 +1,6 @@
-import type { InputHTMLAttributes, JSX } from 'react';
+import type { InputHTMLAttributes, JSX } from "react";
 
-import clsx from 'clsx';
+import clsx from "clsx";
 
 type InputProps = {
   className?: string;
@@ -13,10 +13,10 @@ export const Input = (props: InputProps): JSX.Element => {
     <input
       defaultValue={value}
       className={clsx(
-        'bg-light border border-primary pl-2 h-[30px] w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1',
-        'focus:outline-primary',
-        'focus:invalid:outline-red',
-        'invalid:border-red',
+        "bg-light border border-primary pl-2 h-[30px] w-[100px] text-center rounded-sm flex items-center justify-center overflow-x-auto mr-1",
+        "focus:outline-primary",
+        "focus:invalid:outline-red",
+        "invalid:border-red",
         className,
       )}
       {...rest}

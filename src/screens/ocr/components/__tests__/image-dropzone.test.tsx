@@ -1,32 +1,32 @@
-import { act, cleanup, fireEvent, render, screen } from '@testing-library/react';
-import { ImageDropzone } from '../image-dropzone';
+import { act, cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { ImageDropzone } from "../image-dropzone";
 
 function clipboardFiles(files: File[]) {
   return {
     files,
     items: files.map((file) => ({
-      kind: 'file',
+      kind: "file",
       type: file.type,
       getAsFile: () => file,
     })),
-    types: ['Files'],
+    types: ["Files"],
   };
 }
 
-it.each(['image/png', 'image/jpeg'])('accepts a selected %s image', async (type) => {
+it.each(["image/png", "image/jpeg"])("accepts a selected %s image", async (type) => {
   const onDrop = vi.fn<(files: File[]) => void>();
-  const file = new File(['image'], type === 'image/png' ? 'note.png' : 'note.jpg', { type });
+  const file = new File(["image"], type === "image/png" ? "note.png" : "note.jpg", { type });
   render(<ImageDropzone droppedImage={undefined} clearImage={vi.fn<() => void>()} onDrop={onDrop} />);
 
   await act(async () => {
-    fireEvent.change(screen.getByLabelText('Choose an image'), { target: { files: [file] } });
+    fireEvent.change(screen.getByLabelText("Choose an image"), { target: { files: [file] } });
   });
 
   expect(onDrop).toHaveBeenCalledExactlyOnceWith([file]);
 });
 
-it('shows a drop target while an image is dragged over it', async () => {
-  const file = new File(['image'], 'note.png', { type: 'image/png' });
+it("shows a drop target while an image is dragged over it", async () => {
+  const file = new File(["image"], "note.png", { type: "image/png" });
   render(
     <ImageDropzone
       droppedImage={undefined}
@@ -36,76 +36,76 @@ it('shows a drop target while an image is dragged over it', async () => {
   );
 
   await act(async () => {
-    fireEvent.dragEnter(screen.getByRole('group', { name: 'Image upload' }), { dataTransfer: clipboardFiles([file]) });
+    fireEvent.dragEnter(screen.getByRole("group", { name: "Image upload" }), { dataTransfer: clipboardFiles([file]) });
   });
 
-  expect(screen.getByText('Drop here...')).toBeVisible();
+  expect(screen.getByText("Drop here...")).toBeVisible();
 });
 
-it('accepts one dropped image', async () => {
+it("accepts one dropped image", async () => {
   const onDrop = vi.fn<(files: File[]) => void>();
-  const file = new File(['image'], 'note.png', { type: 'image/png' });
+  const file = new File(["image"], "note.png", { type: "image/png" });
   render(<ImageDropzone droppedImage={undefined} clearImage={vi.fn<() => void>()} onDrop={onDrop} />);
 
   await act(async () => {
-    fireEvent.drop(screen.getByRole('group', { name: 'Image upload' }), { dataTransfer: clipboardFiles([file]) });
+    fireEvent.drop(screen.getByRole("group", { name: "Image upload" }), { dataTransfer: clipboardFiles([file]) });
   });
 
   expect(onDrop).toHaveBeenCalledExactlyOnceWith([file]);
 });
 
 it.each([
-  { name: 'an unsupported file', files: [new File(['text'], 'note.txt', { type: 'text/plain' })] },
+  { name: "an unsupported file", files: [new File(["text"], "note.txt", { type: "text/plain" })] },
   {
-    name: 'multiple images',
+    name: "multiple images",
     files: [
-      new File(['first'], 'first.png', { type: 'image/png' }),
-      new File(['second'], 'second.jpg', { type: 'image/jpeg' }),
+      new File(["first"], "first.png", { type: "image/png" }),
+      new File(["second"], "second.jpg", { type: "image/jpeg" }),
     ],
   },
-])('rejects $name', async ({ files }) => {
+])("rejects $name", async ({ files }) => {
   const onDrop = vi.fn<(files: File[]) => void>();
   render(<ImageDropzone droppedImage={undefined} clearImage={vi.fn<() => void>()} onDrop={onDrop} />);
 
   await act(async () => {
-    fireEvent.drop(screen.getByRole('group', { name: 'Image upload' }), { dataTransfer: clipboardFiles(files) });
+    fireEvent.drop(screen.getByRole("group", { name: "Image upload" }), { dataTransfer: clipboardFiles(files) });
   });
 
   expect(onDrop).not.toHaveBeenCalled();
 });
 
-it('leaves clipboard paste to the existing clipboard controls', async () => {
+it("leaves clipboard paste to the existing clipboard controls", async () => {
   const onDrop = vi.fn<(files: File[]) => void>();
-  const file = new File(['image'], 'note.png', { type: 'image/png' });
+  const file = new File(["image"], "note.png", { type: "image/png" });
   render(<ImageDropzone droppedImage={undefined} clearImage={vi.fn<() => void>()} onDrop={onDrop} />);
 
   await act(async () => {
-    fireEvent.paste(screen.getByRole('group', { name: 'Image upload' }), { clipboardData: clipboardFiles([file]) });
+    fireEvent.paste(screen.getByRole("group", { name: "Image upload" }), { clipboardData: clipboardFiles([file]) });
   });
 
   expect(onDrop).not.toHaveBeenCalled();
 });
 
-it('restricts the native picker to one PNG or JPEG', () => {
+it("restricts the native picker to one PNG or JPEG", () => {
   const onDrop = vi.fn<(files: File[]) => void>();
 
   render(<ImageDropzone droppedImage={undefined} clearImage={vi.fn<() => void>()} onDrop={onDrop} />);
 
-  const input = screen.getByLabelText('Choose an image');
-  expect(input).toHaveAttribute('accept', 'image/png,image/jpeg');
-  expect(input).not.toHaveAttribute('multiple');
+  const input = screen.getByLabelText("Choose an image");
+  expect(input).toHaveAttribute("accept", "image/png,image/jpeg");
+  expect(input).not.toHaveAttribute("multiple");
 });
 
-it('shows the selected image preview', () => {
-  const image = new Blob(['image'], { type: 'image/png' });
-  const createUrl = vi.fn<() => string>().mockReturnValue('blob:preview');
-  vi.stubGlobal('URL', { createObjectURL: createUrl, revokeObjectURL: vi.fn<(url: string) => void>() });
+it("shows the selected image preview", () => {
+  const image = new Blob(["image"], { type: "image/png" });
+  const createUrl = vi.fn<() => string>().mockReturnValue("blob:preview");
+  vi.stubGlobal("URL", { createObjectURL: createUrl, revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     render(
       <ImageDropzone droppedImage={image} clearImage={vi.fn<() => void>()} onDrop={vi.fn<(files: File[]) => void>()} />,
     );
 
-    expect(screen.getByRole('img', { name: 'Uploaded document' })).toHaveAttribute('src', 'blob:preview');
+    expect(screen.getByRole("img", { name: "Uploaded document" })).toHaveAttribute("src", "blob:preview");
     expect(createUrl).toHaveBeenCalledWith(image);
   } finally {
     cleanup();
@@ -113,13 +113,13 @@ it('shows the selected image preview', () => {
   }
 });
 
-it('releases preview URLs when replacing the image and unmounting', () => {
+it("releases preview URLs when replacing the image and unmounting", () => {
   const createUrl = vi
     .fn<(blob: Blob) => string>()
-    .mockReturnValueOnce('blob:first')
-    .mockReturnValueOnce('blob:second');
+    .mockReturnValueOnce("blob:first")
+    .mockReturnValueOnce("blob:second");
   const revokeUrl = vi.fn<(url: string) => void>();
-  vi.stubGlobal('URL', { createObjectURL: createUrl, revokeObjectURL: revokeUrl });
+  vi.stubGlobal("URL", { createObjectURL: createUrl, revokeObjectURL: revokeUrl });
   const clearImage = vi.fn<() => void>();
   const onDrop = vi.fn<(files: File[]) => void>();
   try {
@@ -130,22 +130,22 @@ it('releases preview URLs when replacing the image and unmounting', () => {
     rerender(<ImageDropzone droppedImage={new Blob()} clearImage={clearImage} onDrop={onDrop} />);
     unmount();
 
-    expect(revokeUrl.mock.calls).toEqual([['blob:first'], ['blob:second']]);
+    expect(revokeUrl.mock.calls).toEqual([["blob:first"], ["blob:second"]]);
   } finally {
     cleanup();
     vi.unstubAllGlobals();
   }
 });
 
-it('requests removal of the selected image', () => {
+it("requests removal of the selected image", () => {
   const clearImage = vi.fn<() => void>();
-  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview', revokeObjectURL: vi.fn<(url: string) => void>() });
+  vi.stubGlobal("URL", { createObjectURL: () => "blob:preview", revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     render(
       <ImageDropzone droppedImage={new Blob()} clearImage={clearImage} onDrop={vi.fn<(files: File[]) => void>()} />,
     );
 
-    fireEvent.click(screen.getByRole('button', { name: 'Remove uploaded image' }));
+    fireEvent.click(screen.getByRole("button", { name: "Remove uploaded image" }));
 
     expect(clearImage).toHaveBeenCalledOnce();
   } finally {
@@ -154,17 +154,17 @@ it('requests removal of the selected image', () => {
   }
 });
 
-it('accepts the same file after its preview is cleared', async () => {
-  const file = new File(['image'], 'note.png', { type: 'image/png' });
+it("accepts the same file after its preview is cleared", async () => {
+  const file = new File(["image"], "note.png", { type: "image/png" });
   const onDrop = vi.fn<(files: File[]) => void>();
   const clearImage = vi.fn<() => void>();
-  vi.stubGlobal('URL', { createObjectURL: () => 'blob:preview', revokeObjectURL: vi.fn<(url: string) => void>() });
+  vi.stubGlobal("URL", { createObjectURL: () => "blob:preview", revokeObjectURL: vi.fn<(url: string) => void>() });
   try {
     const { rerender } = render(<ImageDropzone droppedImage={file} clearImage={clearImage} onDrop={onDrop} />);
     rerender(<ImageDropzone droppedImage={undefined} clearImage={clearImage} onDrop={onDrop} />);
 
     await act(async () => {
-      fireEvent.change(screen.getByLabelText('Choose an image'), { target: { files: [file] } });
+      fireEvent.change(screen.getByLabelText("Choose an image"), { target: { files: [file] } });
     });
 
     expect(onDrop).toHaveBeenCalledExactlyOnceWith([file]);

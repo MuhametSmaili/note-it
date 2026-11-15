@@ -1,6 +1,6 @@
-import type { JSX } from 'react';
-import React from 'react';
-import { Spinner } from '@components';
+import type { JSX } from "react";
+import React from "react";
+import { Spinner } from "@components";
 
 type TabContentProps = {
   isActive: boolean;
@@ -17,7 +17,7 @@ const TabContent = (props: TabContentProps) => {
       }
     >
       {props.isActive && (
-        <div className="relative h-full w-full overflow-y-auto p-2" style={{ minHeight: '550px' }}>
+        <div className="relative h-full w-full overflow-y-auto p-2" style={{ minHeight: "550px" }}>
           {props.children}
         </div>
       )}

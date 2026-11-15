@@ -1,13 +1,13 @@
-import clsx from 'clsx';
+import clsx from "clsx";
 
 const sizes = {
-  sm: 'h-4 w-4',
-  md: 'h-8 w-8',
+  sm: "h-4 w-4",
+  md: "h-8 w-8",
 };
 
 const variants = {
-  light: 'text-white',
-  primary: 'text-blue-prussian',
+  light: "text-white",
+  primary: "text-blue-prussian",
 };
 
 export type SpinnerProps = {
@@ -17,11 +17,11 @@ export type SpinnerProps = {
   hidden?: number;
 };
 
-export const Spinner = ({ size = 'md', variant = 'primary', className = '', hidden = 1 }: SpinnerProps) => {
+export const Spinner = ({ size = "md", variant = "primary", className = "", hidden = 1 }: SpinnerProps) => {
   return (
-    <div className={(!hidden && 'hidden') || ' '}>
+    <div className={(!hidden && "hidden") || " "}>
       <svg
-        className={clsx('animate-spin', sizes[size], variants[variant], className)}
+        className={clsx("animate-spin", sizes[size], variants[variant], className)}
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"

@@ -1,7 +1,7 @@
-import type { LocalStorage } from '@utils/storage';
-import { defaultSettings, localStorage } from '@utils/storage';
-import { useCallback, useSyncExternalStore } from 'react';
-import { platform } from '@platform/extension';
+import type { LocalStorage } from "@utils/storage";
+import { defaultSettings, localStorage } from "@utils/storage";
+import { useCallback, useSyncExternalStore } from "react";
+import { platform } from "@platform/extension";
 
 const cache: LocalStorage = { settings: defaultSettings };
 const listeners = new Map<keyof LocalStorage, Set<() => void>>();
@@ -25,10 +25,10 @@ const subscribeToStorage = (key: keyof LocalStorage, callback: () => void) => {
   listeners.set(key, subscribers);
   let active = true;
   const reload = () => {
-    refresh(key, () => active).catch((error: unknown) => console.error('Cannot load stored value:', error));
+    refresh(key, () => active).catch((error: unknown) => console.error("Cannot load stored value:", error));
   };
   const unsubscribe = platform.storage.subscribe((changes, area) => {
-    if (area === 'local' && key in changes) {
+    if (area === "local" && key in changes) {
       revisions.set(key, (revisions.get(key) ?? 0) + 1);
       reload();
     }
@@ -62,8 +62,8 @@ export function useStorage<K extends keyof LocalStorage>(
 
 export async function preloadSettings(): Promise<void> {
   try {
-    publish('settings', await localStorage.get('settings'));
+    publish("settings", await localStorage.get("settings"));
   } catch (error) {
-    console.error('Cannot load settings:', error);
+    console.error("Cannot load settings:", error);
   }
 }

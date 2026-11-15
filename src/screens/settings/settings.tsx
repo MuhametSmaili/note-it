@@ -1,18 +1,18 @@
-import { useStorage } from '@hooks/use-storage.hook';
-import ColorPalette from '@icons/color-palette.svg';
+import { useStorage } from "@hooks/use-storage.hook";
+import ColorPalette from "@icons/color-palette.svg";
 
 const themes = [
-  { name: 'light', displayName: 'Light' },
-  { name: 'dim', displayName: 'Dim' },
-  { name: 'dark', displayName: 'Dark' },
+  { name: "light", displayName: "Light" },
+  { name: "dim", displayName: "Dim" },
+  { name: "dark", displayName: "Dark" },
 ];
 export function Settings() {
-  const [settings, setSettings] = useStorage('settings');
+  const [settings, setSettings] = useStorage("settings");
 
   const onThemeChange = (event: React.FormEvent<HTMLInputElement>) => {
     const theme = event.currentTarget.value;
-    if (theme !== 'light' && theme !== 'dim' && theme !== 'dark') return;
-    setSettings({ ...settings, theme }).catch((error: unknown) => console.error('Cannot save theme:', error));
+    if (theme !== "light" && theme !== "dim" && theme !== "dark") return;
+    setSettings({ ...settings, theme }).catch((error: unknown) => console.error("Cannot save theme:", error));
   };
 
   return (

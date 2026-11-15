@@ -1,8 +1,8 @@
-import AddCamera from '@icons/add-camera.svg';
-import Upload from '@icons/upload.svg';
-import Close from '@icons/x.svg';
-import { useDropzone } from 'react-dropzone';
-import { useEffect, useRef } from 'react';
+import AddCamera from "@icons/add-camera.svg";
+import Upload from "@icons/upload.svg";
+import Close from "@icons/x.svg";
+import { useDropzone } from "react-dropzone";
+import { useEffect, useRef } from "react";
 
 type ImageDropzoneProps = {
   droppedImage: Blob | undefined;
@@ -22,7 +22,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
     onDrop: (files, rejections) => {
       if (rejections.length === 0) onDrop(files);
     },
-    accept: { 'image/png': [], 'image/jpeg': [] },
+    accept: { "image/png": [], "image/jpeg": [] },
     multiple: false,
     noClick: true,
     noKeyboard: true,
@@ -47,17 +47,17 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
         <div className="flex items-center justify-center border border-primary border-dashed min-h-40 h-2/5">
           <div
             {...getRootProps({
-              role: 'group',
-              'aria-label': 'Image upload',
-              className: 'flex relative bg-center bg-no-repeat bg-contain',
+              role: "group",
+              "aria-label": "Image upload",
+              className: "flex relative bg-center bg-no-repeat bg-contain",
             })}
           >
-            <input {...getInputProps({ 'aria-label': 'Choose an image' })} />
+            <input {...getInputProps({ "aria-label": "Choose an image" })} />
             <div className="flex flex-col items-center justify-items-center">
               <Upload />
               <div className="text-primary text-center text-xl flex items-center w-full">
                 {isDragActive ? (
-                  ' Drop here...'
+                  " Drop here..."
                 ) : (
                   <button type="button" onClick={open} className="flex justify-center items-center">
                     <AddCamera />

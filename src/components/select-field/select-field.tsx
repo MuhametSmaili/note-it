@@ -1,7 +1,7 @@
-import type { SelectHTMLAttributes } from 'react';
-import React, { useState } from 'react';
-import clsx from 'clsx';
-import { SelectFieldSpinner } from './select-field-spinner';
+import type { SelectHTMLAttributes } from "react";
+import React, { useState } from "react";
+import clsx from "clsx";
+import { SelectFieldSpinner } from "./select-field-spinner";
 
 export type SelectValue = string | number | readonly string[];
 
@@ -18,18 +18,18 @@ type SelectFieldProps = {
 
 export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>(
   ({ className, options, ...props }, ref) => {
-    const [value, setValue] = useState(props.value ?? props.defaultValue ?? options[0]?.value ?? '');
+    const [value, setValue] = useState(props.value ?? props.defaultValue ?? options[0]?.value ?? "");
     return (
       <div className="flex justify-center items-center hover:cursor-pointer">
         <select
           value={value}
           ref={ref}
           className={clsx(
-            'block w-full px-5 py-1 h-full text-md rounded-sm',
-            'border border-primary ',
-            'text-secondary bg-light text-center',
-            'disabled:opacity-70 disabled:cursor-not-allowed',
-            'appearance-none focus:outline-hidden',
+            "block w-full px-5 py-1 h-full text-md rounded-sm",
+            "border border-primary ",
+            "text-secondary bg-light text-center",
+            "disabled:opacity-70 disabled:cursor-not-allowed",
+            "appearance-none focus:outline-hidden",
             className,
           )}
           {...props}
@@ -56,4 +56,4 @@ export const SelectField = React.forwardRef<HTMLSelectElement, SelectFieldProps>
     );
   },
 );
-SelectField.displayName = 'Select-field';
+SelectField.displayName = "Select-field";

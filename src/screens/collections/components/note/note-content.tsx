@@ -1,9 +1,9 @@
-import { useState } from 'react';
-import { EditorContent, useEditor } from '@tiptap/react';
-import type { Note } from '@modules/notes';
-import { createEditorExtensions } from '@modules/rich-text';
-import { ConfirmNoteDeletion } from './confirm-note-deletion';
-import NoteHeader, { SingleNoteFooter } from './note-header';
+import { useState } from "react";
+import { EditorContent, useEditor } from "@tiptap/react";
+import type { Note } from "@modules/notes";
+import { createEditorExtensions } from "@modules/rich-text";
+import { ConfirmNoteDeletion } from "./confirm-note-deletion";
+import NoteHeader, { SingleNoteFooter } from "./note-header";
 
 type NoteContentProps = {
   note: Note;
@@ -20,7 +20,7 @@ const NoteContent = ({ note, onDeleteNoteHandler, onError }: NoteContentProps) =
     editable: false,
     editorProps: {
       attributes: {
-        class: 'ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden text-ellipsis',
+        class: "ProseMirror p-2 pr-0 min-w-[182px] max-h-[100px] overflow-hidden text-ellipsis",
       },
     },
   });
@@ -38,7 +38,7 @@ const NoteContent = ({ note, onDeleteNoteHandler, onError }: NoteContentProps) =
         />
       ) : null}
       <NoteHeader note={note} onError={onError} />
-      <EditorContent editor={editor} style={{ maxHeight: '200px', overflow: 'hidden' }} />
+      <EditorContent editor={editor} style={{ maxHeight: "200px", overflow: "hidden" }} />
       <SingleNoteFooter note={note} onDeleteNote={onDeleteNote} onError={onError} />
     </div>
   );

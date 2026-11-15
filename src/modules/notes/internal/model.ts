@@ -1,4 +1,4 @@
-import type { NoteContent } from '../../rich-text';
+import type { NoteContent } from "../../rich-text";
 
 export type Note = {
   readonly id: string;
@@ -30,6 +30,10 @@ export type NotesState = {
 };
 
 export type Envelope = NotesState & { readonly schemaVersion: 1 };
+export type DraftTarget = Pick<Draft, "id" | "revision">;
+export type DraftRecord = Pick<Envelope, "schemaVersion" | "revision" | "draft"> & {
+  readonly collectionRevision?: number;
+};
 
 export type NotesSnapshot = {
   readonly state: NotesState | null;
@@ -39,15 +43,17 @@ export type NotesSnapshot = {
 export type NotesAdapter = {
   read: () => Promise<Record<string, unknown>>;
   write: (value: Envelope) => Promise<void>;
+  readDraft: () => Promise<unknown>;
+  writeDraft: (value: DraftRecord) => Promise<void>;
   exclusive: <T>(operation: () => Promise<T>) => Promise<T>;
-  subscribe: (listener: () => void) => () => void;
+  subscribe: (listener: (change?: "draft" | "all") => void) => () => void;
   createId: () => string;
   now: () => number;
 };
 
 export type NoteEditorSession = {
   /** Persist the latest queued JSON draft. Superseded updates share its acknowledgement. Stale targets reject. */
-  update: (content: unknown) => Promise<NotesState>;
+  update: (content: unknown) => Promise<DraftTarget>;
   /** Save content and clear the shared draft in one write. Success closes this session. */
   save: (content: unknown, title: string) => Promise<NotesState>;
 };
@@ -60,9 +66,9 @@ export type NotesModule = {
   /** Observe all extension contexts. Loading failures appear in the snapshot. */
   subscribe: (listener: () => void) => () => void;
   /** Replace only the draft revision the caller has seen. */
-  startDraft: (expected: Pick<Draft, 'id' | 'revision'>) => Promise<NotesState>;
+  startDraft: (expected: Pick<Draft, "id" | "revision">) => Promise<NotesState>;
   /** Read the latest saved note into a new draft if the expected draft still matches. */
-  openNote: (noteId: string, expected: Pick<Draft, 'id' | 'revision'>) => Promise<NotesState>;
+  openNote: (noteId: string, expected: Pick<Draft, "id" | "revision">) => Promise<NotesState>;
   /** Set favorite metadata without replacing content. Concurrent favorite changes use commit order. */
   setFavorite: (noteId: string, value: boolean) => Promise<NotesState>;
   /** Delete the expected content revision. Keep an open draft as an independent draft. */
@@ -70,12 +76,12 @@ export type NotesModule = {
   /** Save an independent note without changing the shared draft. */
   createNote: (content: unknown, title: string) => Promise<NotesState>;
   /** Capture draft identity and revision. Local operations are ordered; other edits cause a conflict. */
-  edit: (draft: Draft) => NoteEditorSession;
+  edit: (draft: Pick<Draft, "id" | "revision">) => NoteEditorSession;
 };
 
 export class NotesConflictError extends Error {
   constructor() {
-    super('This draft changed in another view. Your local text is still in the editor. Save a copy to keep it.');
-    this.name = 'NotesConflictError';
+    super("This draft changed in another view. Your local text is still in the editor. Save a copy to keep it.");
+    this.name = "NotesConflictError";
   }
 }

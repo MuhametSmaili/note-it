@@ -1,14 +1,14 @@
-import { Button } from '@components';
-import { notes as noteStore } from '@modules/notes';
-import { useNotes } from '@modules/notes/use-notes.hook';
-import StarIcon from '@icons/star.svg';
-import type { ChangeEvent } from 'react';
-import { useMemo, useState } from 'react';
-import { useTab } from '@app/providers/active-tab.provider';
-import NoteContent from './components/note/note-content';
-import { SearchNotes } from './components/search-notes';
-import type { Filter } from './utils/filter-notes';
-import { getFilteredNotes } from './utils/filter-notes';
+import { Button } from "@components";
+import { notes as noteStore } from "@app/notes";
+import { useNotes } from "@app/use-notes.hook";
+import StarIcon from "@icons/star.svg";
+import type { ChangeEvent } from "react";
+import { useMemo, useState } from "react";
+import { useTab } from "@app/providers/active-tab.provider";
+import NoteContent from "./components/note/note-content";
+import { SearchNotes } from "./components/search-notes";
+import type { Filter } from "./utils/filter-notes";
+import { getFilteredNotes } from "./utils/filter-notes";
 
 const Collections = () => {
   const [filter, setFilter] = useState<Filter>({ showFavorites: false });
@@ -20,7 +20,7 @@ const Collections = () => {
   const visibleNotes = useMemo(() => getFilteredNotes(filter, notes), [notes, filter]);
 
   const reportError = (failure: unknown) => {
-    setError(failure instanceof Error ? failure.message : 'Cannot change this note.');
+    setError(failure instanceof Error ? failure.message : "Cannot change this note.");
   };
 
   const onDeleteNoteHandler = (id: string) => {
@@ -39,7 +39,7 @@ const Collections = () => {
     setError(null);
     noteStore
       .startDraft(state.draft)
-      .then(() => dispatch({ type: 'TAB_HANDLER', payload: 0 }))
+      .then(() => dispatch({ type: "TAB_HANDLER", payload: 0 }))
       .catch(reportError);
   };
 
@@ -47,13 +47,13 @@ const Collections = () => {
     <>
       {error || loadError ? <div role="alert">{error ?? loadError?.message}</div> : null}
       <div className="flex items-center border-b border-b-primary m-2 pb-1">
-        <SearchNotes onSearchHandler={onSearchHandler} value={filter.title ?? ''} />
+        <SearchNotes onSearchHandler={onSearchHandler} value={filter.title ?? ""} />
         <Button
           className="mx-2 text-primary"
           variant="primary"
           active={filter.showFavorites}
           title="Favorites"
-          icon={<StarIcon fill={filter.showFavorites ? 'currentcolor' : 'transparent'} />}
+          icon={<StarIcon fill={filter.showFavorites ? "currentcolor" : "transparent"} />}
           onClick={() => setFilter((old) => ({ showFavorites: !old.showFavorites }))}
         />
         <Button

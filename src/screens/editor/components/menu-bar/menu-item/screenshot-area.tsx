@@ -1,15 +1,15 @@
-import { Button } from '@components';
-import { getCurrentTab } from '@utils/get-current-tab';
-import { MessageRequest } from '@utils/types/message-request';
-import Camera from '@icons/camera.svg';
-import { localStorage } from '@utils/storage';
-import { platform } from '@platform/extension';
+import { Button } from "@components";
+import { getCurrentTab } from "@utils/get-current-tab";
+import { MessageRequest } from "@utils/types/message-request";
+import Camera from "@icons/camera.svg";
+import { localStorage } from "@utils/storage";
+import { platform } from "@platform/extension";
 
 const screenshotHandler = async () => {
-  const isWindow = await localStorage.get('settings');
+  const isWindow = await localStorage.get("settings");
   const tab = await getCurrentTab();
-  if (!tab) throw new Error('No supported tab is available for a screenshot.');
-  if (isWindow.windowType && isWindow.windowType === 'popup') {
+  if (!tab) throw new Error("No supported tab is available for a screenshot.");
+  if (isWindow.windowType && isWindow.windowType === "popup") {
     setTimeout(() => {
       window.close();
     }, 200);
@@ -28,7 +28,7 @@ export const ScreenshotArea = () => {
       size="sm"
       aria-label="Take screenshot"
       onClick={() => {
-        screenshotHandler().catch((error: unknown) => console.error('Cannot take screenshot:', error));
+        screenshotHandler().catch((error: unknown) => console.error("Cannot take screenshot:", error));
       }}
     >
       <Camera />

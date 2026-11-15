@@ -1,6 +1,7 @@
-import { test as base, expect } from '@playwright/test';
-import type { Worker } from '@playwright/test';
-import { launchChromiumExtension } from './chromium.mts';
+import { test as base, expect } from "@playwright/test";
+import type { Worker } from "@playwright/test";
+import { launchChromiumExtension } from "./chromium.mts";
+import { installNotesStorage } from "./notes.mts";
 
 export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; pageErrors: void }>({
   context: async ({ playwright }, provideContext) => {
@@ -12,7 +13,7 @@ export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; p
     }
   },
   serviceWorker: async ({ context }, provideWorker) => {
-    const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent('serviceworker'));
+    const worker = context.serviceWorkers()[0] ?? (await context.waitForEvent("serviceworker"));
     await provideWorker(worker);
   },
   extensionUrl: async ({ serviceWorker }, provideUrl) => {
@@ -21,7 +22,7 @@ export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; p
   pageErrors: [
     async ({ page }, use) => {
       const errors: string[] = [];
-      page.on('pageerror', (error) => errors.push(error.message));
+      page.on("pageerror", (error) => errors.push(error.message));
       await use();
       expect(errors).toEqual([]);
     },
@@ -30,9 +31,11 @@ export const test = base.extend<{ serviceWorker: Worker; extensionUrl: string; p
 });
 
 export async function seedStorage(serviceWorker: Worker, values: Record<string, unknown> = {}) {
+  await serviceWorker.evaluate(installNotesStorage);
+  await serviceWorker.evaluate(() => noteItTestStorage.reset());
   await serviceWorker.evaluate((stored) => chrome.storage.local.set(stored), {
-    settings: { theme: 'light', windowType: 'window' },
-    currentNote: { id: undefined, title: 'Default', isFavorite: false, noteContent: '' },
+    settings: { theme: "light", windowType: "window" },
+    currentNote: { id: undefined, title: "Default", isFavorite: false, noteContent: "" },
     notes: [],
     ...values,
   });
@@ -40,8 +43,8 @@ export async function seedStorage(serviceWorker: Worker, values: Record<string, 
 
 export async function inject(serviceWorker: Worker, file: string) {
   await serviceWorker.evaluate(async (script) => {
-    const [tab] = await chrome.tabs.query({ url: 'https://note-it.test/*' });
-    if (tab?.id === undefined) throw new Error('Smoke-test tab was not found.');
+    const [tab] = await chrome.tabs.query({ url: "https://note-it.test/*" });
+    if (tab?.id === undefined) throw new Error("Smoke-test tab was not found.");
     await chrome.scripting.executeScript({ target: { tabId: tab.id }, files: [script] });
   }, file);
 }

@@ -1,16 +1,16 @@
-import type { ButtonHTMLAttributes, JSX } from 'react';
-import { forwardRef } from 'react';
-import clsx from 'clsx';
-import { Spinner } from '../spinner/spinner';
+import type { ButtonHTMLAttributes, JSX } from "react";
+import { forwardRef } from "react";
+import clsx from "clsx";
+import { Spinner } from "../spinner/spinner";
 
 const variants = {
-  primary: 'bg-light border border-primary text-secondary',
-  inverse: 'bg-white text-blue-prussian active:bg-gray-true',
+  primary: "bg-light border border-primary text-secondary",
+  inverse: "bg-white text-blue-prussian active:bg-gray-true",
 };
 
 const sizes = {
-  sm: ' text-sm',
-  md: 'py-1 px-2 text-md',
+  sm: " text-sm",
+  md: "py-1 px-2 text-md",
 };
 
 type ButtonProps = {
@@ -23,7 +23,7 @@ type ButtonProps = {
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
-    { className = '', icon, variant = 'primary', size = 'md', isLoading = false, active = false, disabled, ...props },
+    { className = "", icon, variant = "primary", size = "md", isLoading = false, active = false, disabled, ...props },
     ref,
   ) => {
     return (
@@ -31,12 +31,12 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
         type="button"
         ref={ref}
         className={clsx(
-          'flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-hidden',
+          "flex justify-center items-center disabled:opacity-70 disabled:cursor-not-allowed rounded-sm focus:outline-hidden",
           variants[variant],
           sizes[size],
-          active && 'bg-gray-light!',
+          active && "bg-gray-light!",
           className,
-          disabled && 'bg-gray-30 text-white',
+          disabled && "bg-gray-30 text-white",
         )}
         disabled={disabled}
         {...props}
@@ -49,4 +49,4 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   },
 );
 
-Button.displayName = 'Button';
+Button.displayName = "Button";

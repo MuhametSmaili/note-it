@@ -1,6 +1,6 @@
-import type { ImageLike, Worker } from 'tesseract.js';
-import Tesseract from 'tesseract.js';
-import { platform } from '@platform/extension';
+import type { ImageLike, Worker } from "tesseract.js";
+import Tesseract from "tesseract.js";
+import { platform } from "@platform/extension";
 
 export type CropArea = { x: number; y: number; width: number; height: number };
 
@@ -15,13 +15,13 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
   const height = cropArea.height * window.devicePixelRatio;
 
   const img = new Image();
-  const canvas = document.createElement('canvas');
-  const ctx = canvas.getContext('2d');
+  const canvas = document.createElement("canvas");
+  const ctx = canvas.getContext("2d");
 
-  img.crossOrigin = '';
+  img.crossOrigin = "";
 
   return new Promise((resolve, reject) => {
-    img.addEventListener('load', () => {
+    img.addEventListener("load", () => {
       canvas.width = width;
       canvas.height = height;
       ctx?.drawImage(img, left, top, width, height, 0, 0, width, height);
@@ -31,16 +31,16 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
           if (blob) {
             resolve(blob);
           } else {
-            reject(new Error('Could not load image at ' + imageURL));
+            reject(new Error("Could not load image at " + imageURL));
           }
         },
-        'image/png',
+        "image/png",
         0.95,
       );
     });
 
-    img.addEventListener('error', () => {
-      reject(new Error('Could not load image at ' + imageURL));
+    img.addEventListener("error", () => {
+      reject(new Error("Could not load image at " + imageURL));
     });
     img.src = imageURL;
   });
@@ -50,12 +50,12 @@ export function imageToBlob(imageURL: string, cropArea: CropArea): Promise<Blob>
 export function blobToBase64(blob: Blob): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
-    reader.addEventListener('load', () => {
-      if (typeof reader.result === 'string') resolve(reader.result);
-      else reject(new Error('Cannot read image data.'));
+    reader.addEventListener("load", () => {
+      if (typeof reader.result === "string") resolve(reader.result);
+      else reject(new Error("Cannot read image data."));
     });
-    reader.addEventListener('error', () => reject(new Error('Cannot read image data.')));
-    reader.addEventListener('abort', () => reject(new Error('Image read was cancelled.')));
+    reader.addEventListener("error", () => reject(new Error("Cannot read image data.")));
+    reader.addEventListener("abort", () => reject(new Error("Image read was cancelled.")));
     return reader.readAsDataURL(blob);
   });
 }
@@ -64,13 +64,13 @@ export function blobToBase64(blob: Blob): Promise<string> {
  * Read text from the image. Use a Tesseract language code.
  * The default language is English. Return undefined if the operation fails.
  */
-export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promise<string | undefined> {
+export async function imageToText(imageSrc: ImageLike, language = "eng"): Promise<string | undefined> {
   try {
     const worker = await new Promise<Worker>((resolve, reject) => {
       Tesseract.createWorker(language, Tesseract.OEM.LSTM_ONLY, {
         workerBlobURL: false,
-        workerPath: platform.runtime.url('libraries/worker.min.js'),
-        corePath: platform.runtime.url('libraries'),
+        workerPath: platform.runtime.url("libraries/worker.min.js"),
+        corePath: platform.runtime.url("libraries"),
         errorHandler: reject,
       }).then(resolve, reject);
     });
@@ -84,7 +84,7 @@ export async function imageToText(imageSrc: ImageLike, language = 'eng'): Promis
       await worker.terminate();
     }
   } catch (error) {
-    console.error('Error converting image to text', error);
+    console.error("Error converting image to text", error);
     return undefined;
   }
 }

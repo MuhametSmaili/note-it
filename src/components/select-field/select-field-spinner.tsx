@@ -1,8 +1,8 @@
-import type { JSX } from 'react';
-import type { SelectOptionType, SelectValue } from './select-field';
-import ArrowUp from '@icons/arrow-up';
-import ArrowDown from '@icons/arrow-down';
-import clsx from 'clsx';
+import type { JSX } from "react";
+import type { SelectOptionType, SelectValue } from "./select-field";
+import ArrowUp from "@icons/arrow-up";
+import ArrowDown from "@icons/arrow-down";
+import clsx from "clsx";
 
 type ChangeSelectFieldProps = {
   currentValue: SelectValue;
@@ -41,10 +41,10 @@ export const SelectFieldSpinner = ({
   return (
     <div
       className={clsx(
-        'flex flex-col justify-between bg-light ml-1 h-full rounded-sm relative text-sm',
-        'border border-primary',
-        active && 'bg-gray-true',
-        disabled && 'disabled:opacity-70 disabled:cursor-not-allowed',
+        "flex flex-col justify-between bg-light ml-1 h-full rounded-sm relative text-sm",
+        "border border-primary",
+        active && "bg-gray-true",
+        disabled && "disabled:opacity-70 disabled:cursor-not-allowed",
       )}
     >
       <button
@@ -56,7 +56,7 @@ export const SelectFieldSpinner = ({
         <ArrowUp height={16} width={16} />
       </button>
       {showIndex && (
-        <div className="absolute text-sm left-1/2 top-1/2 select-none" style={{ transform: 'translate(-50%, -50%)' }}>
+        <div className="absolute text-sm left-1/2 top-1/2 select-none" style={{ transform: "translate(-50%, -50%)" }}>
           {currentPosition + 1}
         </div>
       )}
