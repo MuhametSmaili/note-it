@@ -49,6 +49,6 @@ You can take notes, convert images to text, download notes to pdf, and more.**
 
 ## CI and releases
 
-Pull requests targeting `main` and pushes to `main` run CI tests and a production build using Node.js 24.
+Pull requests targeting `main` and pushes to `main` run CI tests and a production build using Node.js 26.
 
 Automatic publishing is disabled. Neither pushing to `main` nor pushing a tag creates a GitHub release or publishes to the Chrome Web Store. Tag-driven publishing to both destinations is planned as a separate change.
