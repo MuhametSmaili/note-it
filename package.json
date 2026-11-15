@@ -78,7 +78,7 @@
     "jsdom": "31.0.0",
     "lint-staged": "17.6.0",
     "oxc-resolver": "11.24.2",
-    "oxc-transform-react": "0.156.0",
+    "oxc-transform-react": "0.158.0",
     "oxfmt": "0.78.0",
     "oxlint": "1.93.0",
     "oxlint-tsgolint": "7.0.2007",
