@@ -5,6 +5,7 @@ const themes = [
     name: "Light",
     id: "light",
     background: "rgb(246, 248, 249)",
+    sidebar: "rgb(3, 60, 89)",
     text: "rgb(3, 60, 89)",
     body: "rgb(1, 24, 35)",
     border: "rgb(206, 217, 222)",
@@ -13,6 +14,7 @@ const themes = [
     name: "Dim",
     id: "dim",
     background: "rgb(2, 44, 64)",
+    sidebar: "rgb(3, 60, 89)",
     text: "rgb(142, 202, 230)",
     body: "rgb(255, 255, 255)",
     border: "rgb(46, 86, 107)",
@@ -21,6 +23,7 @@ const themes = [
     name: "Dark",
     id: "dark",
     background: "rgb(1, 17, 24)",
+    sidebar: "rgb(0, 34, 51)",
     text: "rgb(142, 202, 230)",
     body: "rgb(255, 255, 255)",
     border: "rgb(34, 63, 78)",
@@ -113,8 +116,13 @@ for (const theme of themes) {
     await page.getByRole("checkbox", { name: theme.name, exact: true }).check();
     await page.getByRole("button", { name: "Write", exact: true }).click();
 
-    await expect(page.locator("[data-theme]").first()).toHaveAttribute("data-theme", theme.id);
-    await expect(page.locator("[data-theme]").first()).toHaveCSS("background-color", theme.background);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme.id);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("background-color", theme.background);
+    await expect(page.getByRole("navigation", { name: "Main" }).locator("..")).toHaveCSS(
+      "background-color",
+      theme.sidebar,
+    );
+    await expect(page.locator("html")).toHaveCSS("background-color", theme.sidebar);
     await expect(editor).toHaveCSS("color", theme.body);
     await expect(editor.locator("blockquote")).toHaveCSS("border-left-color", theme.border);
     await expect(page.getByRole("button", { name: "Bold", exact: true })).toHaveCSS("color", theme.text);

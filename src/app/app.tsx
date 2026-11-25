@@ -21,11 +21,12 @@ export const App: React.FC = () => {
 
   const [settings] = useStorage("settings", { theme: "light" });
 
+  React.useLayoutEffect(() => {
+    document.documentElement.dataset.theme = settings.theme;
+  }, [settings.theme]);
+
   return (
-    <div
-      data-theme={settings.theme}
-      className={clsx("flex flex-row bg-primary", inPopup ? "h-[600px] w-[800px]" : "h-screen w-full")}
-    >
+    <div className={clsx("flex flex-row bg-primary", inPopup ? "h-[600px] w-[800px]" : "h-screen w-full")}>
       <Sidebar />
       <TabContent isActive={activeTab === 0}>
         <NoteEditor />

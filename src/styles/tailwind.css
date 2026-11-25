@@ -87,6 +87,11 @@
 
     --color-border-primary: var(--color-gray-400);
 
+    &[data-theme] {
+      background-color: hsl(var(--color-bg-acent));
+    }
+
+    &[data-theme="dim"],
     [data-theme="dim"] {
       --color-bg-primary: 200 94% 13%;
       --color-bg-light: var(--color-acent);
@@ -102,6 +107,7 @@
       --color-border-primary: 201 40% 30%;
     }
 
+    &[data-theme="dark"],
     [data-theme="dark"] {
       --color-bg-primary: 200 92% 5%;
       --color-bg-light: 200 100% 10%;
