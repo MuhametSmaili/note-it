@@ -70,7 +70,7 @@ for (const { viewport, width } of [
 test("renders all theme swatches", async ({ page, extensionUrl }) => {
   await page.goto(`${extensionUrl}/popup.html`);
 
-  await page.getByRole("button", { name: "tab-button", exact: true }).nth(3).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
 
   for (const theme of themes) {
     const label = page.locator(`[data-theme="${theme.id}"] > label`);
@@ -91,11 +91,11 @@ for (const theme of themes) {
       theme.id === "light" ? "dark" : "light",
     );
     await page.goto(`${extensionUrl}/popup.html`);
-    await page.getByRole("button", { name: "tab-button", exact: true }).nth(3).click();
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
     const editor = page.locator('[contenteditable="true"]');
 
     await page.getByRole("checkbox", { name: theme.name, exact: true }).check();
-    await page.getByRole("button", { name: "tab-button", exact: true }).nth(0).click();
+    await page.getByRole("button", { name: "Write", exact: true }).click();
 
     await expect(page.locator("[data-theme]").first()).toHaveAttribute("data-theme", theme.id);
     await expect(page.locator("[data-theme]").first()).toHaveCSS("background-color", theme.background);

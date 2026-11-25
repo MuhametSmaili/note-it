@@ -17,14 +17,14 @@ test("opens a fresh draft when returning from another screen", async ({
   await other.goto(`${extensionUrl}/popup.html`);
   await page.locator('[contenteditable="true"]').waitFor();
   await other.locator('[contenteditable="true"]').waitFor();
-  await other.getByRole("button", { name: "tab-button", exact: true }).nth(2).click();
+  await other.getByRole("button", { name: "OCR", exact: true }).click();
   await expect(other.locator('[contenteditable="true"]')).toHaveCount(0);
   await page.locator('[contenteditable="true"]').fill("Changed in the first view");
   await expect
     .poll(() => readDraft(serviceWorker))
     .toMatchObject({ content: [{ content: [{ text: "Changed in the first view" }] }] });
 
-  await other.getByRole("button", { name: "tab-button", exact: true }).nth(0).click();
+  await other.getByRole("button", { name: "Write", exact: true }).click();
 
   await expect(other.locator('[contenteditable="true"]')).toHaveText("Changed in the first view");
   await other.locator('[contenteditable="true"]').fill("Edited after returning");
@@ -60,7 +60,7 @@ test("merges a favorite change from another view with an editor save", async ({
   await page.locator('[contenteditable="true"]').waitFor();
   const other = await context.newPage();
   await other.goto(`${extensionUrl}/popup.html`);
-  await other.getByRole("button", { name: "tab-button", exact: true }).nth(1).click();
+  await other.getByRole("button", { name: "Collections", exact: true }).click();
   await other.getByRole("button", { name: "make-note-favorite", exact: true }).click();
   await expect
     .poll(() => serviceWorker.evaluate(() => noteItTestStorage.read("noteIt.notes")))

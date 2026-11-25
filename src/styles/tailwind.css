@@ -139,6 +139,40 @@
   }
 }
 
+@utility tab-pill {
+  position: absolute;
+  left: 8px;
+  right: -2px;
+  height: 2.5rem;
+  border-radius: 8px 0 0 8px;
+  background: hsl(var(--color-bg-primary));
+  pointer-events: none;
+  transition: top 220ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 12px;
+    height: 10px;
+  }
+
+  &::before {
+    top: -10px;
+    background: radial-gradient(circle at 0 0, transparent 10px, hsl(var(--color-bg-primary)) 10.5px);
+  }
+
+  &::after {
+    bottom: -10px;
+    background: radial-gradient(circle at 0 100%, transparent 10px, hsl(var(--color-bg-primary)) 10.5px);
+  }
+}
+
 @utility cursor-custom {
   cursor:
     url("data:image/svg+xml,%3Csvg width='23' height='23' viewBox='0 0 23 23' fill='none' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0.2444 11.3203H22.8718M11.5581 0.006558V22.634' stroke='%23fff' stroke-width='2'/%3E%3C/svg%3E")
