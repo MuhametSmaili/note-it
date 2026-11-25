@@ -1,6 +1,13 @@
 import type { Page } from "@playwright/test";
 import { expect, seedStorage, test } from "./fixtures/extension.mts";
 
+const screens = [
+  { tab: "Write", control: { role: "button", name: "Save note" } },
+  { tab: "Collections", control: { role: "button", name: "New note" } },
+  { tab: "OCR", control: { role: "button", name: "Convert" } },
+  { tab: "Settings", control: { role: "checkbox", name: "Dark" } },
+] as const;
+
 const focusedLabel = (page: Page) => page.evaluate(() => document.activeElement?.getAttribute("aria-label"));
 
 test.beforeEach(async ({ serviceWorker }) => {
@@ -73,3 +80,19 @@ test("slides the active background unless reduced motion is preferred", async ({
   expect(slide).toEqual(["top", "0.22s"]);
   await expect(pill).toHaveCSS("transition-duration", "0s");
 });
+
+for (const width of [360, 1280]) {
+  test(`keeps every screen's controls in view in a ${width}px window`, async ({ page, extensionUrl }) => {
+    await page.setViewportSize({ width, height: 600 });
+    await page.goto(`${extensionUrl}/popup.html`);
+    await page.locator('[contenteditable="true"]').waitFor();
+
+    for (const { tab, control } of screens) {
+      await page.getByRole("navigation", { name: "Main" }).getByRole("button", { name: tab }).click();
+
+      await expect(page.getByRole(control.role, { name: control.name, exact: true })).toBeInViewport({ ratio: 1 });
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(width);
+      expect(await page.locator("main").evaluate((main) => main.scrollWidth - main.clientWidth)).toBe(0);
+    }
+  });
+}

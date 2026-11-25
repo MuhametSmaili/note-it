@@ -54,18 +54,34 @@ test("renders custom editor typography and spacing", async ({ page, extensionUrl
   await expect(page.getByRole("button", { name: "Bold", exact: true })).toHaveCSS("cursor", "pointer");
 });
 
-for (const { viewport, width } of [
-  { viewport: 800, width: "800px" },
-  { viewport: 700, width: "768px" },
-]) {
-  test(`sizes the popup at a ${viewport}px viewport`, async ({ page, extensionUrl }) => {
-    await page.setViewportSize({ width: viewport, height: 600 });
+for (const width of [1280, 500]) {
+  test(`fills a ${width}px window`, async ({ page, extensionUrl }) => {
+    await page.setViewportSize({ width, height: 600 });
 
     await page.goto(`${extensionUrl}/popup.html`);
 
-    await expect(page.locator("[data-theme]").first()).toHaveCSS("width", width);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("width", `${width}px`);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("height", "600px");
   });
 }
+
+test("keeps the toolbar popup at a fixed size", async ({ page, serviceWorker, extensionUrl }) => {
+  await page.goto(`${extensionUrl}/popup.html`);
+  await page.locator('[contenteditable="true"]').waitFor();
+  await serviceWorker.evaluate(() => chrome.action.setPopup({ popup: "popup.html" }));
+
+  await serviceWorker.evaluate(() => chrome.action.openPopup());
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const [popup] = chrome.extension.getViews({ type: "popup" });
+        const app = popup?.document.querySelector("main")?.parentElement?.getBoundingClientRect();
+        return app && [app.width, app.height];
+      }),
+    )
+    .toEqual([800, 600]);
+});
 
 test("renders all theme swatches", async ({ page, extensionUrl }) => {
   await page.goto(`${extensionUrl}/popup.html`);

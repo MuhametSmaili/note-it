@@ -84,3 +84,16 @@ it("releases storage listeners when the caller unsubscribes", () => {
   expect(changed).toHaveBeenCalledExactlyOnceWith({ draft: { newValue: "Saved" } }, "local");
   expect(changeListeners.size).toBe(0);
 });
+
+it("tells the toolbar popup apart from other extension pages", () => {
+  const popups: Window[] = [];
+  const getViews = vi.fn<(options: { type: string }) => Window[]>(() => popups);
+  vi.stubGlobal("chrome", { extension: { getViews } });
+
+  const inTab = api.views.isPopup(window);
+  popups.push(window);
+  const inPopup = api.views.isPopup(window);
+
+  expect([inTab, inPopup]).toEqual([false, true]);
+  expect(getViews).toHaveBeenCalledWith({ type: "popup" });
+});

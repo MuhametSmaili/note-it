@@ -71,6 +71,10 @@ export function createExtensionPlatform(api: () => typeof chrome = () => chrome)
       focus: (id: number) => request<BrowserWindow>((done) => api().windows.update(id, { focused: true }, done)),
       onFocusChanged: (listener: (id: number) => void) => subscribe(api().windows.onFocusChanged, listener),
     },
+    views: {
+      /** Whether `view` is the toolbar popup, as opposed to a window or tab. */
+      isPopup: (view: Window) => api().extension.getViews({ type: "popup" }).includes(view),
+    },
     action: {
       setPopup: (popup: string) => request<void>((done) => api().action.setPopup({ popup }, done)),
       onClick: (listener: () => void) => subscribe(api().action.onClicked, listener),
