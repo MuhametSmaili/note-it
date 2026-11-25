@@ -1,7 +1,7 @@
 import type { JSX } from "react";
 import type { SelectOptionType, SelectValue } from "./select-field";
-import ArrowUp from "@icons/arrow-up";
-import ArrowDown from "@icons/arrow-down";
+import ArrowUp from "@icons/arrow-up.svg";
+import ArrowDown from "@icons/arrow-down.svg";
 import clsx from "clsx";
 
 type ChangeSelectFieldProps = {

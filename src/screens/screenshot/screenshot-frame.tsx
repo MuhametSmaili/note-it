@@ -32,7 +32,7 @@ export const ScreenshotFrame = () => {
             onRetakeImageHandler().catch((error: unknown) => console.error("Cannot retake screenshot:", error));
           }}
         >
-          <CameraRetake />
+          <CameraRetake className="text-primary" />
         </button>
         <button
           type="button"
@@ -41,7 +41,7 @@ export const ScreenshotFrame = () => {
             handleClose().catch((error: unknown) => console.error("Cannot remove screenshot:", error));
           }}
         >
-          <Close />
+          <Close className="text-primary" />
         </button>
       </div>
       {/* oxlint-disable-next-line react/iframe-missing-sandbox */}

@@ -2,6 +2,7 @@ import { Button } from "@components";
 import { notes as noteStore } from "@app/notes";
 import { useNotes } from "@app/use-notes.hook";
 import StarIcon from "@icons/star.svg";
+import StarFilledIcon from "@icons/star-filled.svg";
 import type { ChangeEvent } from "react";
 import { useMemo, useState } from "react";
 import { useTab } from "@app/providers/active-tab.provider";
@@ -53,7 +54,7 @@ const Collections = () => {
           variant="primary"
           active={filter.showFavorites}
           title="Favorites"
-          icon={<StarIcon fill={filter.showFavorites ? "currentcolor" : "transparent"} />}
+          icon={filter.showFavorites ? <StarFilledIcon /> : <StarIcon />}
           onClick={() => setFilter((old) => ({ showFavorites: !old.showFavorites }))}
         />
         <Button

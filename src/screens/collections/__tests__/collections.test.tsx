@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import type { Note } from "@modules/notes";
 import type { notes } from "@app/notes";
 import { ActiveTabProvider } from "@app/providers/active-tab.provider";
@@ -16,6 +16,8 @@ vi.mock("@app/notes", () => ({ notes: { deleteNote: storage.deleteNote } }));
 vi.mock("@app/use-notes.hook", () => ({
   useNotes: () => ({ state: { notes: storage.notes }, error: null }),
 }));
+vi.mock("@icons/star.svg", () => ({ default: () => <svg data-testid="star" /> }));
+vi.mock("@icons/star-filled.svg", () => ({ default: () => <svg data-testid="star-filled" /> }));
 vi.mock("../components/note/note-content", () => ({
   default: ({ note, onDeleteNoteHandler }: { note: Note; onDeleteNoteHandler: (id: string) => void }) => (
     <button type="button" onClick={() => onDeleteNoteHandler(note.id)}>
@@ -37,4 +39,17 @@ it("deletes only the selected ID and revision under the favorites filter", () =>
 
   expect(screen.queryByRole("button", { name: "Delete Hidden" })).not.toBeInTheDocument();
   expect(storage.deleteNote).toHaveBeenCalledExactlyOnceWith("1", 2);
+});
+
+it("fills the Favorites star while only favorites are shown", () => {
+  render(
+    <ActiveTabProvider>
+      <NotesFolder />
+    </ActiveTabProvider>,
+  );
+  const favorites = screen.getByRole("button", { name: "Favorites" });
+
+  fireEvent.click(favorites);
+
+  expect(within(favorites).getByTestId("star-filled")).toBeInTheDocument();
 });

@@ -6,7 +6,7 @@ import pdfMake from "pdfmake/build/pdfmake";
 import { richNote } from "../../../../../../../test/fixtures/rich-note";
 import { DownloadNote } from "../download-note";
 
-vi.mock("@icons/box-download.svg", () => ({ default: () => <svg aria-hidden="true" /> }));
+vi.mock("@icons/download-simple.svg", () => ({ default: () => <svg aria-hidden="true" /> }));
 
 it("exports rich text, fonts, links, and metadata to PDF", async () => {
   const editor = new Editor({

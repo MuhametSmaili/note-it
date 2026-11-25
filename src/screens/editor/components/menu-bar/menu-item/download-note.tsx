@@ -1,7 +1,7 @@
 import type { Editor } from "@tiptap/react";
 import { useState } from "react";
 import { Button } from "@components";
-import Download from "@icons/box-download.svg";
+import Download from "@icons/download-simple.svg";
 
 async function downloadPdf(content: string) {
   const [{ default: htmlToPdfMake }, { default: pdfMake }, { default: pdfFonts }] = await Promise.all([
