@@ -14,7 +14,7 @@ const Tab = ({ label, isActive = false, onClickHandler, children, className }: T
     type="button"
     className={clsx(
       "relative z-10 my-1 flex h-10 w-full items-center justify-center hover:cursor-pointer",
-      "focus-visible:-outline-offset-2",
+      "rounded-l-sm focus-visible:bg-[#f6f8f9]/10 focus-visible:-outline-offset-2",
       className,
     )}
     onClick={onClickHandler}

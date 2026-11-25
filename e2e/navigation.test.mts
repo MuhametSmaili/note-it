@@ -96,3 +96,15 @@ for (const width of [360, 1280]) {
     }
   });
 }
+
+test("draws the active tab's icon in the accent color and the others in light", async ({ page, extensionUrl }) => {
+  const navigation = page.getByRole("navigation", { name: "Main" });
+  const accent = (tab: string) => navigation.getByRole("button", { name: tab }).locator(".icon-accent").first();
+  await page.goto(`${extensionUrl}/popup.html`);
+  await page.locator('[contenteditable="true"]').waitFor();
+
+  await navigation.getByRole("button", { name: "Collections" }).click();
+
+  await expect(accent("Collections")).toHaveCSS("color", "rgb(33, 158, 188)");
+  await expect(accent("Write")).toHaveCSS("color", "rgb(246, 248, 249)");
+});

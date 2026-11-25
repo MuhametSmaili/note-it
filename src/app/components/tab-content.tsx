@@ -16,7 +16,9 @@ const TabContent = (props: TabContentProps) => {
         </div>
       }
     >
-      {props.isActive && <main className="relative h-full w-full min-w-0 overflow-y-auto p-2">{props.children}</main>}
+      {props.isActive && (
+        <main className="relative h-full w-full min-w-0 overflow-y-auto px-4 py-2">{props.children}</main>
+      )}
     </React.Suspense>
   );
 };

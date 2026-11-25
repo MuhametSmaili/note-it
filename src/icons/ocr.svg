@@ -1,0 +1,11 @@
+<svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+  <g fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5">
+    <path class="icon-accent" d="M10 22C6.22876 22 4.34315 22 3.17157 20.8284C2 19.6569 2 18.7712 2 15" />
+    <path class="icon-accent" d="M22 15C22 18.7712 22 19.6569 20.8284 20.8284C19.6569 22 17.7712 22 14 22" />
+    <path class="icon-accent" d="M14 2C17.7712 2 19.6569 2 20.8284 3.17157C22 4.34315 22 5.22876 22 9" />
+    <path class="icon-accent" d="M10 2C6.22876 2 4.34315 2 3.17157 3.17157C2 4.34315 2 5.22876 2 9" />
+    <rect x="5.25" y="8.5" width="3.5" height="7" rx="1" />
+    <path d="M13.75 8.5H11.25A1 1 0 0 0 10.25 9.5V14.5A1 1 0 0 0 11.25 15.5H13.75" />
+    <path d="M15.25 15.5V8.5H17.75A1 1 0 0 1 18.75 9.5V11A1 1 0 0 1 17.75 12H15.25M17.25 12L18.75 15.5" />
+  </g>
+</svg>
