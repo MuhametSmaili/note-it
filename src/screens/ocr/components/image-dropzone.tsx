@@ -39,7 +39,7 @@ export const ImageDropzone = ({ droppedImage, clearImage, onDrop }: ImageDropzon
             className="absolute -top-6 -right-2 rounded-md bg-primary"
             onClick={clearImage}
           >
-            <Close />
+            <Close className="text-primary" />
           </button>
           <img ref={preview} alt="Uploaded document" loading="lazy" />
         </div>

@@ -3,7 +3,8 @@ import type { Note } from "@modules/notes";
 import { useNotes } from "@app/use-notes.hook";
 import { useTab } from "@app/providers/active-tab.provider";
 import DeleteIcon from "@icons/delete.svg";
-import StarIcon from "@icons/star2.svg";
+import StarIcon from "@icons/star.svg";
+import StarFilledIcon from "@icons/star-filled.svg";
 import clsx from "clsx";
 
 type NoteHeaderProps = {
@@ -62,7 +63,7 @@ export function SingleNoteFooter({ note, onDeleteNote, onError }: SingleNoteFoot
           className={clsx("hover:scale-90 hover:rotate-12 hover:cursor-pointer")}
           onClick={onFavoriteToggleHandler}
         >
-          <StarIcon fill={note.isFavorite ? "#19A1E5" : "transparent"} />
+          {note.isFavorite ? <StarFilledIcon fill="#19A1E5" /> : <StarIcon />}
         </button>
         <button
           type="button"
