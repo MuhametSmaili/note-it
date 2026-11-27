@@ -63,7 +63,7 @@
     "@tailwindcss/vite": "4.3.5",
     "@tesseract.js-data/eng": "1.0.0",
     "@testing-library/dom": "10.4.2",
-    "@testing-library/jest-dom": "7.0.1",
+    "@testing-library/jest-dom": "8.0.0",
     "@testing-library/react": "16.3.3",
     "@types/chrome": "0.3.7",
     "@types/html-to-pdfmake": "2.4.5",
