@@ -37,7 +37,7 @@ test("recognizes an uploaded image and releases its local OCR worker", async ({
     drawing.fillText("NOTE IT OCR TEST", 40, 100);
     return canvas.toDataURL("image/png");
   });
-  await page.getByRole("button", { name: "tab-button", exact: true }).nth(2).click();
+  await page.getByRole("button", { name: "OCR", exact: true }).click();
   const choosing = page.waitForEvent("filechooser");
   await page.getByRole("button", { name: "Upload an image or drag and drop it here" }).click();
   await (

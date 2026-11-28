@@ -18,3 +18,8 @@
 ::-webkit-scrollbar-thumb:hover {
   cursor: pointer;
 }
+
+html,
+body {
+  overflow: hidden;
+}

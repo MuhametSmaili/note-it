@@ -2,22 +2,25 @@ import type { JSX } from "react";
 import clsx from "clsx";
 
 type TabProps = {
+  label: string;
   isActive?: boolean;
   onClickHandler: () => void;
   className?: string;
   children?: JSX.Element[] | JSX.Element;
 };
-const Tab = ({ isActive = false, onClickHandler, children, className }: TabProps) => (
+
+const Tab = ({ label, isActive = false, onClickHandler, children, className }: TabProps) => (
   <button
     type="button"
     className={clsx(
-      "my-2 p-1 hover:cursor-pointer",
-      "flex w-full justify-center transition-[margin]",
-      isActive ? "ml-4 rounded-sm rounded-tr-none rounded-br-none bg-primary" : "bg-transparent",
+      "relative z-10 my-1 flex h-10 w-full items-center justify-center hover:cursor-pointer",
+      "focus-visible:-outline-offset-2",
       className,
     )}
     onClick={onClickHandler}
-    aria-label="tab-button"
+    aria-label={label}
+    title={label}
+    aria-current={isActive ? "page" : undefined}
   >
     {children}
   </button>

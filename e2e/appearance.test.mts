@@ -5,6 +5,7 @@ const themes = [
     name: "Light",
     id: "light",
     background: "rgb(246, 248, 249)",
+    sidebar: "rgb(3, 60, 89)",
     text: "rgb(3, 60, 89)",
     body: "rgb(1, 24, 35)",
     border: "rgb(206, 217, 222)",
@@ -13,6 +14,7 @@ const themes = [
     name: "Dim",
     id: "dim",
     background: "rgb(2, 44, 64)",
+    sidebar: "rgb(3, 60, 89)",
     text: "rgb(142, 202, 230)",
     body: "rgb(255, 255, 255)",
     border: "rgb(46, 86, 107)",
@@ -21,6 +23,7 @@ const themes = [
     name: "Dark",
     id: "dark",
     background: "rgb(1, 17, 24)",
+    sidebar: "rgb(0, 34, 51)",
     text: "rgb(142, 202, 230)",
     body: "rgb(255, 255, 255)",
     border: "rgb(34, 63, 78)",
@@ -54,23 +57,39 @@ test("renders custom editor typography and spacing", async ({ page, extensionUrl
   await expect(page.getByRole("button", { name: "Bold", exact: true })).toHaveCSS("cursor", "pointer");
 });
 
-for (const { viewport, width } of [
-  { viewport: 800, width: "800px" },
-  { viewport: 700, width: "768px" },
-]) {
-  test(`sizes the popup at a ${viewport}px viewport`, async ({ page, extensionUrl }) => {
-    await page.setViewportSize({ width: viewport, height: 600 });
+for (const width of [1280, 500]) {
+  test(`fills a ${width}px window`, async ({ page, extensionUrl }) => {
+    await page.setViewportSize({ width, height: 600 });
 
     await page.goto(`${extensionUrl}/popup.html`);
 
-    await expect(page.locator("[data-theme]").first()).toHaveCSS("width", width);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("width", `${width}px`);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("height", "600px");
   });
 }
+
+test("keeps the toolbar popup at a fixed size", async ({ page, serviceWorker, extensionUrl }) => {
+  await page.goto(`${extensionUrl}/popup.html`);
+  await page.locator('[contenteditable="true"]').waitFor();
+  await serviceWorker.evaluate(() => chrome.action.setPopup({ popup: "popup.html" }));
+
+  await serviceWorker.evaluate(() => chrome.action.openPopup());
+
+  await expect
+    .poll(() =>
+      page.evaluate(() => {
+        const [popup] = chrome.extension.getViews({ type: "popup" });
+        const app = popup?.document.querySelector("main")?.parentElement?.getBoundingClientRect();
+        return app && [app.width, app.height];
+      }),
+    )
+    .toEqual([800, 600]);
+});
 
 test("renders all theme swatches", async ({ page, extensionUrl }) => {
   await page.goto(`${extensionUrl}/popup.html`);
 
-  await page.getByRole("button", { name: "tab-button", exact: true }).nth(3).click();
+  await page.getByRole("button", { name: "Settings", exact: true }).click();
 
   for (const theme of themes) {
     const label = page.locator(`[data-theme="${theme.id}"] > label`);
@@ -91,14 +110,19 @@ for (const theme of themes) {
       theme.id === "light" ? "dark" : "light",
     );
     await page.goto(`${extensionUrl}/popup.html`);
-    await page.getByRole("button", { name: "tab-button", exact: true }).nth(3).click();
+    await page.getByRole("button", { name: "Settings", exact: true }).click();
     const editor = page.locator('[contenteditable="true"]');
 
     await page.getByRole("checkbox", { name: theme.name, exact: true }).check();
-    await page.getByRole("button", { name: "tab-button", exact: true }).nth(0).click();
+    await page.getByRole("button", { name: "Write", exact: true }).click();
 
-    await expect(page.locator("[data-theme]").first()).toHaveAttribute("data-theme", theme.id);
-    await expect(page.locator("[data-theme]").first()).toHaveCSS("background-color", theme.background);
+    await expect(page.locator("html")).toHaveAttribute("data-theme", theme.id);
+    await expect(page.getByRole("main").locator("..")).toHaveCSS("background-color", theme.background);
+    await expect(page.getByRole("navigation", { name: "Main" }).locator("..")).toHaveCSS(
+      "background-color",
+      theme.sidebar,
+    );
+    await expect(page.locator("html")).toHaveCSS("background-color", theme.sidebar);
     await expect(editor).toHaveCSS("color", theme.body);
     await expect(editor.locator("blockquote")).toHaveCSS("border-left-color", theme.border);
     await expect(page.getByRole("button", { name: "Bold", exact: true })).toHaveCSS("color", theme.text);

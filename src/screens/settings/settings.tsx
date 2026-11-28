@@ -19,9 +19,9 @@ export function Settings() {
     <div>
       <h2 className="mb-1 flex w-fit items-center justify-center text-xl text-primary">
         <ColorPalette />
-        Apperance settings
+        Appearance settings
       </h2>
-      <ul className="flex items-start gap-3">
+      <ul className="flex flex-wrap items-start gap-3">
         {themes.map((t) => (
           <li key={t.name} data-theme={t.name}>
             <ApperanceItem

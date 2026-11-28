@@ -46,7 +46,7 @@ const Collections = () => {
   return (
     <>
       {error || loadError ? <div role="alert">{error ?? loadError?.message}</div> : null}
-      <div className="m-2 flex items-center border-b border-b-primary pb-1">
+      <div className="m-2 flex flex-wrap items-center gap-y-2 border-b border-b-primary pb-1">
         <SearchNotes onSearchHandler={onSearchHandler} value={filter.title ?? ""} />
         <Button
           className="mx-2 text-primary"

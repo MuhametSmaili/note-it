@@ -37,7 +37,7 @@ export const MenuBar = ({ editor, onSave }: MenuBarProps) => {
   });
   return (
     <>
-      <div className="flex flex-row items-center text-primary">
+      <div className="flex flex-row flex-wrap items-center text-primary">
         <Button aria-label="Undo" variant="inverse" size="sm" onClick={() => editor.chain().focus().undo().run()}>
           <Undo />
         </Button>

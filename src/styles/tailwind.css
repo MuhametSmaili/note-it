@@ -87,6 +87,11 @@
 
     --color-border-primary: var(--color-gray-400);
 
+    &[data-theme] {
+      background-color: hsl(var(--color-bg-acent));
+    }
+
+    &[data-theme="dim"],
     [data-theme="dim"] {
       --color-bg-primary: 200 94% 13%;
       --color-bg-light: var(--color-acent);
@@ -102,6 +107,7 @@
       --color-border-primary: 201 40% 30%;
     }
 
+    &[data-theme="dark"],
     [data-theme="dark"] {
       --color-bg-primary: 200 92% 5%;
       --color-bg-light: 200 100% 10%;
@@ -136,6 +142,40 @@
 
   &::after {
     right: -5px;
+  }
+}
+
+@utility tab-pill {
+  position: absolute;
+  left: 8px;
+  right: -2px;
+  height: 2.5rem;
+  border-radius: 8px 0 0 8px;
+  background: hsl(var(--color-bg-primary));
+  pointer-events: none;
+  transition: top 220ms cubic-bezier(0.23, 1, 0.32, 1);
+
+  @media (prefers-reduced-motion: reduce) {
+    transition: none;
+  }
+
+  &::before,
+  &::after {
+    content: "";
+    position: absolute;
+    right: 0;
+    width: 12px;
+    height: 10px;
+  }
+
+  &::before {
+    top: -10px;
+    background: radial-gradient(circle at 0 0, transparent 10px, hsl(var(--color-bg-primary)) 10.5px);
+  }
+
+  &::after {
+    bottom: -10px;
+    background: radial-gradient(circle at 0 100%, transparent 10px, hsl(var(--color-bg-primary)) 10.5px);
   }
 }
 

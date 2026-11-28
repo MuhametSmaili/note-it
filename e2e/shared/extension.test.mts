@@ -386,7 +386,7 @@ describe.each([
   it("recognizes a clipboard image and replaces it with the extracted text", async () => {
     const image = await createImage();
     await openEditor();
-    await browser.evaluate(page, "document.querySelectorAll('[aria-label=\"tab-button\"]')[2].click();");
+    await browser.evaluate(page, "document.querySelector('[aria-label=\"OCR\"]').click();");
     await waitFor(page, "document.querySelector('[name=\"paste-from-clipboard\"]')?.disabled === false");
     await browser.evaluate(
       page,
